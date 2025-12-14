@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 
 <footer class="footer">
 	<div class="footer-container">
@@ -27,7 +27,7 @@
 		        <li><a href="<c:url value='/index.jsp' />">Trang chủ</a></li>
 		        <li><a href="<c:url value='/pages/menu.jsp' />">Thực đơn</a></li>
 		        <li><a href="<c:url value='/pages/book-table.jsp' />">Đặt bàn</a></li>
-		        <li><a href="<c:url value='/pages/book-event.jsp' />">Đặt tiệc</a></li>
+		        <li><a href="<c:url value='/pages/promotion.jsp' />">Ưu đãi</a></li>
 		        <li><a href="<c:url value='/pages/contact.jsp' />">Liên hệ</a></li>
 		    </ul>
 		</div>

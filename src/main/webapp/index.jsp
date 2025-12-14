@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ page import="java.time.format.DateTimeFormatter, beans.PromotionList, model.Promotion, beans.DishList" %>
-
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 	
 <!DOCTYPE html>
 <html lang="vi">
@@ -9,7 +9,12 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>BBQ Master - Trang chủ</title>
-	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="<c:url value='/css/base.css'/>">
+	<link rel="stylesheet" href="<c:url value='/css/header.css'/>">
+    <link rel="stylesheet" href="<c:url value='/css/home.css'/>">
+    <link rel="stylesheet" href="<c:url value='/css/footer.css'/>">
+    <link rel="stylesheet" href="<c:url value='/css/responsive.css'/>">
+	
 	<link rel="stylesheet"
 		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -24,8 +29,16 @@
 				<span class="bbq">BBQ Master</span>
 			</h1>
 			<p>Trải nghiệm BBQ ngoài trời tuyệt vời nhất</p>
-			<button class="btn btn-primary" onclick="window.location.href='datban.jsp'">Đặt bàn ngay</button>
-			<button class="btn btn-primary" onclick="window.location.href='thucdon.jsp'">Xem thực đơn</button>
+			<button class="btn btn-primary"
+			        onclick="location.href='<c:url value="/pages/book-table.jsp"/>'">
+			    Đặt bàn ngay
+			</button>
+			
+			<button class="btn btn-primary"
+			        onclick="location.href='<c:url value="/pages/menu.jsp"/>'">
+			    Xem thực đơn
+			</button>
+
 		</div>
 	</section>
 

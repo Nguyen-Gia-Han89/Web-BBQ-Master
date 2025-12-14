@@ -1,0 +1,172 @@
+@charset "UTF-8";
+
+/* ===== Container & Section ===== */
+.booking-section {
+  padding: 40px 20px;
+  background-color: #f9f9f9;
+  font-family: Arial, sans-serif;
+}
+.booking-section h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+}
+.booking-section .booking { color: #ff6b6b; }
+
+/* ===== Tabs ===== */
+.tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+.tab {
+  padding: 10px 20px;
+  cursor: pointer;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px 5px 0 0;
+  transition: all 0.3s;
+}
+.tab:hover, .tab.active {
+  background-color: #ff6b6b;
+  color: #fff;
+}
+
+/* ===== Tab Content ===== */
+.tab-content {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 0 5px 5px 5px;
+  display: none;
+}
+.tab-content.active { display: block; }
+
+.tab-content .form-group { margin-bottom: 20px; }
+.tab-content h2 { font-size: 18px; margin-bottom: 10px; }
+.required { color: red; }
+
+/* ===== Form Inputs ===== */
+input[type="text"],
+input[type="tel"],
+input[type="email"],
+input[type="number"],
+input[type="date"],
+select,
+textarea {
+  width: 100%;
+  padding: 8px 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+textarea { resize: vertical; }
+
+/* ===== Buttons ===== */
+.btn-next, .btn-back, .btn-book, .btn-view-map {
+  padding: 10px 20px;
+  margin: 5px 0;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+.btn-next, .btn-book, .btn-view-map {
+  background-color: #ff6b6b;
+  color: #fff;
+}
+.btn-next:hover, .btn-book:hover, .btn-view-map:hover {
+  background-color: #e55b5b;
+}
+.btn-back { background-color: #ccc; color: #333; }
+.btn-back:hover { background-color: #bbb; }
+
+/* ===== Time Slots ===== */
+.time-slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+.time-slots button {
+  padding: 8px 12px;
+  border: 1px solid #ff6b6b;
+  background-color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.time-slots button.selected,
+.time-slots button:hover {
+  background-color: #ff6b6b;
+  color: #fff;
+}
+
+/* ===== Space Selection ===== */
+.space-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.space-buttons button {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ff6b6b;
+  border-radius: 5px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.space-buttons button:hover,
+.space-buttons button.selected {
+  background-color: #ff6b6b;
+  color: #fff;
+}
+.space-desc { margin-top: 10px; font-style: italic; color: #555; }
+
+.space-options-wrapper {
+  display: flex;
+  flex-wrap: wrap; /* Cho phép xuống dòng nếu màn hình hẹp */
+  gap: 15px;
+  margin-top: 10px;
+}
+.space-option-card {
+  flex: 1 1 22%; /* Mỗi card chiếm khoảng 22% chiều rộng, tạo 4 cột */
+  min-width: 120px;
+  text-align: center;
+  display: none; /* Mặc định ẩn, JS sẽ xử lý hiển thị */
+}
+.space-option-card .space-radio { display: none; /* Ẩn radio thực tế */ }
+.space-option-card label {
+  display: block;
+  padding: 15px 10px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.space-option-card label span {
+  display: block;
+  font-size: 0.85em;
+  color: #666;
+  margin-top: 5px;
+}
+.space-option-card .space-radio:checked + label {
+  border-color: #ff5722; /* Màu cam nổi bật khi chọn */
+  background-color: #fff3e0;
+  box-shadow: 0 0 5px rgba(255, 87, 34, 0.5);
+}
+
+/* ===== Booking Summary ===== */
+#selectedTableDisplay { margin: 10px 0; font-weight: bold; }
+
+/* ===== Responsive ===== */
+@media screen and (max-width: 768px) {
+  .tabs { flex-direction: column; align-items: center; }
+  .space-buttons { flex-direction: column; }
+}

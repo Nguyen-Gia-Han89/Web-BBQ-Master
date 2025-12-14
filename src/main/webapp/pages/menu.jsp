@@ -1,26 +1,20 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
-
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>BBQ Master - Giỏ hàng</title>
-	<link rel="stylesheet" href="<c:url value='/css/base.css'/>">
+   	<meta charset="UTF-8">
+   	<title>Thực đơn</title>
+   	<link rel="stylesheet" href="<c:url value='/css/base.css'/>">
 	<link rel="stylesheet" href="<c:url value='/css/header.css'/>">
-    <link rel="stylesheet" href="<c:url value='/css/home.css'/>">
-    <link rel="stylesheet" href="<c:url value='/css/footer.css'/>">
-    <link rel="stylesheet" href="<c:url value='/css/responsive.css'/>">
-    
-	<link rel="stylesheet"
-			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-		
-</head>
+   	<link rel="stylesheet" href="<c:url value='/css/menu.css'/>">
+   	<link rel="stylesheet" href="<c:url value='/css/footer.css'/>">
+   	<link rel="stylesheet" href="<c:url value='/css/responsive.css'/>">
 
+   	<link rel="stylesheet"
+         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
 <body>
 <jsp:include page="../includes/header.jsp" />
 <div class="main-content">

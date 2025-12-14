@@ -1,15 +1,19 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<title>Đặt bàn - BBQ Master</title>
-<link rel="stylesheet" href="<c:url value='/css/style.css' />">
-<link rel="stylesheet"
-		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+	<meta charset="UTF-8">
+	<title>Đặt bàn - BBQ Master</title>
+	<link rel="stylesheet" href="<c:url value='/css/base.css'/>">
+	<link rel="stylesheet" href="<c:url value='/css/header.css'/>">
+    <link rel="stylesheet" href="<c:url value='/css/booking.css'/>">
+    <link rel="stylesheet" href="<c:url value='/css/footer.css'/>">
+    <link rel="stylesheet" href="<c:url value='/css/responsive.css'/>">
+	<link rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 	
@@ -36,23 +40,22 @@
                     <label for="name">Họ và tên:</label>
                     <input type="text" id="name" name="name" 
                            value="${not empty sessionScope.customer ? sessionScope.customer.fullName : ''}" 
-                           placeholder="Nhập họ và tên" required>
-
-                    <label for="phone">Số điện thoại:</label>
+                           placeholder="Nhập họ và tên" required
+                           ${not empty sessionScope.customer ? 'readonly' : ''}> <label for="phone">Số điện thoại:</label>
                     <input type="tel" id="phone" name="phone" 
                            value="${not empty sessionScope.customer ? sessionScope.customer.phoneNumber : ''}" 
-                           placeholder="Nhập số điện thoại" pattern="\d{9,11}" required>
-
-                    <label for="email">Email:</label>
+                           placeholder="Nhập số điện thoại" pattern="\d{9,11}" required
+                           ${not empty sessionScope.customer ? 'readonly' : ''}> <label for="email">Email:</label>
                     <input type="email" id="email" name="email" 
                            value="${not empty sessionScope.customer ? sessionScope.customer.email : ''}" 
                            placeholder="Nhập email" required>
+                    
                 </fieldset>
 
                 <fieldset>
                     <legend>Thời gian <span class="required">*</span></legend>
-                    <label for="guests">Số người:</label>
-                    <input type="number" id="guests" name="guests" min="1" max="10" value="1" required>
+                    <label for="guests">Số người (1-100):</label>
+                    <input type="number" id="guests" name="guests" min="1" max="100" value="1" required>
 
                     <label for="date">Chọn ngày:</label>
                     <input type="date" id="date" name="date" required>
@@ -60,6 +63,45 @@
                     <label>Chọn giờ:</label>
                     <div id="timeSlots" class="time-slots"></div>
                     <input type="hidden" id="time" name="time" required>
+                </fieldset>
+                
+                <fieldset style="margin-top: 30px;">
+                    <legend>🏠 Chọn Không gian Ăn uống <span class="required">*</span></legend>
+                    <p style="font-size: 0.9em; color: gray;">*Các lựa chọn sẽ thay đổi theo số lượng người (Ngưỡng 20 khách).</p>
+                    
+                    <div class="space-options-wrapper" id="spaceOptionsContainer">
+                        <div class="space-option-card space-small">
+                            <input type="radio" id="space-lau1" name="space" value="lau1" class="space-radio" required>
+                            <label for="space-lau1">
+                                **Lầu 1**
+                                <span>Khu vực ăn uống chính</span>
+                            </label>
+                        </div>
+                        
+                        <div class="space-option-card space-small">
+                            <input type="radio" id="space-vip" name="space" value="vip" class="space-radio">
+                            <label for="space-vip">
+                                **VIP**
+                                <span>Phòng riêng/Yên tĩnh</span>
+                            </label>
+                        </div>
+                        
+                        <div class="space-option-card space-small">
+                            <input type="radio" id="space-sanvuon" name="space" value="sanvuon" class="space-radio">
+                            <label for="space-sanvuon">
+                                **Sân vườn**
+                                <span>Không gian ngoài trời</span>
+                            </label>
+                        </div>
+                        
+                        <div class="space-option-card space-large">
+                            <input type="radio" id="space-sanhtiec" name="space" value="sanhtiec" class="space-radio">
+                            <label for="space-sanhtiec">
+                                **Sảnh Tiệc**
+                                <span>Dành cho sự kiện lớn</span>
+                            </label>
+                        </div>
+                    </div>
                 </fieldset>
 
                 <button type="button" class="btn-next">Tiếp tục</button>
