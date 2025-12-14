@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ page import="model.Booking, model.BookingDetail"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 
 
 <!DOCTYPE html>
@@ -12,7 +12,7 @@
 	<title>BBQ Master - Giỏ hàng</title>
 	<link rel="stylesheet" href="<c:url value='/css/base.css'/>">
 	<link rel="stylesheet" href="<c:url value='/css/header.css'/>">
-    <link rel="stylesheet" href="<c:url value='/css/home.css'/>">
+    <link rel="stylesheet" href="<c:url value='/css/cart.css'/>">
     <link rel="stylesheet" href="<c:url value='/css/footer.css'/>">
     <link rel="stylesheet" href="<c:url value='/css/responsive.css'/>">
     
@@ -22,64 +22,81 @@
 </head>
 
 <body>
-<jsp:include page="../includes/header.jsp" />
-<div class="main-content">
-   <div class="menu-container">
-       <h2><i class="fas fa-fire"></i> THỰC ĐƠN</h2>
-       <p class="intro">
-           Thưởng thức những món nướng & lẩu hấp dẫn chuẩn hương vị nhà hàng.
-           Chọn món yêu thích và đặt hàng ngay!
-       </p>
-       <!-- 🔥 FILTER QUA SERVLET -->
-       <div class="filter-buttons">
-           <a href="${pageContext.request.contextPath}/menu?category=all"
-              class="filter-btn ${selectedCategory == 'all' ? 'active' : ''}">Tất cả</a>
-           <a href="${pageContext.request.contextPath}/menu?category=meat"
-              class="filter-btn ${selectedCategory == 'meat' ? 'active' : ''}">Thịt & Hải sản</a>
-           <a href="${pageContext.request.contextPath}/menu?category=veg"
-              class="filter-btn ${selectedCategory == 'veg' ? 'active' : ''}">Rau củ</a>
-           <a href="${pageContext.request.contextPath}/menu?category=soup"
-              class="filter-btn ${selectedCategory == 'soup' ? 'active' : ''}">Lẩu</a>
-           <a href="${pageContext.request.contextPath}/menu?category=drink"
-              class="filter-btn ${selectedCategory == 'drink' ? 'active' : ''}">Thức uống</a>
-       </div>
-       <!-- 🔥 DANH SÁCH MÓN -->
-       <div class="item-grid">
-           <c:if test="${empty foods}">
-               <p class="no-items-message">
-                   <i class="fas fa-exclamation-triangle"></i>
-                   Hiện tại thực đơn chưa có món ăn nào được tải lên.
-               </p>
-           </c:if>
-           <c:if test="${not empty foods}">
-               <c:forEach var="dish" items="${foods}">
-                   <div class="item-card">
-                       <img src="${pageContext.request.contextPath}/${dish.imageUrl}"
-                            alt="${dish.name}">
-                       <h4>${dish.name}</h4>
-                       <p class="description">${dish.description}</p>
-                       <p class="price">
-                           <c:choose>
-                               <c:when test="${dish.price > 0}">
-                                   <fmt:formatNumber value="${dish.price}" pattern="#,##0"/>đ
-                               </c:when>
-                               <c:otherwise>
-                                   (Liên hệ giá)
-                               </c:otherwise>
-                           </c:choose>
-                       </p>
-                       <button class="order-btn"
-                               onclick="addToCart(${dish.dishId})">
-                           Đặt món
-                       </button>
-                   </div>
-               </c:forEach>
-           </c:if>
-       </div>
-   </div>
-</div>
-<jsp:include page="../includes/footer.jsp" />
-   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-   <script src="../js/menu.js"></script>
+	<!-- Header -->
+	<jsp:include page="../includes/header.jsp" />
+
+	<section class="cart">
+		<div class="container">
+			<h2>Giỏ hàng của bạn</h2>
+
+			<jsp:useBean id="cart" class="model.Booking" scope="session"/>
+			<%
+    BookingDetail[] items = cart.getBookingDetailsArray();
+%>
+
+<table class="cart-table">
+    <thead>
+        <tr>
+            <th>Sản phẩm</th>
+            <th>Đơn giá</th>
+            <th>Số lượng</th>
+            <th>Số tiền</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        <%
+            for(BookingDetail item : cart.getBookingDetails()) {
+        %>
+        <tr>
+            <td>
+                <img src="<%= item.getDish().getImageUrl() %>" alt="" style="width:50px;">
+                <%= item.getDish().getName() %>
+            </td>
+            <td><%= item.getPrice() %> đ</td>
+            <td>
+                <form action="update-cart" method="post">
+                    <input type="hidden" name="dishId" value="<%= item.getDish().getDishId() %>">
+                    <button type="submit" name="action" value="minus">-</button>
+                    <input type="text" name="quantity" value="<%= item.getQuantity() %>" size="2">
+                    <button type="submit" name="action" value="plus">+</button>
+                </form>
+            </td>
+            <td><%= item.getTotal() %> đ</td>
+            <td>
+                <form action="remove-from-cart" method="post">
+                    <input type="hidden" name="dishId" value="<%= item.getDish().getDishId() %>">
+                    <button type="submit">Xóa</button>
+                </form>
+            </td>
+        </tr>
+        <%
+            }
+            if(cart.getBookingDetails().isEmpty()){
+        %>
+        <tr>
+            <td colspan="5" style="text-align:center;">Không có sản phẩm nào trong giỏ hàng</td>
+        </tr>
+        <%
+            }
+        %>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3">Tổng cộng</td>
+            <td colspan="2"><%= cart.getTotalAmount() %> đ</td>
+        </tr>
+    </tfoot>
+</table>
+
+
+		</div>
+	</section>
+
+
+	<!-- Footer -->
+	<jsp:include page="../includes/footer.jsp"></jsp:include>
+
+	<script src="js/main.js"></script>
 </body>
 </html>

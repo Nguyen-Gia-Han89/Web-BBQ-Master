@@ -169,6 +169,8 @@ public class Booking {
                 return;
             }
         }
+        
+        
 
         // Nếu chưa có, tạo mới BookingDetail
         BookingDetail newDetail = new BookingDetail();
@@ -185,6 +187,39 @@ public class Booking {
         }
         return total;
     }
+
+	public void removeDish(Dish selectedDish) {
+		if (selectedDish == null) return;
+	    // Loại bỏ tất cả chi tiết có dishId bằng với món được chọn
+	    bookingDetails.removeIf(detail -> detail.getDish().getDishId() == selectedDish.getDishId());
+	    // Cập nhật lại tổng tiền sau khi xóa
+	    calculateTotalAmount();
+		
+	}
+
+	// Lấy BookingDetail theo dishId
+	public BookingDetail getDetailByDishId(int dishId) {
+	    for (BookingDetail detail : bookingDetails) {
+	        if (detail.getDish().getDishId() == dishId) return detail;
+	    }
+	    return null;
+	}
+
+	// Set trực tiếp số lượng
+	public void setQuantity(Dish dish, int quantity) {
+	    if (dish == null) return;
+	    for (BookingDetail detail : bookingDetails) {
+	        if (detail.getDish().getDishId() == dish.getDishId()) {
+	            detail.setQuantity(quantity);
+	            calculateTotalAmount();
+	            return;
+	        }
+	    }
+	    // Nếu chưa có món này thì thêm mới
+	    if (quantity > 0) addDish(dish, quantity);
+	}
+
+
 
 
 }

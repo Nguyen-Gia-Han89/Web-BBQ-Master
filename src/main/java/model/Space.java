@@ -95,7 +95,7 @@ public class Space {
     }
 
     public List<Table> getTables() {
-        return tables;
+        return new ArrayList<>(tables);
     }
 
     public void setTables(List<Table> tables) {

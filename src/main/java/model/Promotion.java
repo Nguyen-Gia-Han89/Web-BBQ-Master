@@ -1,6 +1,6 @@
 package model;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 /**
  * Lớp đại diện cho một chương trình khuyến mãi trong hệ thống.
@@ -27,10 +27,10 @@ public class Promotion {
     private double discountPercent;
 
     /** Ngày bắt đầu áp dụng */
-    private LocalDate startDate;
+    private Date startDate;
 
     /** Ngày kết thúc áp dụng */
-    private LocalDate endDate;
+    private Date endDate;
 
     /** Đường dẫn ảnh hiển thị cho khuyến mãi */
     private String imageUrl;
@@ -55,7 +55,7 @@ public class Promotion {
      * @param status
      */
     public Promotion(int promoId, String promoName, String description, double discountPercent,
-                     LocalDate startDate, LocalDate endDate, String imageUrl, String status) {
+                     Date startDate, Date endDate, String imageUrl, String status) {
         this.promoId = promoId;
         this.promoName = promoName;
         this.description = description;
@@ -99,19 +99,19 @@ public class Promotion {
         this.discountPercent = discountPercent;
     }
 
-    public LocalDate getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDate getEndDate() {
+    public Date getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
