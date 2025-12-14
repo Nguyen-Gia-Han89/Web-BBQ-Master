@@ -78,7 +78,8 @@
   gap: 6px;
 }
 .qty-btn {
-  width: 32px; height: 32px;
+  width: 32px; 
+  height: 32px;
   border: 1px solid #ff5722;
   background: #fff;
   color: #ff5722;
