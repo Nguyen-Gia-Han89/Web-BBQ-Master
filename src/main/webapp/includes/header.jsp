@@ -8,7 +8,7 @@
 
 <%-- URL dùng chung --%>
 <c:url var="homeUrl" value="/index.jsp" />
-<c:url var="menuUrl" value="/pages/menu.jsp" />
+<c:url var="menuUrl" value="/menu" />
 <c:url var="bookTableUrl" value="/pages/book-table.jsp" />
 <c:url var="bookEventUrl" value="/pages/book-event.jsp" />
 <c:url var="promotionUrl" value="/pages/promotion.jsp" />
@@ -18,7 +18,7 @@
 
 <%-- Active class --%>
 <c:set var="homeActive" value="${currentPage == '/index.jsp' ? 'active' : ''}" />
-<c:set var="menuActive" value="${currentPage == '/pages/menu.jsp' ? 'active' : ''}" />
+<c:set var="menuActive" value="${currentPage == '/menu' ? 'active' : ''}" />
 <c:set var="bookTableActive" value="${currentPage == '/pages/book-table.jsp' ? 'active' : ''}" />
 <c:set var="bookEventActive" value="${currentPage == '/pages/book-event.jsp' ? 'active' : ''}" />
 
