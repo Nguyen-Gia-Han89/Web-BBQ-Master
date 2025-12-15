@@ -15,7 +15,7 @@ public class MenuListBean {
         System.out.println("MenuListBean DEBUG: So luong mon an da tai cho Menu: " + (foods != null ? foods.size() : 0));
     }
 
-    public List<Dish> getFoods() { // Getter phải là getFoods()
+    public List<Dish> getFoods() { 
         return foods;
     }
 
