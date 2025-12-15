@@ -21,9 +21,7 @@
 
 <body>
     <!-- Header -->
-    <jsp:include page="includes/header.jsp" />
-
-    <!-- Hero -->
+	<jsp:include page="/includes/header.jsp" />
     <section class="hero">
         <div class="hero-content">
             <h1><span class="bbq">BBQ Master</span></h1>

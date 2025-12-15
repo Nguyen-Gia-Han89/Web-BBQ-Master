@@ -7,8 +7,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Đặt bàn - BBQ Master</title>
-	<link rel="stylesheet" href="<c:url value='/css/base.css'/>">
-	<link rel="stylesheet" href="<c:url value='/css/header.css'/>">
+	<link rel="stylesheet" href="<c:url value='/css/base.css'/>">	<link rel="stylesheet" href="<c:url value='/css/header.css'/>">
     <link rel="stylesheet" href="<c:url value='/css/booking.css'/>">
     <link rel="stylesheet" href="<c:url value='/css/footer.css'/>">
     <link rel="stylesheet" href="<c:url value='/css/responsive.css'/>">
@@ -18,7 +17,7 @@
 <body>
 	
 	<!-- HEADER -->
-	<jsp:include page="../includes/header.jsp" />
+	<jsp:include page="/includes/header.jsp" />
 <section class="booking-section">
     <div class="container">
         <h1>Đặt bàn</h1>
@@ -34,78 +33,78 @@
         <form action="BookingServlet" method="post" id="bookingForm">
 
             <!-- Tab 1: Thông tin & Thời gian -->
-            <div class="tab-content" id="tab1">
-                <fieldset>
-                    <legend>Thông tin cá nhân <span class="required">*</span></legend>
-                    <label for="name">Họ và tên:</label>
-                    <input type="text" id="name" name="name" 
-                           value="${not empty sessionScope.customer ? sessionScope.customer.fullName : ''}" 
-                           placeholder="Nhập họ và tên" required
-                           ${not empty sessionScope.customer ? 'readonly' : ''}> <label for="phone">Số điện thoại:</label>
-                    <input type="tel" id="phone" name="phone" 
-                           value="${not empty sessionScope.customer ? sessionScope.customer.phoneNumber : ''}" 
-                           placeholder="Nhập số điện thoại" pattern="\d{9,11}" required
-                           ${not empty sessionScope.customer ? 'readonly' : ''}> <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" 
-                           value="${not empty sessionScope.customer ? sessionScope.customer.email : ''}" 
-                           placeholder="Nhập email" required>
-                    
-                </fieldset>
+			<div class="tab-content" id="tab1">
+			    <!-- Khung 1: Thông tin cá nhân -->
+			    <div class="booking-card">
+			        <h3>Thông tin cá nhân <span class="required">*</span></h3>
+			        <label for="name">Họ và tên:</label>
+			        <input type="text" id="name" name="name"
+			               value="${not empty sessionScope.customer ? sessionScope.customer.fullName : ''}"
+			               placeholder="Nhập họ và tên" required
+			               ${not empty sessionScope.customer ? 'readonly' : ''}>
+			
+			        <label for="phone">Số điện thoại:</label>
+			        <input type="tel" id="phone" name="phone"
+			               value="${not empty sessionScope.customer ? sessionScope.customer.phoneNumber : ''}"
+			               placeholder="Nhập số điện thoại" pattern="\d{9,11}" required
+			               ${not empty sessionScope.customer ? 'readonly' : ''}>
+			
+			        <label for="email">Email:</label>
+			        <input type="email" id="email" name="email"
+			               value="${not empty sessionScope.customer ? sessionScope.customer.email : ''}"
+			               placeholder="Nhập email" required>
+			    </div>
+			
+			    <!-- Khung 2: Thời gian -->
+			    <div class="booking-card">
+			        <h3>Thời gian <span class="required">*</span></h3>
+			        <label for="guests">Số người (1-20):</label>
+			        <input type="number" id="guests" name="guests" min="1" max="20" value="1" required>
 
-                <fieldset>
-                    <legend>Thời gian <span class="required">*</span></legend>
-                    <label for="guests">Số người (1-100):</label>
-                    <input type="number" id="guests" name="guests" min="1" max="100" value="1" required>
+					<div class="date-time-row">
+					    <div class="date-group">
+					        <label for="date">Chọn ngày:</label>
+					        <input type="date" id="date" name="date" required>
+					    </div>
+					    <div class="time-group">
+					        <label>Chọn giờ:</label>
+					        <div id="timeSlots" class="time-slots"></div>
+					        <input type="time" id="time" name="time" required step="1800" min="10:00" max="22:00">
+					    </div>
+					</div>
 
-                    <label for="date">Chọn ngày:</label>
-                    <input type="date" id="date" name="date" required>
+			    </div>
+			
+			    
+				<!-- Khung 3: Không gian -->
+				<div class="booking-card">
+				  	<h3>🏠 Chọn Không gian Ăn uống <span class="required">*</span></h3>
+					  <p class="hint">*Các lựa chọn sẽ thay đổi theo số lượng người (Ngưỡng 20 khách).</p>
+					
+						  <fieldset class="space-options-wrapper" id="spaceOptionsContainer" aria-labelledby="spaceLegend">
+							    <legend id="spaceLegend" class="sr-only">Chọn không gian ăn uống</legend>
+							
+							    <!-- Lầu 1 -->
+							    <input type="radio" id="space-lau1" name="space" value="lau1" class="space-radio" required>
+							    <label for="space-lau1" class="space-option">Lầu 1</label>
+							
+							    <!-- VIP -->
+							    <input type="radio" id="space-vip" name="space" value="vip" class="space-radio">
+							    <label for="space-vip" class="space-option">VIP</label>
+							
+							    <!-- Sân vườn -->
+							    <input type="radio" id="space-sanvuon" name="space" value="sanvuon" class="space-radio">
+							    <label for="space-sanvuon" class="space-option">Sân vườn</label>
+						  </fieldset>
+					
+					  <p>Bạn đã chọn: <span id="selectedSpace">Chưa chọn</span></p>
+				</div>
 
-                    <label>Chọn giờ:</label>
-                    <div id="timeSlots" class="time-slots"></div>
-                    <input type="hidden" id="time" name="time" required>
-                </fieldset>
-                
-                <fieldset style="margin-top: 30px;">
-                    <legend>🏠 Chọn Không gian Ăn uống <span class="required">*</span></legend>
-                    <p style="font-size: 0.9em; color: gray;">*Các lựa chọn sẽ thay đổi theo số lượng người (Ngưỡng 20 khách).</p>
-                    
-                    <div class="space-options-wrapper" id="spaceOptionsContainer">
-                        <div class="space-option-card space-small">
-                            <input type="radio" id="space-lau1" name="space" value="lau1" class="space-radio" required>
-                            <label for="space-lau1">
-                                **Lầu 1**
-                                <span>Khu vực ăn uống chính</span>
-                            </label>
-                        </div>
-                        
-                        <div class="space-option-card space-small">
-                            <input type="radio" id="space-vip" name="space" value="vip" class="space-radio">
-                            <label for="space-vip">
-                                **VIP**
-                                <span>Phòng riêng/Yên tĩnh</span>
-                            </label>
-                        </div>
-                        
-                        <div class="space-option-card space-small">
-                            <input type="radio" id="space-sanvuon" name="space" value="sanvuon" class="space-radio">
-                            <label for="space-sanvuon">
-                                **Sân vườn**
-                                <span>Không gian ngoài trời</span>
-                            </label>
-                        </div>
-                        
-                        <div class="space-option-card space-large">
-                            <input type="radio" id="space-sanhtiec" name="space" value="sanhtiec" class="space-radio">
-                            <label for="space-sanhtiec">
-                                **Sảnh Tiệc**
-                                <span>Dành cho sự kiện lớn</span>
-                            </label>
-                        </div>
-                    </div>
-                </fieldset>
+				
+				
+			    <button type="button" class="btn-next">Tiếp tục</button>
+			</div>
 
-                <button type="button" class="btn-next">Tiếp tục</button>
-            </div>
 
             <!-- Tab 2: Chọn bàn -->
             <div class="tab-content" id="tab2" style="display:none;">
@@ -126,15 +125,7 @@
             <div class="tab-content" id="tab3" style="display:none;">
                 <fieldset>
                     <legend>Dịch vụ & Xác nhận</legend>
-
-                    <label for="space">Chọn không gian:</label>
-                    <select id="space" name="space" required>
-                        <option value="">-- Chọn không gian --</option>
-                        <option value="lau1">Lầu 1</option>
-                        <option value="vip">VIP</option>
-                        <option value="sanvuon">Sân vườn</option>
-                    </select>
-
+                    
                     <label for="service">Chọn dịch vụ:</label>
                     <select id="service" name="service" required>
                         <option value="">-- Chọn dịch vụ --</option>

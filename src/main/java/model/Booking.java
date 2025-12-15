@@ -161,23 +161,21 @@ public class Booking {
     public void addDish(Dish dish, int quantity) {
         if (dish == null || quantity <= 0) return;
 
-        // Kiểm tra món đã tồn tại chưa
         for (BookingDetail detail : bookingDetails) {
             if (detail.getDish().getDishId() == dish.getDishId()) {
-                // Nếu đã có, cộng dồn số lượng
                 detail.setQuantity(detail.getQuantity() + quantity);
+                calculateTotalAmount();   
                 return;
             }
         }
-        
-        
 
-        // Nếu chưa có, tạo mới BookingDetail
         BookingDetail newDetail = new BookingDetail();
         newDetail.setDish(dish);
         newDetail.setQuantity(quantity);
-        newDetail.setPrice(dish.getPrice()); // gán giá hiện tại
+        newDetail.setPrice(dish.getPrice());
         bookingDetails.add(newDetail);
+
+        calculateTotalAmount();   
     }
 
     public int getTotalQuantity() {
@@ -198,11 +196,16 @@ public class Booking {
 	}
 
 	// Lấy BookingDetail theo dishId
-	public BookingDetail getDetailByDishId(int dishId) {
+	public BookingDetail findDetailByDishId(int dishId) {
 	    for (BookingDetail detail : bookingDetails) {
 	        if (detail.getDish().getDishId() == dishId) return detail;
 	    }
 	    return null;
+	}
+
+	// alias cho servlet cũ
+	public BookingDetail getDetailByDishId(int dishId) {
+	    return findDetailByDishId(dishId);
 	}
 
 	// Set trực tiếp số lượng
@@ -217,6 +220,14 @@ public class Booking {
 	    }
 	    // Nếu chưa có món này thì thêm mới
 	    if (quantity > 0) addDish(dish, quantity);
+	}
+
+	public void removeDetailByDishId(int dishId) {
+	    if (bookingDetails == null || bookingDetails.isEmpty()) {
+	        return;
+	    }
+	    // Duyệt qua danh sách và xóa phần tử có dishId trùng khớp
+	    bookingDetails.removeIf(detail -> detail.getDish().getDishId() == dishId);
 	}
 
 

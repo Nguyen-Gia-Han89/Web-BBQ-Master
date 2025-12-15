@@ -1,172 +1,176 @@
 @charset "UTF-8";
-
-/* ===== Container & Section ===== */
+/* ===== Booking Section ===== */
 .booking-section {
   padding: 40px 20px;
-  background-color: #f9f9f9;
-  font-family: Arial, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 .booking-section h1 {
   text-align: center;
+  font-size: 2rem;
   margin-bottom: 30px;
-  color: #333;
+  color: #ff5722;
 }
-.booking-section .booking { color: #ff6b6b; }
 
 /* ===== Tabs ===== */
 .tabs {
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
   gap: 10px;
+  margin-bottom: 20px;
 }
 .tab {
   padding: 10px 20px;
-  cursor: pointer;
-  background-color: #fff;
+  background: #fff;
   border: 1px solid #ddd;
-  border-radius: 5px 5px 0 0;
+  border-radius: 6px 6px 0 0;
+  cursor: pointer;
   transition: all 0.3s;
 }
-.tab:hover, .tab.active {
+.tab:hover,
+.tab.active {
   background-color: #ff6b6b;
   color: #fff;
 }
 
 /* ===== Tab Content ===== */
 .tab-content {
-  background-color: #fff;
-  border: 1px solid #ddd;
+  background: #fff;
   padding: 20px;
-  border-radius: 0 5px 5px 5px;
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   display: none;
 }
-.tab-content.active { display: block; }
-
-.tab-content .form-group { margin-bottom: 20px; }
-.tab-content h2 { font-size: 18px; margin-bottom: 10px; }
-.required { color: red; }
-
-/* ===== Form Inputs ===== */
-input[type="text"],
-input[type="tel"],
-input[type="email"],
-input[type="number"],
-input[type="date"],
-select,
-textarea {
-  width: 100%;
-  padding: 8px 10px;
-  margin-top: 5px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
-  box-sizing: border-box;
+.tab-content.active {
+  display: block;
 }
-textarea { resize: vertical; }
+
+/* ===== Booking Card ===== */
+.booking-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.booking-card h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #ff5722;
+  margin-bottom: 12px;
+}
+.booking-card .hint {
+  font-size: 0.9rem;
+  color: gray;
+  margin-bottom: 10px;
+}
+.booking-card label {
+  display: block;
+  margin-top: 8px;
+  font-weight: 600;
+}
+
+/* ===== Inputs ===== */
+.booking-card input,
+.booking-card select,
+.booking-card textarea {
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 4px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+}
+textarea {
+  resize: vertical;
+}
+
+/* ===== Date & Time Row ===== */
+.date-time-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.date-group,
+.time-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
 
 /* ===== Buttons ===== */
-.btn-next, .btn-back, .btn-book, .btn-view-map {
+.btn-next,
+.btn-back,
+.btn-book,
+.btn-view-map {
   padding: 10px 20px;
   margin: 5px 0;
   border: none;
-  border-radius: 5px;
-  cursor: pointer;
+  border-radius: 6px;
   font-size: 14px;
-  transition: all 0.3s;
-}
-.btn-next, .btn-book, .btn-view-map {
-  background-color: #ff6b6b;
-  color: #fff;
-}
-.btn-next:hover, .btn-book:hover, .btn-view-map:hover {
-  background-color: #e55b5b;
-}
-.btn-back { background-color: #ccc; color: #333; }
-.btn-back:hover { background-color: #bbb; }
-
-/* ===== Time Slots ===== */
-.time-slots {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 10px;
-}
-.time-slots button {
-  padding: 8px 12px;
-  border: 1px solid #ff6b6b;
-  background-color: #fff;
-  border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s;
 }
-.time-slots button.selected,
-.time-slots button:hover {
+.btn-next,
+.btn-book,
+.btn-view-map {
   background-color: #ff6b6b;
   color: #fff;
 }
-
-/* ===== Space Selection ===== */
-.space-buttons {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.space-buttons button {
-  flex: 1;
-  padding: 12px;
-  border: 1px solid #ff6b6b;
-  border-radius: 5px;
-  background-color: #fff;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-.space-buttons button:hover,
-.space-buttons button.selected {
+.btn-next:hover,
+.btn-book:hover,
+.btn-view-map:hover {
   background-color: #ff6b6b;
-  color: #fff;
 }
-.space-desc { margin-top: 10px; font-style: italic; color: #555; }
+.btn-back {
+  background-color: #ccc;
+  color: #333;
+}
+.btn-back:hover {
+  background-color: #bbb;
+}
 
+/* ===== Space Selection (Radio Style) ===== */
 .space-options-wrapper {
   display: flex;
-  flex-wrap: wrap; /* Cho phép xuống dòng nếu màn hình hẹp */
-  gap: 15px;
-  margin-top: 10px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
-.space-option-card {
-  flex: 1 1 22%; /* Mỗi card chiếm khoảng 22% chiều rộng, tạo 4 cột */
-  min-width: 120px;
-  text-align: center;
-  display: none; /* Mặc định ẩn, JS sẽ xử lý hiển thị */
+.space-radio {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
 }
-.space-option-card .space-radio { display: none; /* Ẩn radio thực tế */ }
-.space-option-card label {
-  display: block;
-  padding: 15px 10px;
-  border: 2px solid #ddd;
+.space-option {
+  flex: 1 1 30%;
+  padding: 12px;
+  border: 1px solid #ccc;
   border-radius: 8px;
+  background: #f9f9f9;
+  text-align: center;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
 }
-.space-option-card label span {
-  display: block;
-  font-size: 0.85em;
-  color: #666;
-  margin-top: 5px;
+.space-option:hover {
+  border-color: #49515c;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
 }
-.space-option-card .space-radio:checked + label {
-  border-color: #ff5722; /* Màu cam nổi bật khi chọn */
-  background-color: #fff3e0;
-  box-shadow: 0 0 5px rgba(255, 87, 34, 0.5);
+.space-radio:checked + .space-option {
+  border-color: #ff5722;
+  background: linear-gradient(180deg, #ffe9e9, #ffd5d5);
+  color: #b13030;
+  box-shadow: 0 6px 14px rgba(255,87,34,0.25);
+  transform: translateY(-1px);
 }
-
-/* ===== Booking Summary ===== */
-#selectedTableDisplay { margin: 10px 0; font-weight: bold; }
 
 /* ===== Responsive ===== */
 @media screen and (max-width: 768px) {
-  .tabs { flex-direction: column; align-items: center; }
-  .space-buttons { flex-direction: column; }
+  .tabs {
+    flex-direction: column;
+    align-items: center;
+  }
+  .space-options-wrapper {
+    flex-direction: column;
+  }
 }
