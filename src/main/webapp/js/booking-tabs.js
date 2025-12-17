@@ -273,4 +273,32 @@ document.addEventListener('DOMContentLoaded', function () {
     guestsInput.addEventListener('change', toggleHallByGuests);
   }
 
+  // Nút Xem sơ đồ bàn
+  // Khi đổi không gian ở Tab 2 → đổi sơ đồ
+  document.querySelectorAll('input[name="space2"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+          const value = radio.value;
+
+          // Ẩn tất cả sơ đồ
+          document.getElementById('floor1-map').style.display = 'none';
+          document.getElementById('garden-map').style.display = 'none';
+
+          // Hiện đúng sơ đồ
+          if (value === 'lau1') {
+              mapContainer.style.display = 'block';
+              document.getElementById('floor1-map').style.display = 'block';
+          } 
+          else if (value === 'sanvuon') {
+              mapContainer.style.display = 'block';
+              document.getElementById('garden-map').style.display = 'block';
+          } 
+          else {
+              mapContainer.style.display = 'none';
+          }
+
+          // Cập nhật hidden input để submit
+          document.getElementById('selectedSpace').value = value;
+      });
+  });
+
 });

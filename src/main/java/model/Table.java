@@ -8,6 +8,9 @@ public class Table {
 
     /** Mã bàn */
     private int tableId;
+    
+    /** Tên bàn */
+    private String tableName;
 
     /** Mã khu vực - khóa ngoại liên kết với Space */
     private int spaceId;
@@ -37,8 +40,9 @@ public class Table {
      * @param seats
      * @param status
      */
-    public Table(int tableId, int spaceId, int seats, String status) {
+    public Table(int tableId, int spaceId, String tableName, int seats, String status) {
         this.tableId = tableId;
+        this.tableName = tableName;
         this.spaceId = spaceId;
         this.seats = seats;
         this.status = status;
@@ -69,7 +73,15 @@ public class Table {
         this.tableId = tableId;
     }
 
-    public int getSpaceId() {
+    public String getTableName() {
+		return tableName;
+	}
+
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
+
+	public int getSpaceId() {
         return spaceId;
     }
 

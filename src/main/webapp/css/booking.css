@@ -164,6 +164,83 @@ textarea {
   transform: translateY(-1px);
 }
 
+
+/* container tổng */
+.map-container {
+    margin-top: 16px;
+    position: relative;
+    z-index: 1;
+}
+
+/* mỗi sơ đồ */
+.floor-layout {
+    position: relative;
+    z-index: 2;
+}
+
+/* ===== LẦU 1 ===== */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    max-width: 500px;
+}
+
+/* ===== SÂN VƯỜN ===== */
+.garden-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 600px;
+}
+
+.side-tables {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.long-table {
+    padding: 20px 30px;
+    background: #eee;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+/* ===== BUTTON BÀN ===== */
+.table-btn {
+    cursor: pointer;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: #f9f9f9;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.table-btn span {
+    font-size: 12px;
+    font-weight: normal;
+}
+
+/* bàn trống */
+.table-btn.available:hover {
+    background: #e8f5e9;
+}
+
+/* bàn đang chọn */
+.table-btn.selected {
+    background: #ffebee;
+    border-color: #e53935;
+}
+
+/* bàn đã đặt */
+.table-btn.occupied {
+    background: #e0e0e0;
+    cursor: not-allowed;
+}
+
+
 /* ===== Responsive ===== */
 @media screen and (max-width: 768px) {
   .tabs {

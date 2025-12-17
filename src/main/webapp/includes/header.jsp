@@ -77,11 +77,16 @@
         <!-- CART -->
         <a href="${cartUrl}" class="cart-icon">
             <i class="fa-solid fa-cart-shopping"></i>
-            <c:if test="${not empty sessionScope.cart}">
-                <span class="cart-badge">
-                    ${sessionScope.cart.totalQuantity}
-                </span>
-            </c:if>
+            <c:choose>
+			    <c:when test="${empty sessionScope.cart or sessionScope.cart.totalQuantity == 0}">
+			        <span id="cart-badge" class="cart-badge" style="display:none;">0</span>
+			    </c:when>
+			    <c:otherwise>
+			        <span id="cart-badge" class="cart-badge">
+			            ${sessionScope.cart.totalQuantity}
+			        </span>
+			    </c:otherwise>
+			</c:choose>
         </a>
 
         <!-- LOGIN / AVATAR -->

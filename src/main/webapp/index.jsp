@@ -27,7 +27,7 @@
             <h1><span class="bbq">BBQ Master</span></h1>
             <p>Trải nghiệm BBQ ngoài trời tuyệt vời nhất</p>
             <button class="btn btn-primary" onclick="location.href='<c:url value='/pages/book-table.jsp'/>'">Đặt bàn ngay</button>
-            <button class="btn btn-primary" onclick="location.href='<c:url value='/pages/menu.jsp'/>'">Xem thực đơn</button>
+            <button class="btn btn-primary" onclick="location.href='<c:url value='/menu'/>'">Xem thực đơn</button>
         </div>
     </section>
 
@@ -96,10 +96,7 @@
                         <p>${dish.description}</p>
                         <div class="combo-footer">
                             <span class="price"><fmt:formatNumber value="${dish.price}" pattern="#,##0"/>đ</span>
-                            <form action="<c:url value='/add-to-cart'/>" method="post">
-                                <input type="hidden" name="dishId" value="${dish.dishId}" />
-                                <button type="submit" class="btn-order">Đặt ngay</button>
-                            </form>
+                            <button class="btn-order" onclick="addToCart(${dish.dishId})">Đặt ngay</button>
                         </div>
                     </div>
                 </c:if>
@@ -111,5 +108,6 @@
     <jsp:include page="includes/footer.jsp" />
 
     <script src="<c:url value='/js/main.js'/>"></script>
+	<script src="<c:url value='/js/cart.js'/>"></script>
 </body>
 </html>

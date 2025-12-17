@@ -37,17 +37,26 @@ public class AddToCartServlet extends HttpServlet {
             return;
         }
 
-        Dish selectedDish = findDishFromSessionList(session, dishId);
+        Dish selectedDish = findDish(dishId);
         if (selectedDish != null) {
             Booking cart = (Booking) session.getAttribute("cart");
             if (cart == null) cart = new Booking();
             cart.addDish(selectedDish, 1); // thêm 1 món
             session.setAttribute("cart", cart);
         }
+        
+        String ajax = request.getParameter("ajax");
+        if ("true".equals(ajax)) {
+            response.setContentType("application/json");
+            Booking cart = (Booking) session.getAttribute("cart");
+            int count = (cart != null) ? cart.getTotalQuantity() : 0;
+            response.getWriter().write("{\"count\": " + count + "}");
+            return;
+        }
         redirectBack(request, response);
     }
 
-    @Override
+	@Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         HttpSession session = request.getSession();
@@ -62,7 +71,7 @@ public class AddToCartServlet extends HttpServlet {
             return;
         }
 
-        Dish selectedDish = findDishFromSessionList(session, dishId);
+        Dish selectedDish = findDish(dishId);
         if (selectedDish == null) {
             redirectBack(request, response);
             return;
@@ -90,6 +99,14 @@ public class AddToCartServlet extends HttpServlet {
         }
 
         session.setAttribute("cart", cart);
+
+        String ajax = request.getParameter("ajax");
+        if ("true".equals(ajax)) {
+            response.setContentType("application/json");
+            int count = (cart != null) ? cart.getTotalQuantity() : 0;
+            response.getWriter().write("{\"count\": " + count + "}");
+            return;
+        }
         redirectBack(request, response);
     }
 
@@ -99,12 +116,9 @@ public class AddToCartServlet extends HttpServlet {
         response.sendRedirect(referer != null ? referer : cartPage);
     }
 
-    private Dish findDishFromSessionList(HttpSession session, int dishId) {
-        DishList dishList = (DishList) session.getAttribute("dishList");
-        if (dishList == null || dishList.getDishes() == null) return null;
-        for (Dish d : dishList.getDishes()) {
-            if (d.getDishId() == dishId) return d;
-        }
-        return null;
+    private Dish findDish(int dishId) {
+        DishDAO dao = new DishDAO();
+        return dao.getDishById(dishId);
     }
+  
 }

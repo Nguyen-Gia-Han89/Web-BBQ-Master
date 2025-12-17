@@ -74,31 +74,6 @@
 					</div>
 
 			    </div>
-			
-			    
-				<!-- Khung 3: Không gian -->
-				<div class="booking-card">
-				  	<h3>🏠 Chọn Không gian Ăn uống <span class="required">*</span></h3>
-					  <p class="hint">*Các lựa chọn sẽ thay đổi theo số lượng người (Ngưỡng 20 khách).</p>
-					
-						  <fieldset class="space-options-wrapper" id="spaceOptionsContainer" aria-labelledby="spaceLegend">
-							    <legend id="spaceLegend" class="sr-only">Chọn không gian ăn uống</legend>
-							
-							    <!-- Lầu 1 -->
-							    <input type="radio" id="space-lau1" name="space" value="lau1" class="space-radio" required>
-							    <label for="space-lau1" class="space-option">Lầu 1</label>
-							
-							    <!-- VIP -->
-							    <input type="radio" id="space-vip" name="space" value="vip" class="space-radio">
-							    <label for="space-vip" class="space-option">VIP</label>
-							
-							    <!-- Sân vườn -->
-							    <input type="radio" id="space-sanvuon" name="space" value="sanvuon" class="space-radio">
-							    <label for="space-sanvuon" class="space-option">Sân vườn</label>
-						  </fieldset>
-					
-					  <p>Bạn đã chọn: <span id="selectedSpace">Chưa chọn</span></p>
-				</div>
 
 				
 				
@@ -108,11 +83,48 @@
 
             <!-- Tab 2: Chọn bàn -->
             <div class="tab-content" id="tab2" style="display:none;">
+              
+                <div class="booking-card">
+				    <h3>Chọn không gian</h3>
+				
+				    <label><input type="radio" name="space2" value="lau1"> Lầu 1</label>
+				    <label><input type="radio" name="space2" value="vip"> VIP</label>
+				    <label><input type="radio" name="space2" value="sanvuon"> Sân vườn</label>
+				
+				</div>
+				
                 <fieldset>
                     <legend>Chọn bàn trực tiếp</legend>
-                    <button type="button" class="btn-view-map">Xem sơ đồ bàn</button>
+                   
                     <p>Bàn đã chọn: <span id="selectedTableDisplay">Chưa chọn</span></p>
                     <input type="hidden" id="selectedTable" name="selectedTable">
+                		
+                		<!-- SƠ ĐỒ BÀN (ẨN BAN ĐẦU) -->
+			        <div class="map-container" id="mapContainer" style="display:none; margin-top:16px;">
+			            
+			            <!-- LẦU 1 -->
+			            <div id="floor1-map" class="floor-layout">
+			                <div class="grid-container">
+			                    <button type="button" class="table-btn available" data-id="A01">
+			                        A01<br><span>(4 người)</span>
+			                    </button>
+			
+			                    <button type="button" class="table-btn occupied" disabled>
+			                        A02<br><span>(Đã đặt)</span>
+			                    </button>
+			                </div>
+			            </div>
+			
+			            <!-- SÂN VƯỜN -->
+			            <div id="garden-map" class="floor-layout" style="display:none;">
+			                <div class="garden-flex">
+			                    <button type="button" class="table-btn available" data-id="SV01">SV01</button>
+			                    <div class="long-table">Bàn tiệc</div>
+			                    <button type="button" class="table-btn available" data-id="SV02">SV02</button>
+			                </div>
+			            </div>
+			
+			        </div>
                 </fieldset>
 
                 <div class="tab-buttons">
@@ -155,8 +167,7 @@
     </div>
 </section>
 <jsp:include page="../includes/footer.jsp"></jsp:include>
-<script src="../js/booking-tabs.js"></script>
-
+<script src="<c:url value='/js/booking-tabs.js'/>"></script>
 
 </body>
 </html>
