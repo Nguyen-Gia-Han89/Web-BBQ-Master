@@ -11,7 +11,7 @@
 <c:url var="menuUrl" value="/menu" />
 <c:url var="bookTableUrl" value="/pages/book-table.jsp" />
 <c:url var="bookEventUrl" value="/pages/book-event.jsp" />
-<c:url var="promotionUrl" value="/pages/promotion.jsp" />
+<c:url var="promotionUrl" value="/promotions" />
 <c:url var="contactUrl" value="/pages/contact.jsp" />
 <c:url var="cartUrl" value="/pages/cart.jsp" />
 <c:url var="logoUrl" value="/images/Logo.jpg" />
@@ -30,6 +30,7 @@
 
 
 <c:set var="promotionActive" value="${currentPage == '/pages/promotion.jsp' ? 'active' : ''}" />
+
 <c:set var="contactActive" value="${currentPage == '/pages/contact.jsp' ? 'active' : ''}" />
 
 <header class="header">
@@ -47,6 +48,9 @@
         <ul>
             <li><a href="${homeUrl}" class="${homeActive}">Trang chủ</a></li>
             <li><a href="${menuUrl}" class="${menuActive}">Thực đơn</a></li>
+          
+          
+            
             <!-- DỊCH VỤ -->
 	        <li class="has-dropdown ${serviceActiveClass}">
 			    <a href="javascript:void(0)">
