@@ -112,6 +112,6 @@
     </div>
 </header>
 
-<jsp:include page="loginPopup.jsp" />
+<jsp:include page="/includes/loginPopup.jsp" />
 <script src="<c:url value='/js/header.js' />"></script>
 
