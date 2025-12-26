@@ -7,11 +7,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Đặt bàn - BBQ Master</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/base.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/header.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/booking.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/footer.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css">
+    <link rel="stylesheet" href="<c:url value='/css/base.css'/>">
+    <link rel="stylesheet" href="<c:url value='/css/header.css'/>">
+    <link rel="stylesheet" href="<c:url value='/css/booking.css'/>">
+    <link rel="stylesheet" href="<c:url value='/css/footer.css'/>">
+    <link rel="stylesheet" href="<c:url value='/css/responsive.css'/>">
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -96,13 +96,14 @@
                 <div class="booking-card">
                     <h3>Chọn không gian</h3>
                     <div class="space-options-wrapper">
-                        <c:forEach var="sp" items="${spaces}">
-                            <label class="space-option">
-                                <input type="radio" class="space-radio" name="spaceId" value="${sp.spaceId}">
-                                <strong>${sp.name}</strong><br>
-                                <span>${sp.description}</span>
-                            </label>
-                        </c:forEach>
+					    <c:forEach var="sp" items="${spaces}">
+					        <input type="radio" class="space-radio" name="spaceId" 
+					               id="space-${sp.spaceId}" value="${sp.spaceId}">
+					        <label for="space-${sp.spaceId}" class="space-option">
+					            <strong>${sp.name}</strong><br>
+					            <span>${sp.description}</span>
+					        </label>
+					    </c:forEach>
                         <c:if test="${empty spaces}">
                             <p>Không có dữ liệu khu vực</p>
                         </c:if>
@@ -150,7 +151,7 @@
                     <select id="service" name="serviceId">
                         <option value="">-- Không chọn --</option>
                         <c:forEach var="sv" items="${services}">
-                            <option value="${sv.serviceId}">
+                            <option value="${sv.serviceID}">
                                 ${sv.name}
                                 <c:if test="${sv.extraFee > 0}">
                                     (+${sv.extraFee}đ)

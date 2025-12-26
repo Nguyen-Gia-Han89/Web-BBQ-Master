@@ -26,7 +26,7 @@
         <div class="hero-content">
             <h1><span class="bbq">BBQ Master</span></h1>
             <p>Trải nghiệm BBQ ngoài trời tuyệt vời nhất</p>
-            <button class="btn btn-primary" onclick="location.href='<c:url value='/pages/book-table.jsp'/>'">Đặt bàn ngay</button>
+            <button class="btn btn-primary" onclick="location.href='<c:url value='/booking-table' />'">Đặt bàn ngay</button>
             <button class="btn btn-primary" onclick="location.href='<c:url value='/menu'/>'">Xem thực đơn</button>
         </div>
     </section>

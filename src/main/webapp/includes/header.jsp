@@ -9,7 +9,7 @@
 <%-- URL dùng chung --%>
 <c:url var="homeUrl" value="/index.jsp" />
 <c:url var="menuUrl" value="/menu" />
-<c:url var="bookTableUrl" value="/pages/book-table.jsp" />
+<c:url var="bookTableUrl" value="/booking-table" />
 <c:url var="bookEventUrl" value="/pages/book-event.jsp" />
 <c:url var="promotionUrl" value="/promotions" />
 <c:url var="contactUrl" value="/pages/contact.jsp" />
@@ -58,10 +58,8 @@
 			    </a>
 			    <ul class="dropdown-menu">
 			        <li>
-			            <a href="${bookTableUrl}" class="${bookTableActive}">
-			                Đặt bàn
-			            </a>
-			        </li>
+					    <a href="${bookTableUrl}" class="${bookTableActive}">Đặt bàn</a>
+					</li>
 			        <li>
 			            <a href="${bookEventUrl}" class="${bookEventActive}">
 			                Đặt tiệc

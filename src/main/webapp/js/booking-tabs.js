@@ -59,6 +59,19 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+	// Chọn khu vực
+	document.querySelectorAll('.space-radio').forEach(radio => {
+	    radio.addEventListener('change', function() {
+	        const selectedSpace = this.value;
+	        document.querySelectorAll('.table-btn').forEach(btn => {
+	            if (btn.getAttribute('data-space') === selectedSpace) {
+	                btn.style.display = 'inline-block';
+	            } else {
+	                btn.style.display = 'none';
+	            }
+	        });
+	    });
+	});
     /* ===== CHỌN BÀN ===== */
     const tableBtns = document.querySelectorAll(".table-btn");
     const tableInput = document.getElementById("selectedTable");

@@ -21,12 +21,10 @@ import dao.SpaceDAO;
 import dao.TableDAO;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
-@WebServlet("/booking")
+@WebServlet("/booking-table")
 public class BookingServlet extends HttpServlet {
 
     @Override
@@ -40,16 +38,20 @@ public class BookingServlet extends HttpServlet {
 
         // Lấy dữ liệu
         List<Space> spaces = spaceDAO.getAllSpaces();
+        System.out.println("DEBUG: Spaces size = " + (spaces != null ? spaces.size() : "null"));
+
         List<Table> availableTables = tableDAO.getAll(); 
+        System.out.println("DEBUG: Tables size = " + (availableTables != null ? availableTables.size() : "null"));
+        
         List<Service> services = serviceDAO.getAll();
+        System.out.println("DEBUG: Service size = " + (services != null ? services.size() : "null"));
 
         // Đưa sang JSP
         request.setAttribute("spaces", spaces);
         request.setAttribute("availableTables", availableTables);
         request.setAttribute("services", services);
 
-        request.getRequestDispatcher("/pages/book-table.jsp").forward(request, response);
-    }
+        request.getRequestDispatcher("/pages/book-table.jsp").forward(request, response);    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
