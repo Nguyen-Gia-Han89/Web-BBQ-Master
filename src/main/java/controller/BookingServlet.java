@@ -6,87 +6,99 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+
 import model.Booking;
+import model.Booking.BookingStatus;
+import model.Booking.BookingType;
 import model.Customer;
-import model.Dish;
 import model.Service;
+import model.Space;
 import model.Table;
-import model.BookingDetail;
+
+import dao.BookingDAO;
+import dao.ServiceDAO;
+import dao.SpaceDAO;
+import dao.TableDAO;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.time.LocalTime;
 import java.util.List;
 
-/**
- * Servlet implementation class BookingServlet
- */
-@WebServlet("/BookingServlet")
+@WebServlet("/booking")
 public class BookingServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-       
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		String name = request.getParameter("name");
-		HttpSession session = request.getSession();
-	
-		// Thông tin khách hàng đã đăng nhập
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // DAO
+        SpaceDAO spaceDAO = new SpaceDAO();
+        TableDAO tableDAO = new TableDAO();
+        ServiceDAO serviceDAO = new ServiceDAO();
+
+        // Lấy dữ liệu
+        List<Space> spaces = spaceDAO.getAllSpaces();
+        List<Table> availableTables = tableDAO.getAll(); 
+        List<Service> services = serviceDAO.getAll();
+
+        // Đưa sang JSP
+        request.setAttribute("spaces", spaces);
+        request.setAttribute("availableTables", availableTables);
+        request.setAttribute("services", services);
+
+        request.getRequestDispatcher("/pages/book-table.jsp").forward(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        HttpSession session = request.getSession();
         Customer customer = (Customer) session.getAttribute("customer");
+
         if (customer == null) {
-            response.sendRedirect("login.jsp"); 
+            response.sendRedirect("login.jsp");
             return;
         }
-        
-        // Lấy thông tin từ form
-        int guests = Integer.parseInt(request.getParameter("guests"));
-        String note = request.getParameter("note");
-        String tableParam = request.getParameter("selectedTable");
-        String serviceName = request.getParameter("service");
-        String combo = request.getParameter("combo");
-        String time = request.getParameter("time");
-        String date = request.getParameter("date");
 
-        // Tạo Booking mới
+        int guests = Integer.parseInt(request.getParameter("guests"));
+        String date = request.getParameter("date");
+        String time = request.getParameter("time");
+        String note = request.getParameter("note");
+
+        Integer tableId = Integer.parseInt(request.getParameter("tableId"));
+        String serviceIdStr = request.getParameter("serviceId");
+
         Booking booking = new Booking();
         booking.setCustomer(customer);
         booking.setNumberOfGuests(guests);
+        booking.setBookingTime(LocalDateTime.parse(date + "T" + time));
         booking.setNote(note);
-        booking.setBookingTime(LocalDateTime.now()); // thời gian tạo đơn
-        booking.setStatus(Booking.BookingStatus.PENDING);
-        booking.setBookingType(Booking.BookingType.DINE_IN);
+        booking.setStatus(BookingStatus.PENDING);
+        booking.setBookingType(BookingType.DINE_IN);
 
-        if (tableParam != null && !tableParam.isEmpty()) {
-            int tableId = Integer.parseInt(tableParam);
-            // Gán bàn (nếu có Table class)
-            if (tableId <= 0) {
-                Table table = new Table();
-                table.setTableId(tableId);
-                booking.setTable(table);
-            }
+        if (tableId != null) {
+            Table table = new Table();
+            table.setTableId(tableId);
+            booking.setTable(table);
         }
 
-        // Gán dịch vụ (nếu có)
-        if (serviceName != null && !serviceName.isEmpty()) {
-            Service service = new Service();
-            service.setName(serviceName);
-            service.setExtraFee(0); // có thể gán phí nếu cần
-            booking.setService(service);
+        if (serviceIdStr != null && !serviceIdStr.isEmpty()) {
+            Service s = new Service();
+            s.setServiceID(Integer.parseInt(serviceIdStr));
+            booking.setService(s);
         }
 
-        // Gán combo (nếu có)
-        if (combo != null && !combo.isEmpty()) {
-            // Tạo BookingDetail từ combo
-            Dish dish = new Dish();
-            dish.setName(combo);
-            dish.setPrice(0); // nếu có giá combo, gán ở đây
-            booking.addDish(dish, 1);
+        BookingDAO dao = new BookingDAO();
+        int bookingId = dao.insert(booking);
+
+        if (bookingId > 0) {
+            response.sendRedirect("booking-success.jsp");
+        } else {
+            request.setAttribute("error", "Đặt bàn thất bại");
+            doGet(request, response);
         }
-
-        // Lưu vào session list bookings
-        List<Booking> bookings = (List<Booking>) session.getAttribute("bookings");
-        if (bookings == null) bookings = new ArrayList<>();
-        bookings.add(booking);
-        session.setAttribute("bookings", bookings);
-
-        // Chuyển sang trang xác nhận
-        response.sendRedirect("booking-success.jsp");
     }
 }

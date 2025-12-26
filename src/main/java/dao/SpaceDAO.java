@@ -79,4 +79,5 @@ public class SpaceDAO {
             System.out.println(s.getName() + " | " + s.getDescription());
         }
     }
+
 }

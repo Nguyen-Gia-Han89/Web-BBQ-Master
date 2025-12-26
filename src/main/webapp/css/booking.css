@@ -1,4 +1,5 @@
 @charset "UTF-8";
+
 /* ===== Booking Section ===== */
 .booking-section {
   padding: 40px 20px;
@@ -27,10 +28,14 @@
   cursor: pointer;
   transition: all 0.3s;
 }
-.tab:hover,
+.tab:hover {
+  background-color: #ffe0e0;
+}
 .tab.active {
   background-color: #ff6b6b;
   color: #fff;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 /* ===== Tab Content ===== */
@@ -39,10 +44,15 @@
   padding: 20px;
   border-radius: 0 0 6px 6px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  display: none;
+  display: none; 
+  animation: fadeIn 0.3s ease;
 }
 .tab-content.active {
   display: block;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ===== Booking Card ===== */
@@ -85,19 +95,39 @@ textarea {
   resize: vertical;
 }
 
-/* ===== Date & Time Row ===== */
-.date-time-row {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-.date-group,
-.time-group {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+/* ===== Nút chọn giờ ===== */
+.time-slot-btn {
+  padding: 10px 16px;
+  margin: 4px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
 }
 
+/* hover */
+.time-slot-btn:hover {
+  background-color: #ffe0e0;
+  border-color: #ff6b6b;
+}
+
+/* trạng thái đang chọn */
+.time-slot-btn.active {
+  background-color: #ff6b6b;
+  color: #fff;
+  border-color: #ff6b6b;
+  font-weight: bold;
+  box-shadow: 0 0 8px rgba(255,87,34,0.5);
+}
+
+/* trạng thái disabled (nếu cần) */
+.time-slot-btn:disabled {
+  background-color: #e0e0e0;
+  color: #999;
+  cursor: not-allowed;
+}
 /* ===== Buttons ===== */
 .btn-next,
 .btn-back,
@@ -117,17 +147,24 @@ textarea {
   background-color: #ff6b6b;
   color: #fff;
 }
-.btn-next:hover,
-.btn-book:hover,
-.btn-view-map:hover {
-  background-color: #ff6b6b;
-}
 .btn-back {
   background-color: #ccc;
   color: #333;
 }
+.btn-next:hover,
+.btn-book:hover,
+.btn-view-map:hover {
+  background-color: #ff4c4c;
+}
 .btn-back:hover {
   background-color: #bbb;
+}
+
+/* hiệu ứng click báo hiệu */
+.btn-next:active,
+.btn-back:active {
+  transform: scale(0.95);
+  box-shadow: 0 0 8px rgba(255, 87, 34, 0.6);
 }
 
 /* ===== Space Selection (Radio Style) ===== */
@@ -164,82 +201,72 @@ textarea {
   transform: translateY(-1px);
 }
 
-
-/* container tổng */
+/* ===== Map Container ===== */
 .map-container {
-    margin-top: 16px;
-    position: relative;
-    z-index: 1;
+  margin-top: 16px;
+  position: relative;
+  z-index: 1;
 }
-
-/* mỗi sơ đồ */
 .floor-layout {
-    position: relative;
-    z-index: 2;
+  position: relative;
+  z-index: 2;
 }
 
-/* ===== LẦU 1 ===== */
+/* ===== Lầu 1 ===== */
 .grid-container {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    max-width: 500px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  max-width: 500px;
 }
 
-/* ===== SÂN VƯỜN ===== */
+/* ===== Sân vườn ===== */
 .garden-flex {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 600px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 600px;
 }
-
 .side-tables {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
-
 .long-table {
-    padding: 20px 30px;
-    background: #eee;
-    border-radius: 8px;
-    font-weight: bold;
+  padding: 20px 30px;
+  background: #eee;
+  border-radius: 8px;
+  font-weight: bold;
 }
 
-/* ===== BUTTON BÀN ===== */
+/* ===== Button Bàn ===== */
 .table-btn {
-    cursor: pointer;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    background: #f9f9f9;
-    font-weight: 600;
-    transition: 0.2s;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #f9f9f9;
+  font-weight: 600;
+  transition: 0.2s;
 }
-
 .table-btn span {
-    font-size: 12px;
-    font-weight: normal;
+  font-size: 12px;
+  font-weight: normal;
 }
-
 /* bàn trống */
 .table-btn.available:hover {
-    background: #e8f5e9;
+  background: #e8f5e9;
 }
-
 /* bàn đang chọn */
 .table-btn.selected {
-    background: #ffebee;
-    border-color: #e53935;
+  background: #ffebee;
+  border-color: #e53935;
 }
-
 /* bàn đã đặt */
 .table-btn.occupied {
-    background: #e0e0e0;
-    cursor: not-allowed;
+  background: #e0e0e0;
+  cursor: not-allowed;
 }
-
 
 /* ===== Responsive ===== */
 @media screen and (max-width: 768px) {
