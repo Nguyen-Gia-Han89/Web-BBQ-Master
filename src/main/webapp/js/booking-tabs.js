@@ -3,11 +3,17 @@ document.addEventListener("DOMContentLoaded", function () {
     const contents = document.querySelectorAll(".tab-content");
 
     function showTab(id) {
-        contents.forEach(c => c.classList.remove("active"));
+        contents.forEach(c => {
+            c.classList.remove("active");
+            c.style.display = "none"; // Đảm bảo ẩn hẳn
+        });
         tabs.forEach(t => t.classList.remove("active"));
 
         const targetContent = document.getElementById(id);
-        if (targetContent) targetContent.classList.add("active");
+        if (targetContent) {
+            targetContent.classList.add("active");
+            targetContent.style.display = "block"; // Hiện tab được chọn
+        }
 
         const targetTab = document.querySelector(`.tab[data-tab="${id}"]`);
         if (targetTab) targetTab.classList.add("active");
@@ -25,9 +31,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const index = Array.from(contents).findIndex(c => c.id === current.id);
             if (index >= 0 && index < contents.length - 1) {
                 showTab(contents[index + 1].id);
+                window.scrollTo(0, 0); // Cuộn lên đầu trang khi sang tab mới
             }
-            btn.classList.add("clicked");
-            setTimeout(() => btn.classList.remove("clicked"), 300);
         });
     });
 
@@ -38,9 +43,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const index = Array.from(contents).findIndex(c => c.id === current.id);
             if (index > 0) {
                 showTab(contents[index - 1].id);
+                window.scrollTo(0, 0);
             }
-            btn.classList.add("clicked");
-            setTimeout(() => btn.classList.remove("clicked"), 300);
         });
     });
 
@@ -59,21 +63,34 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-	// Chọn khu vực
-	document.querySelectorAll('.space-radio').forEach(radio => {
-	    radio.addEventListener('change', function() {
-	        const selectedSpace = this.value;
-	        document.querySelectorAll('.table-btn').forEach(btn => {
-	            if (btn.getAttribute('data-space') === selectedSpace) {
-	                btn.style.display = 'inline-block';
-	            } else {
-	                btn.style.display = 'none';
-	            }
-	        });
-	    });
-	});
+    /* ===== LỌC BÀN THEO KHU VỰC ===== */
+    const spaceRadios = document.querySelectorAll('.space-radio');
+    const tableBtns = document.querySelectorAll('.table-btn');
+
+    function filterTables(selectedSpace) {
+        tableBtns.forEach(btn => {
+            if (btn.getAttribute('data-space') === selectedSpace) {
+                btn.style.display = 'inline-block';
+            } else {
+                btn.style.display = 'none';
+            }
+        });
+    }
+
+    spaceRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            filterTables(this.value);
+        });
+    });
+
+    // Tự động kích hoạt lọc cho khu vực đầu tiên khi load trang
+    const firstSpace = document.querySelector('.space-radio:checked') || document.querySelector('.space-radio');
+    if (firstSpace) {
+        firstSpace.checked = true;
+        filterTables(firstSpace.value);
+    }
+
     /* ===== CHỌN BÀN ===== */
-    const tableBtns = document.querySelectorAll(".table-btn");
     const tableInput = document.getElementById("selectedTable");
     const tableDisplay = document.getElementById("selectedTableDisplay");
 
@@ -85,4 +102,28 @@ document.addEventListener("DOMContentLoaded", function () {
             tableDisplay.textContent = btn.textContent.trim();
         });
     });
+});
+
+/* ===== THAY ĐỔI SỐ LƯỢNG COMBO (Nằm ngoài DOMContentLoaded) ===== */
+function updateBookingCart(dishId, action) {
+    const url = `${pageContext.request.contextPath}/add-to-cart?dishId=${dishId}&action=${action}&ajax=true`;
+
+    fetch(url, { method: 'POST' })
+    .then(response => response.json())
+    .then(data => {
+        // Lưu lại trạng thái đang ở Tab 3 để sau khi load lại không bị nhảy về Tab 1
+        localStorage.setItem('currentTab', 'tab3');
+        location.reload(); 
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+// Logic khi trang load xong: Tự động nhảy về Tab khách đang đứng
+document.addEventListener("DOMContentLoaded", function() {
+    const savedTab = localStorage.getItem('currentTab');
+    if (savedTab) {
+        const tabToClick = document.querySelector(`[data-tab="${savedTab}"]`);
+        if (tabToClick) tabToClick.click();
+        localStorage.removeItem('currentTab');
+    }
 });

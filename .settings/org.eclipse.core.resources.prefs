@@ -9,6 +9,7 @@ encoding//src/main/java/controller/LoginServlet.java=UTF-8
 encoding//src/main/java/controller/LogoutServlet.java=UTF-8
 encoding//src/main/java/controller/MenuServlet.java=UTF-8
 encoding//src/main/java/controller/PromotionServlet.java=UTF-8
+encoding//src/main/java/controller/UpdateCartServlet.java=UTF-8
 encoding//src/main/java/dao/BookingDAO.java=UTF-8
 encoding//src/main/java/dao/BookingDetailDAO.java=UTF-8
 encoding//src/main/java/dao/CustomerDAO.java=UTF-8

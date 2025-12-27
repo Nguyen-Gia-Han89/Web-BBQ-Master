@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -9,7 +10,7 @@
     <title>Đặt bàn - BBQ Master</title>
     <link rel="stylesheet" href="<c:url value='/css/base.css'/>">
     <link rel="stylesheet" href="<c:url value='/css/header.css'/>">
-    <link rel="stylesheet" href="<c:url value='/css/booking.css'/>">
+    <link rel="stylesheet" href="<c:url value='/css/booking.css?v=' /><%= System.currentTimeMillis() %>">
     <link rel="stylesheet" href="<c:url value='/css/footer.css'/>">
     <link rel="stylesheet" href="<c:url value='/css/responsive.css'/>">
     <link rel="stylesheet"
@@ -144,39 +145,73 @@
 
             <!-- Tab 3: Dịch vụ & Xác nhận -->
             <div class="tab-content" id="tab3">
-                <fieldset>
-                    <legend>Dịch vụ & Xác nhận</legend>
-
-                    <label for="service">Chọn dịch vụ:</label>
-                    <select id="service" name="serviceId">
-                        <option value="">-- Không chọn --</option>
-                        <c:forEach var="sv" items="${services}">
-                            <option value="${sv.serviceID}">
-                                ${sv.name}
-                                <c:if test="${sv.extraFee > 0}">
-                                    (+${sv.extraFee}đ)
-                                </c:if>
-                            </option>
-                        </c:forEach>
-                    </select>
-
-                    <label for="combo">Chọn combo / set món (nếu có):</label>
-                    <select id="combo" name="combo">
-                        <option value="">Không chọn</option>
-                        <option value="combo1">Combo BBQ thập cẩm</option>
-                        <option value="combo2">Set nướng gia đình</option>
-                        <option value="combo3">Set nướng cặp đôi</option>
-                    </select>
-
-                    <label for="note">Ghi chú:</label>
-                    <textarea id="note" name="note" rows="4" placeholder="Nhập yêu cầu đặc biệt (nếu có)"></textarea>
-                </fieldset>
-
-                <div class="tab-buttons">
-                    <button type="button" class="btn-back">Quay lại</button>
-                    <button type="submit" class="btn-book">Xác nhận đặt bàn</button>
-                </div>
-            </div>
+			    <fieldset>
+			        <legend>Danh sách món ăn đã đặt</legend>
+			        
+			        <table class="cart-table">
+			            <thead>
+			                <tr>
+			                    <th>Sản phẩm</th>
+			                    <th>Đơn giá</th>
+			                    <th style="width: 100px;">Số lượng</th>
+			                    <th>Thành tiền</th>
+			                </tr>
+			            </thead>
+			            <tbody>
+			                <c:choose>
+			                    <c:when test="${not empty sessionScope.cart.bookingDetails}">
+			                        <c:forEach var="item" items="${sessionScope.cart.bookingDetails}">
+			                            <tr>
+			                                <td>
+			                                    <div style="display: flex; align-items: center; gap: 10px;">
+			                                        <img src="${item.dish.imageUrl}" width="50" style="border-radius: 5px;">
+			                                        <span>${item.dish.name}</span>
+			                                    </div>
+			                                </td>
+			                                <td><fmt:formatNumber value="${item.price}" pattern="#,##0"/>đ</td>
+			                                <td>
+			                                    <div class="qty-wrapper">
+			                                        <button type="button" class="qty-btn" onclick="updateBookingCart(${item.dish.dishId}, 'minus')">-</button>
+			                                        <input type="text" value="${item.quantity}" class="qty-input" readonly size="1">
+			                                        <button type="button" class="qty-btn" onclick="updateBookingCart(${item.dish.dishId}, 'plus')">+</button>
+			                                    </div>
+			                                </td>
+			                                <td><fmt:formatNumber value="${item.total}" pattern="#,##0"/>đ</td>
+			                            </tr>
+			                        </c:forEach>
+			                        <tr style="background: #f9f9f9; font-weight: bold;">
+			                            <td colspan="3" style="text-align: right;">Tổng tiền món:</td>
+			                            <td style="color: red;"><fmt:formatNumber value="${sessionScope.cart.totalAmount}" pattern="#,##0"/>đ</td>
+			                        </tr>
+			                    </c:when>
+			                    <c:otherwise>
+			                        <tr>
+			                            <td colspan="4" style="text-align: center; padding: 20px;">
+			                                Giỏ hàng trống. <a href="menu">Quay lại chọn món</a>
+			                            </td>
+			                        </tr>
+			                    </c:otherwise>
+			                </c:choose>
+			            </tbody>
+			        </table>
+			
+			        <label for="service">Dịch vụ đi kèm:</label>
+			        <select id="service" name="serviceId">
+			            <option value="">-- Chọn dịch vụ --</option>
+			            <c:forEach var="sv" items="${services}">
+			                <option value="${sv.serviceID}">${sv.name} (+<fmt:formatNumber value="${sv.extraFee}" pattern="#,##0"/>đ)</option>
+			            </c:forEach>
+			        </select>
+			
+			        <label for="note">Ghi chú đặc biệt:</label>
+			        <textarea id="note" name="note" rows="3" placeholder="Ví dụ: Trang trí sinh nhật, ít cay..."></textarea>
+			    </fieldset>
+			
+			    <div class="tab-buttons">
+			        <button type="button" class="btn-back">Quay lại</button>
+			        <button type="submit" class="btn-book">Xác nhận đặt bàn</button>
+			    </div>
+			</div>
 
         </form>
     </div>
@@ -184,6 +219,5 @@
 
 <jsp:include page="../includes/footer.jsp"></jsp:include>
 <script src="<c:url value='/js/booking-tabs.js'/>"></script>
-
 </body>
 </html>

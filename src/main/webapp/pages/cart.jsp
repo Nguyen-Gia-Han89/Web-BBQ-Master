@@ -65,19 +65,27 @@
                             </c:forEach>
                         </tbody>
                         <tfoot>
-						    <tr>
-						        <td colspan="3">Tổng cộng</td>
-						        <td colspan="2">
-						            <fmt:formatNumber value="${sessionScope.cart.totalAmount}" pattern="#,##0"/> đ
-						        </td>
-						    </tr>
-						</tfoot>
+                            <tr>
+                                <td colspan="3">Tổng cộng</td>
+                                <td colspan="2">
+                                    <fmt:formatNumber value="${sessionScope.cart.totalAmount}" pattern="#,##0"/> đ
+                                </td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </c:when>
                 <c:otherwise>
-                    <p style="text-align:center;">Không có sản phẩm nào trong giỏ hàng</p>
+                    <p class="empty-cart">Không có sản phẩm nào trong giỏ hàng</p>
                 </c:otherwise>
             </c:choose>
+
+            <!-- Nút đặt bàn luôn hiển thị -->
+            <div class="checkout-btn-container">
+                <form action="${pageContext.request.contextPath}/booking-table" method="get">
+				    <button type="submit" class="checkout-btn">Đặt bàn ngay</button>
+				</form>
+
+            </div>
         </div>
     </section>
 

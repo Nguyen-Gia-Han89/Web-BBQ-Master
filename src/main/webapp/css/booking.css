@@ -1,280 +1,248 @@
 @charset "UTF-8";
 
-/* ===== Booking Section ===== */
+/* =================== BOOKING PAGE =================== */
 .booking-section {
-  padding: 40px 20px;
-  max-width: 1200px;
-  margin: 0 auto;
+    padding: 40px 20px;
+    background: #f9f9f9;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 .booking-section h1 {
-  text-align: center;
-  font-size: 2rem;
-  margin-bottom: 30px;
-  color: #ff5722;
+    font-size: 2rem;
+    margin-bottom: 30px;
+    color: #ff5722;
+    font-weight: 700;
+    text-align: center;
 }
 
-/* ===== Tabs ===== */
+/* =================== TABS =================== */
 .tabs {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 .tab {
-  padding: 10px 20px;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 6px 6px 0 0;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-.tab:hover {
-  background-color: #ffe0e0;
+    padding: 10px 20px;
+    background: #fff;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    font-weight: 600;
+    transition: all 0.3s ease;
 }
 .tab.active {
-  background-color: #ff6b6b;
-  color: #fff;
-  font-weight: bold;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    background: #ff6600;
+    color: #fff;
+    border-color: #ff6600;
 }
 
-/* ===== Tab Content ===== */
+/* =================== TAB CONTENT =================== */
 .tab-content {
-  background: #fff;
-  padding: 20px;
-  border-radius: 0 0 6px 6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  display: none; 
-  animation: fadeIn 0.3s ease;
+    display: none;
+    background: #fff;
+    padding: 20px;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
-.tab-content.active {
-  display: block;
-}
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+.tab-content.active { display: block; }
 
-/* ===== Booking Card ===== */
+/* =================== COMMON FORM & CARD =================== */
 .booking-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 16px 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 .booking-card h3 {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: #ff5722;
-  margin-bottom: 12px;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
 }
-.booking-card .hint {
-  font-size: 0.9rem;
-  color: gray;
-  margin-bottom: 10px;
-}
-.booking-card label {
-  display: block;
-  margin-top: 8px;
-  font-weight: 600;
-}
-
-/* ===== Inputs ===== */
 .booking-card input,
 .booking-card select,
 .booking-card textarea {
-  width: 100%;
-  padding: 10px 12px;
-  margin-top: 4px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 14px;
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    margin-bottom: 15px;
+    font-size: 14px;
+    box-sizing: border-box;
 }
-textarea {
-  resize: vertical;
-}
+.booking-card input[readonly] { background: #f5f5f5; cursor: not-allowed; }
 
-/* ===== Nút chọn giờ ===== */
+/* =================== DATE & TIME =================== */
+.date-time-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.time-slots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+}
 .time-slot-btn {
-  padding: 10px 16px;
-  margin: 4px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  background-color: #f9f9f9;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #ff6600;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
 }
-
-/* hover */
+.time-slot-btn.active,
 .time-slot-btn:hover {
-  background-color: #ffe0e0;
-  border-color: #ff6b6b;
+    background: #ff6600;
+    color: #fff;
+    border-color: #ff6600;
 }
-
-/* trạng thái đang chọn */
-.time-slot-btn.active {
-  background-color: #ff6b6b;
-  color: #fff;
-  border-color: #ff6b6b;
-  font-weight: bold;
-  box-shadow: 0 0 8px rgba(255,87,34,0.5);
-}
-
-/* trạng thái disabled (nếu cần) */
 .time-slot-btn:disabled {
-  background-color: #e0e0e0;
-  color: #999;
-  cursor: not-allowed;
-}
-/* ===== Buttons ===== */
-.btn-next,
-.btn-back,
-.btn-book,
-.btn-view-map {
-  padding: 10px 20px;
-  margin: 5px 0;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-.btn-next,
-.btn-book,
-.btn-view-map {
-  background-color: #ff6b6b;
-  color: #fff;
-}
-.btn-back {
-  background-color: #ccc;
-  color: #333;
-}
-.btn-next:hover,
-.btn-book:hover,
-.btn-view-map:hover {
-  background-color: #ff4c4c;
-}
-.btn-back:hover {
-  background-color: #bbb;
+    background: #e0e0e0;
+    color: #999;
+    cursor: not-allowed;
 }
 
-/* hiệu ứng click báo hiệu */
-.btn-next:active,
-.btn-back:active {
-  transform: scale(0.95);
-  box-shadow: 0 0 8px rgba(255, 87, 34, 0.6);
-}
-
-/* ===== Space Selection (Radio Style) ===== */
+/* =================== SPACE & TABLE =================== */
 .space-options-wrapper {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
 }
-.space-radio {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
+.space-radio { display: none; }
 .space-option {
-  flex: 1 1 30%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background: #f9f9f9;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-.space-option:hover {
-  border-color: #49515c;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+    border: 1px solid #ddd;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1 1 150px;
+    text-align: center;
 }
 .space-radio:checked + .space-option {
-  border-color: #ff5722;
-  background: linear-gradient(180deg, #ffe9e9, #ffd5d5);
-  color: #b13030;
-  box-shadow: 0 6px 14px rgba(255,87,34,0.25);
-  transform: translateY(-1px);
+    border-color: #ff6600;
+    background: #fff3e6;
 }
 
-/* ===== Map Container ===== */
-.map-container {
-  margin-top: 16px;
-  position: relative;
-  z-index: 1;
-}
-.floor-layout {
-  position: relative;
-  z-index: 2;
-}
-
-/* ===== Lầu 1 ===== */
+.map-container { margin-top: 15px; }
 .grid-container {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  max-width: 500px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
 }
-
-/* ===== Sân vườn ===== */
-.garden-flex {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 600px;
-}
-.side-tables {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.long-table {
-  padding: 20px 30px;
-  background: #eee;
-  border-radius: 8px;
-  font-weight: bold;
-}
-
-/* ===== Button Bàn ===== */
 .table-btn {
-  cursor: pointer;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  background: #f9f9f9;
-  font-weight: 600;
-  transition: 0.2s;
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #fff;
 }
-.table-btn span {
-  font-size: 12px;
-  font-weight: normal;
+.table-btn.available:hover { border-color: #ff6600; background: #fff3e6; }
+.table-btn.selected { border-color: #ff6600; background: #ffedd9; }
+.table-btn.occupied { background: #e0e0e0; cursor: not-allowed; }
+
+/* =================== CART TABLE (TAB 3) =================== */
+.cart-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
 }
-/* bàn trống */
-.table-btn.available:hover {
-  background: #e8f5e9;
+.cart-table th,
+.cart-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: middle;
+    text-align: center;
 }
-/* bàn đang chọn */
-.table-btn.selected {
-  background: #ffebee;
-  border-color: #e53935;
+.cart-table th { background: #f7f7f7; font-weight: 700; }
+.cart-table td img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-right: 10px;
 }
-/* bàn đã đặt */
-.table-btn.occupied {
-  background: #e0e0e0;
-  cursor: not-allowed;
+.qty-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    justify-content: center;
+}
+.qty-btn {
+    width: 28px;
+    height: 28px;
+    border: 1px solid #ff5722;
+    background: #fff;
+    color: #ff5722;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+.qty-btn:hover { background: #ff5722; color: #fff; }
+.qty-input {
+    width: 36px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 4px 6px;
+}
+.cart-table select,
+.cart-table textarea { margin-top: 10px; }
+
+/* ===== Dịch vụ đi kèm và ghi chú ===== */
+#service,
+#note {
+    width: 100%;
+    padding: 10px 12px;
+    margin-top: 8px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    box-sizing: border-box;
 }
 
-/* ===== Responsive ===== */
-@media screen and (max-width: 768px) {
-  .tabs {
-    flex-direction: column;
-    align-items: center;
-  }
-  .space-options-wrapper {
-    flex-direction: column;
-  }
+#service {
+    background: #fff;
+}
+
+#note {
+    resize: vertical;
+}
+
+/* =================== TAB BUTTONS =================== */
+.tab-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+.btn-next, .btn-back, .btn-book {
+    padding: 10px 25px;
+    font-size: 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    transition: 0.3s;
+}
+.btn-next, .btn-book { background: #ff6600; color: #fff; }
+.btn-next:hover, .btn-book:hover { background: #e65c00; }
+.btn-back { background: #f0f0f0; color: #333; }
+.btn-back:hover { background: #ddd; }
+
+/* =================== RESPONSIVE =================== */
+@media (max-width: 768px) {
+    .date-time-row { flex-direction: column; }
+    .cart-table tbody tr { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .cart-table tbody td:nth-child(1) { grid-column: 1 / 3; }
+    .qty-wrapper { justify-content: flex-start; }
+    .space-options-wrapper { flex-direction: column; }
+    .grid-container { flex-direction: column; }
 }

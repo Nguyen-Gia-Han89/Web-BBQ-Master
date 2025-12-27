@@ -115,6 +115,55 @@
   color: #fff;
 }
 
+/* Container nút */
+.checkout-btn-container {
+    display: flex;       
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+/* Nút Đặt bàn ngay */
+.checkout-btn {
+    background-color: #ff6600;
+    color: #fff;
+    border: none;
+    padding: 10px 25px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.checkout-btn:hover {
+    background-color: #e65c00;
+}
+
+/* Dòng thông báo giỏ hàng trống */
+.empty-cart {
+    text-align: center;          
+    font-size: 1.2rem;           
+    color: #555;                 
+    margin: 40px 0;              
+}
+
+/*Hiệu ứng */
+.fly-to-cart {
+    position: fixed !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3) !important;
+}
+
+#cart-badge.bounce {
+    animation: bounceBadge 0.3s ease-out;
+}
+
+@keyframes bounceBadge {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.6); } /* Tăng độ nảy cho rõ hơn */
+    100% { transform: scale(1); }
+}
+
 /* Responsive bảng */
 @media (max-width: 768px) {
   .cart-table thead { display: none; }

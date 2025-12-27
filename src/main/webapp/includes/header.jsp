@@ -78,18 +78,19 @@
 
         <!-- CART -->
         <a href="${cartUrl}" class="cart-icon">
-            <i class="fa-solid fa-cart-shopping"></i>
-            <c:choose>
-			    <c:when test="${empty sessionScope.cart or sessionScope.cart.totalQuantity == 0}">
-			        <span id="cart-badge" class="cart-badge" style="display:none;">0</span>
-			    </c:when>
-			    <c:otherwise>
-			        <span id="cart-badge" class="cart-badge">
-			            ${sessionScope.cart.totalQuantity}
-			        </span>
-			    </c:otherwise>
-			</c:choose>
-        </a>
+		    <i class="fa-solid fa-cart-shopping"></i>
+		    <c:choose>
+		        <c:when test="${empty sessionScope.cart or sessionScope.cart.totalQuantity == 0}">
+		            <span id="cart-badge" class="cart-badge" style="display:none;">0</span>
+		        </c:when>
+		        <c:otherwise>
+		            <span id="cart-badge" class="cart-badge">
+		                ${sessionScope.cart.totalQuantity}
+		            </span>
+		        </c:otherwise>
+		    </c:choose>
+		</a>
+
 
         <!-- LOGIN / AVATAR -->
         <c:choose>
@@ -111,5 +112,6 @@
 </header>
 
 <jsp:include page="/includes/loginPopup.jsp" />
-<script src="<c:url value='/js/header.js' />"></script>
 
+<script src="<c:url value='/js/login.js' />"></script>
+<script src="<c:url value='/js/header.js' />"></script>
