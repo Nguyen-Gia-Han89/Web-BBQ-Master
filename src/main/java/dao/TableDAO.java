@@ -23,10 +23,22 @@ public class TableDAO {
         table.setSeats(rs.getInt("Seats"));
         table.setStatus(rs.getString("Status"));
 
-        // Map Space object (OOP)
+       
         Space space = spaceDAO.getSpaceById(table.getSpaceId());
-        table.setSpace(space);
 
+        // Nếu không tìm thấy Space theo ID
+        if (space == null) {
+            List<Space> allSpaces = spaceDAO.getAllSpaces(); 
+            
+            if (allSpaces != null && !allSpaces.isEmpty()) {
+                space = allSpaces.get(0); 
+            } else {
+                space = new Space();
+                space.setName("Khu vực chung");
+            }
+        }
+        
+        table.setSpace(space);
         return table;
     }
 

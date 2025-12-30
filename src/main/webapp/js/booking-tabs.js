@@ -1,96 +1,140 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const tabs = document.querySelectorAll(".tab");
+
+
+/*************************************************
+ * 3. CHUYỂN TAB
+ *************************************************/
+function showTab(tabId) {
     const contents = document.querySelectorAll(".tab-content");
+    const tabs = document.querySelectorAll(".tab");
 
-    function showTab(id) {
-        contents.forEach(c => {
-            c.classList.remove("active");
-            c.style.display = "none"; // Đảm bảo ẩn hẳn
-        });
-        tabs.forEach(t => t.classList.remove("active"));
+    contents.forEach(c => {
+        c.classList.remove("active");
+        c.style.display = "none";
+    });
+    tabs.forEach(t => t.classList.remove("active"));
 
-        const targetContent = document.getElementById(id);
-        if (targetContent) {
-            targetContent.classList.add("active");
-            targetContent.style.display = "block"; // Hiện tab được chọn
-        }
-
-        const targetTab = document.querySelector(`.tab[data-tab="${id}"]`);
-        if (targetTab) targetTab.classList.add("active");
+    const targetContent = document.getElementById(tabId);
+    if (targetContent) {
+        targetContent.classList.add("active");
+        targetContent.style.display = "block";
+        if (tabId === "tab3") calculateGrandTotal();
     }
 
-    // Click trực tiếp vào tab header
-    tabs.forEach(tab => {
-        tab.addEventListener("click", () => showTab(tab.dataset.tab));
-    });
+    const targetTab = document.querySelector(
+        `.tab[data-tab="${tabId}"]`
+    );
+    if (targetTab) targetTab.classList.add("active");
+}
 
-    // Nút Tiếp tục
+/*************************************************
+ * 4. CẬP NHẬT GIỎ HÀNG (AJAX, KHÔNG RELOAD)
+ *************************************************/
+function updateBookingCart(dishId, action) {
+    const path = window.location.pathname;
+    const contextPath =
+        path.split("/").length > 2 ? "/" + path.split("/")[1] : "";
+
+    const url = `${contextPath}/add-to-cart?dishId=${dishId}&action=${action}&ajax=true`;
+
+    fetch(url, { method: "POST" })
+        .then(res => {
+            if (!res.ok) throw new Error("Network error");
+            return res.json(); // server trả về JSON giỏ hàng mới
+        })
+        .then(cart => {
+            // Cập nhật tổng tiền món ăn
+            const foodTotalElem = document.getElementById("foodTotalDisplay");
+            foodTotalElem.dataset.foodTotal = cart.totalAmount;
+            foodTotalElem.innerText = cart.totalAmount.toLocaleString("vi-VN") + "đ";
+
+            // Cập nhật số lượng và thành tiền từng món
+            cart.bookingDetails.forEach(item => {
+                const qtyInput = document.querySelector(
+                    `.qty-input[data-dish-id="${item.dish.dishId}"]`
+                );
+                if (qtyInput) {
+                    qtyInput.value = item.quantity;
+                    const totalCell = qtyInput.closest("tr").querySelector("td:last-child");
+                    totalCell.innerText = item.total.toLocaleString("vi-VN") + "đ";
+                }
+            });
+
+            // Tính lại tổng thanh toán (bao gồm dịch vụ)
+            calculateGrandTotal();
+        })
+        .catch(err => {
+            console.error("Lỗi cập nhật giỏ hàng:", err);
+            alert("Có lỗi khi cập nhật giỏ hàng, vui lòng thử lại.");
+        });
+}
+
+/*************************************************
+ * 5. KHỞI TẠO KHI TRANG LOAD
+ *************************************************/
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* ---- TÍNH TIỀN BAN ĐẦU ---- */
+    calculateGrandTotal();
+
+    /* ---- KHÔI PHỤC TAB ---- */
+    const savedTab = localStorage.getItem("currentTab");
+    if (savedTab) {
+        showTab(savedTab);
+        localStorage.removeItem("currentTab");
+    }
+
+    /* ---- NÚT NEXT / BACK ---- */
     document.querySelectorAll(".btn-next").forEach(btn => {
         btn.addEventListener("click", () => {
             const current = btn.closest(".tab-content");
-            const index = Array.from(contents).findIndex(c => c.id === current.id);
-            if (index >= 0 && index < contents.length - 1) {
-                showTab(contents[index + 1].id);
-                window.scrollTo(0, 0); // Cuộn lên đầu trang khi sang tab mới
-            }
-        });
-    });
-
-    // Nút Quay lại
-    document.querySelectorAll(".btn-back").forEach(btn => {
-        btn.addEventListener("click", () => {
-            const current = btn.closest(".tab-content");
-            const index = Array.from(contents).findIndex(c => c.id === current.id);
-            if (index > 0) {
-                showTab(contents[index - 1].id);
+            const contents = [...document.querySelectorAll(".tab-content")];
+            const idx = contents.findIndex(c => c.id === current.id);
+            if (idx < contents.length - 1) {
+                showTab(contents[idx + 1].id);
                 window.scrollTo(0, 0);
             }
         });
     });
 
-    // Mặc định mở tab1
-    showTab("tab1");
-
-    /* ===== CHỌN GIỜ ===== */
-    const timeBtns = document.querySelectorAll(".time-slot-btn");
-    const timeInput = document.getElementById("time");
-
-    timeBtns.forEach(btn => {
+    document.querySelectorAll(".btn-back").forEach(btn => {
         btn.addEventListener("click", () => {
-            timeBtns.forEach(b => b.classList.remove("active"));
+            const current = btn.closest(".tab-content");
+            const contents = [...document.querySelectorAll(".tab-content")];
+            const idx = contents.findIndex(c => c.id === current.id);
+            if (idx > 0) {
+                showTab(contents[idx - 1].id);
+                window.scrollTo(0, 0);
+            }
+        });
+    });
+
+    /* ---- CHỌN GIỜ ---- */
+    const timeInput = document.getElementById("time");
+    document.querySelectorAll(".time-slot-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            document
+                .querySelectorAll(".time-slot-btn")
+                .forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
             timeInput.value = btn.dataset.time;
         });
     });
 
-    /* ===== LỌC BÀN THEO KHU VỰC ===== */
-    const spaceRadios = document.querySelectorAll('.space-radio');
-    const tableBtns = document.querySelectorAll('.table-btn');
+    /* ---- LỌC BÀN THEO KHÔNG GIAN ---- */
+    const tableBtns = document.querySelectorAll(".table-btn");
 
-    function filterTables(selectedSpace) {
+    function filterTables(spaceId) {
         tableBtns.forEach(btn => {
-            if (btn.getAttribute('data-space') === selectedSpace) {
-                btn.style.display = 'inline-block';
-            } else {
-                btn.style.display = 'none';
-            }
+            btn.style.display =
+                btn.dataset.space === spaceId ? "inline-block" : "none";
         });
     }
 
-    spaceRadios.forEach(radio => {
-        radio.addEventListener('change', function() {
-            filterTables(this.value);
-        });
+    document.querySelectorAll(".space-radio").forEach(radio => {
+        radio.addEventListener("change", () => filterTables(radio.value));
     });
 
-    // Tự động kích hoạt lọc cho khu vực đầu tiên khi load trang
-    const firstSpace = document.querySelector('.space-radio:checked') || document.querySelector('.space-radio');
-    if (firstSpace) {
-        firstSpace.checked = true;
-        filterTables(firstSpace.value);
-    }
-
-    /* ===== CHỌN BÀN ===== */
+    /* ---- CHỌN BÀN ---- */
     const tableInput = document.getElementById("selectedTable");
     const tableDisplay = document.getElementById("selectedTableDisplay");
 
@@ -102,28 +146,30 @@ document.addEventListener("DOMContentLoaded", function () {
             tableDisplay.textContent = btn.textContent.trim();
         });
     });
-});
 
-/* ===== THAY ĐỔI SỐ LƯỢNG COMBO (Nằm ngoài DOMContentLoaded) ===== */
-function updateBookingCart(dishId, action) {
-    const url = `${pageContext.request.contextPath}/add-to-cart?dishId=${dishId}&action=${action}&ajax=true`;
+    /* ---- VALIDATE FORM ---- */
+    const bookingForm = document.getElementById("bookingForm");
+    if (bookingForm) {
+		bookingForm.addEventListener("submit", function(e) {
+		    const dateInput = document.getElementById("date");
+		    if (!dateInput.value) {
+		        alert("Vui lòng chọn ngày!");
+		        e.preventDefault();
+		    }
+		});
+    }
 
-    fetch(url, { method: 'POST' })
-    .then(response => response.json())
-    .then(data => {
-        // Lưu lại trạng thái đang ở Tab 3 để sau khi load lại không bị nhảy về Tab 1
-        localStorage.setItem('currentTab', 'tab3');
-        location.reload(); 
-    })
-    .catch(error => console.error('Error:', error));
-}
+    /* ---- LƯU DỊCH VỤ ĐÃ CHỌN ---- */
+    const serviceSelect = document.getElementById("service");
+    if (serviceSelect) {
+        serviceSelect.addEventListener("change", function () {
+            localStorage.setItem("selectedService", this.value);
+            calculateGrandTotal();
+        });
 
-// Logic khi trang load xong: Tự động nhảy về Tab khách đang đứng
-document.addEventListener("DOMContentLoaded", function() {
-    const savedTab = localStorage.getItem('currentTab');
-    if (savedTab) {
-        const tabToClick = document.querySelector(`[data-tab="${savedTab}"]`);
-        if (tabToClick) tabToClick.click();
-        localStorage.removeItem('currentTab');
+        const savedService = localStorage.getItem("selectedService");
+        if (savedService) {
+            serviceSelect.value = savedService;
+        }
     }
 });

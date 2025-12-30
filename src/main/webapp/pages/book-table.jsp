@@ -33,7 +33,10 @@
         </div>
 
         <!-- Booking Form -->
-        <form action="${pageContext.request.contextPath}/booking" method="post" id="bookingForm">
+        <form action="${pageContext.request.contextPath}/booking-table" method="post" id="bookingForm">
+
+			<input type="hidden" name="amount" value="${sessionScope.cart.totalAmount}">
+
 
             <!-- Tab 1: Thông tin & Thời gian -->
             <div class="tab-content active" id="tab1">
@@ -89,7 +92,10 @@
                     </div>
                 </div>
 
-                <button type="button" class="btn-next">Tiếp tục</button>
+                <div class="tab-buttons">
+				    <button type="button" class="btn-next">Tiếp tục</button>
+				</div>
+
             </div>
 
             <!-- Tab 2: Chọn bàn -->
@@ -143,81 +149,112 @@
                 </div>
             </div>
 
-            <!-- Tab 3: Dịch vụ & Xác nhận -->
-            <div class="tab-content" id="tab3">
+             <!-- Tab 3: Dịch vụ & Xác nhận -->
+            <div id="tab3" class="tab-content">
 			    <fieldset>
-			        <legend>Danh sách món ăn đã đặt</legend>
-			        
+			        <legend>Chi tiết thực đơn</legend>
 			        <table class="cart-table">
 			            <thead>
 			                <tr>
 			                    <th>Sản phẩm</th>
 			                    <th>Đơn giá</th>
-			                    <th style="width: 100px;">Số lượng</th>
+			                    <th>Số lượng</th>
 			                    <th>Thành tiền</th>
 			                </tr>
 			            </thead>
 			            <tbody>
-			                <c:choose>
-			                    <c:when test="${not empty sessionScope.cart.bookingDetails}">
-			                        <c:forEach var="item" items="${sessionScope.cart.bookingDetails}">
-			                            <tr>
-			                                <td>
-			                                    <div style="display: flex; align-items: center; gap: 10px;">
-			                                        <img src="${item.dish.imageUrl}" width="50" style="border-radius: 5px;">
-			                                        <span>${item.dish.name}</span>
-			                                    </div>
-			                                </td>
-			                                <td><fmt:formatNumber value="${item.price}" pattern="#,##0"/>đ</td>
-			                                <td>
-			                                    <div class="qty-wrapper">
-			                                        <button type="button" class="qty-btn" onclick="updateBookingCart(${item.dish.dishId}, 'minus')">-</button>
-			                                        <input type="text" value="${item.quantity}" class="qty-input" readonly size="1">
-			                                        <button type="button" class="qty-btn" onclick="updateBookingCart(${item.dish.dishId}, 'plus')">+</button>
-			                                    </div>
-			                                </td>
-			                                <td><fmt:formatNumber value="${item.total}" pattern="#,##0"/>đ</td>
-			                            </tr>
-			                        </c:forEach>
-			                        <tr style="background: #f9f9f9; font-weight: bold;">
-			                            <td colspan="3" style="text-align: right;">Tổng tiền món:</td>
-			                            <td style="color: red;"><fmt:formatNumber value="${sessionScope.cart.totalAmount}" pattern="#,##0"/>đ</td>
-			                        </tr>
-			                    </c:when>
-			                    <c:otherwise>
+			                <c:if test="${not empty sessionScope.cart.bookingDetails}">
+			                    <c:forEach var="item" items="${sessionScope.cart.bookingDetails}">
 			                        <tr>
-			                            <td colspan="4" style="text-align: center; padding: 20px;">
-			                                Giỏ hàng trống. <a href="menu">Quay lại chọn món</a>
+			                            <td>
+			                                <div class="cart-item">
+			                                    <img src="${item.dish.imageUrl}" class="cart-item-img" alt="${item.dish.name}">
+			                                    <span>${item.dish.name}</span>
+			                                </div>
 			                            </td>
+			                            <td><fmt:formatNumber value="${item.price}" pattern="#,##0"/>đ</td>
+			                            <td>
+			                                <div class="qty-wrapper">
+			                                    <button type="button" class="qty-btn" onclick="updateBookingCart(${item.dish.dishId}, 'minus')">-</button>
+			                                    <input type="text" value="${item.quantity}" class="qty-input" readonly>
+			                                    <button type="button" class="qty-btn" onclick="updateBookingCart(${item.dish.dishId}, 'plus')">+</button>
+			                                </div>
+			                            </td>
+			                            <td><fmt:formatNumber value="${item.total}" pattern="#,##0"/>đ</td>
 			                        </tr>
-			                    </c:otherwise>
-			                </c:choose>
+			                    </c:forEach>
+			                </c:if>
+			                <tr>
+			                    <td colspan="4">
+			                        <a href="${pageContext.request.contextPath}/menu" class="add-food-link">+ Thêm món ăn mới</a>
+			                    </td>
+			                </tr>
 			            </tbody>
 			        </table>
-			
-			        <label for="service">Dịch vụ đi kèm:</label>
-			        <select id="service" name="serviceId">
-			            <option value="">-- Chọn dịch vụ --</option>
-			            <c:forEach var="sv" items="${services}">
-			                <option value="${sv.serviceID}">${sv.name} (+<fmt:formatNumber value="${sv.extraFee}" pattern="#,##0"/>đ)</option>
-			            </c:forEach>
-			        </select>
-			
-			        <label for="note">Ghi chú đặc biệt:</label>
-			        <textarea id="note" name="note" rows="3" placeholder="Ví dụ: Trang trí sinh nhật, ít cay..."></textarea>
 			    </fieldset>
 			
+			    <fieldset>
+				    <legend>Dịch vụ bổ sung</legend>
+				    <label for="service">Chọn dịch vụ đi kèm:</label>
+				    <select id="service" name="serviceId">
+				        <option value="" data-fee="0">-- Tự phục vụ / Tự nướng --</option>
+				        <c:forEach var="sv" items="${services}">
+				            <option value="${sv.serviceID}" data-fee="${sv.extraFee}">
+				                ${sv.name} (+<fmt:formatNumber value="${sv.extraFee}" pattern="#,##0"/>đ)
+				            </option>
+				        </c:forEach>
+				    </select>
+				</fieldset>
+
+			
+			    <fieldset>
+			        <legend>Ghi chú cho nhà hàng</legend>
+			        <textarea id="note" name="note" rows="3" placeholder="Ví dụ: Bàn gần cửa sổ, không ăn cay..."></textarea>
+			    </fieldset>
+			
+			    <div class="summary-container">
+				    <div class="summary-line">
+				        <span>Tiền món ăn:</span>
+				        <strong id="foodTotalDisplay" data-food-total="${sessionScope.cart.totalAmount}">
+				            <fmt:formatNumber value="${sessionScope.cart.totalAmount}" pattern="#,##0"/>đ
+				        </strong>
+				    </div>
+				
+				    <div class="summary-line">
+				        <span>Phí dịch vụ:</span>
+				        <strong id="serviceFeeDisplay">0đ</strong>
+				    </div>
+				
+				    <div class="grand-total-line">
+				        <h3>Tổng thanh toán:</h3>
+				        <span id="grandTotalDisplay">
+				            <fmt:formatNumber value="${sessionScope.cart.totalAmount}" pattern="#,##0"/>đ
+				        </span>
+				    </div>
+				</div>
+				
+				<input type="hidden" name="amount" id="finalAmountInput" value="${sessionScope.cart.totalAmount}">
+
 			    <div class="tab-buttons">
 			        <button type="button" class="btn-back">Quay lại</button>
-			        <button type="submit" class="btn-book">Xác nhận đặt bàn</button>
+			        <c:choose>
+			            <c:when test="${not empty sessionScope.cart.bookingDetails}">
+			                <button type="submit" name="action" value="BOOK_AND_PAY" class="btn-book">Tiếp tục thanh toán</button>
+			            </c:when>
+			            <c:otherwise>
+			                <button type="submit" name="action" value="BOOK_ONLY" class="btn-book">Xác nhận đặt bàn ngay</button>
+			            </c:otherwise>
+			        </c:choose>
 			    </div>
 			</div>
-
         </form>
     </div>
 </section>
 
 <jsp:include page="../includes/footer.jsp"></jsp:include>
 <script src="<c:url value='/js/booking-tabs.js'/>"></script>
+<script src="<c:url value='/js/booking-total.js'/>"></script>
+
+
 </body>
 </html>

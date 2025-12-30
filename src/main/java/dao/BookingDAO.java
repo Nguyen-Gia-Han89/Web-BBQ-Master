@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -116,33 +118,74 @@ public class BookingDAO {
      * Tạo Booking mới
      */
     public int insert(Booking booking) {
-        String sql = """
-            INSERT INTO Booking
-            (CustomerID, TableID, ServiceID, BookingTime,
-             NumberOfGuests, Note, TotalAmount, Status, BookingType)
+        String sqlInsert = """
+            INSERT INTO Booking 
+            (CustomerID, TableID, ServiceID, BookingTime, 
+             NumberOfGuests, Note, TotalAmount, Status, BookingType) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """;
 
+        String sqlUpdateCode = "UPDATE Booking SET OrderCode = ? WHERE BookingID = ?";
+
         try (
-            Connection con = DBCPDataSource.getDataSource().getConnection();
-            PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)
+            Connection con = DBCPDataSource.getDataSource().getConnection()
         ) {
-            ps.setInt(1, booking.getCustomer().getCustomerID());
-            ps.setObject(2, booking.getTable() != null ? booking.getTable().getTableId() : null);
-            ps.setObject(3, booking.getService() != null ? booking.getService().getServiceID() : null);
-            ps.setTimestamp(4, java.sql.Timestamp.valueOf(booking.getBookingTime()));
-            ps.setInt(5, booking.getNumberOfGuests());
-            ps.setString(6, booking.getNote());
-            ps.setDouble(7, booking.getTotalAmount());
-            ps.setString(8, booking.getStatus().name());
-            ps.setString(9, booking.getBookingType().name());
+            con.setAutoCommit(false); // Bắt đầu Transaction để đảm bảo tính toàn vẹn
 
-            ps.executeUpdate();
+            try (PreparedStatement ps = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setInt(1, booking.getCustomer().getCustomerID());
 
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    return rs.getInt(1); // BookingID
+                if (booking.getTable() != null && booking.getTable().getTableId() > 0) {
+                    ps.setInt(2, booking.getTable().getTableId());
+                } else {
+                    ps.setNull(2, Types.INTEGER);
                 }
+
+                if (booking.getService() != null && booking.getService().getServiceID() > 0) {
+                    ps.setInt(3, booking.getService().getServiceID());
+                } else {
+                    ps.setNull(3, Types.INTEGER);
+                }
+
+                ps.setTimestamp(4, Timestamp.valueOf(booking.getBookingTime()));
+                ps.setInt(5, booking.getNumberOfGuests());
+                ps.setString(6, booking.getNote());
+                ps.setDouble(7, booking.getTotalAmount());
+                ps.setString(8, booking.getStatus().name());
+                ps.setString(9, booking.getBookingType().name());
+
+                int affectedRows = ps.executeUpdate();
+
+                if (affectedRows > 0) {
+                    try (ResultSet rs = ps.getGeneratedKeys()) {
+                        if (rs.next()) {
+                            int newId = rs.getInt(1);
+
+                            // 1. TẠO ORDER_CODE (VÍ DỤ: BBQ-20251230-1)
+                            String datePart = new java.text.SimpleDateFormat("yyyyMMdd").format(new java.util.Date());
+                            String orderCode = "BBQ-" + datePart + "-" + newId;
+
+                            // 2. UPDATE NGƯỢC LẠI VÀO DB
+                            try (PreparedStatement psUpdate = con.prepareStatement(sqlUpdateCode)) {
+                                psUpdate.setString(1, orderCode);
+                                psUpdate.setInt(2, newId);
+                                psUpdate.executeUpdate();
+                            }
+
+                            // 3. LƯU CHI TIẾT MÓN ĂN
+                            insertBookingDetails(con, newId, booking.getBookingDetails());
+
+                            // Gán ngược orderCode vào đối tượng booking để Servlet có thể lấy ra session
+                            booking.setOrderCode(orderCode); 
+
+                            con.commit(); // Thành công hết thì mới lưu thật vào DB
+                            return newId;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                con.rollback(); // Lỗi bất cứ bước nào thì hủy hết (tránh dữ liệu rác)
+                e.printStackTrace();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -150,6 +193,23 @@ public class BookingDAO {
         return -1;
     }
 
+    private void insertBookingDetails(Connection con, int bookingId, List<model.BookingDetail> details) throws Exception {
+        if (details == null || details.isEmpty()) return;
+
+        String sql = "INSERT INTO BookingDetail (BookingID, DishID, Quantity, PriceAtOrder, Total) VALUES (?, ?, ?, ?, ?)";
+        
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            for (model.BookingDetail item : details) {
+                ps.setInt(1, bookingId);
+                ps.setInt(2, item.getDish().getDishId());
+                ps.setInt(3, item.getQuantity());
+                ps.setDouble(4, item.getPrice());  
+                ps.setDouble(5, item.getTotal()); 
+                ps.addBatch();
+            }
+            ps.executeBatch();
+        }
+    }
     /**
      * Cập nhật tổng tiền Booking
      */
