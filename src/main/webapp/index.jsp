@@ -85,24 +85,35 @@
 	</section>
     <!-- Combo Đề cử -->
     <section class="combo-section">
-        <h2>Combo Đề Cử</h2>
-        <div class="combo-list">
-            <jsp:useBean id="dishList" class="beans.DishList" scope="session" />
-            <c:forEach var="dish" items="${dishList.dishes}">
-                <c:if test="${dish.combo and dish.available}">
-                    <div class="combo-card">
-                        <img src="${dish.imageUrl}" alt="${dish.name}">
-                        <h3>${dish.name}</h3>
-                        <p>${dish.description}</p>
-                        <div class="combo-footer">
-                            <span class="price"><fmt:formatNumber value="${dish.price}" pattern="#,##0"/>đ</span>
-                            <button class="btn-order" onclick="addToCart(${dish.dishId})">Đặt ngay</button>
-                        </div>
-                    </div>
-                </c:if>
-            </c:forEach>
-        </div>
-    </section>
+	    <h2>Combo Đề Cử</h2>
+	    <div class="combo-list">
+	        <jsp:useBean id="dishList" class="beans.DishList" scope="session" />
+	        
+	        <c:forEach var="dish" items="${dishList.dishes}">
+	            <c:if test="${dish.combo and dish.available}">
+	                <div class="combo-card">
+	                    <img src="${dish.imageUrl}" alt="${dish.name}">
+	                    <h3>${dish.name}</h3>
+	                    <p>${dish.description}</p>
+	
+	                    <div class="combo-footer">
+	                        <span class="price">
+	                            <fmt:formatNumber value="${dish.price}" pattern="#,##0"/>đ
+	                        </span>
+	
+	                        <!-- ADD TO CART -->
+	                        <form action="${pageContext.request.contextPath}/cart" method="post">
+	                            <input type="hidden" name="dishId" value="${dish.dishId}">
+	                            <input type="hidden" name="action" value="add">
+	                            <button type="submit" class="btn-order">Đặt ngay</button>
+	                        </form>
+	                    </div>
+	                </div>
+	            </c:if>
+	        </c:forEach>
+	    </div>
+	</section>
+
 
     <!-- Footer -->
     <jsp:include page="includes/footer.jsp" />

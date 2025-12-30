@@ -278,26 +278,6 @@ VALUES
     (3, 4, 'available', 'SV05'),
     (3, 4, 'available', 'SV06');
 
--- 6.  Bảng Booking
-INSERT INTO Booking
-(CustomerID, TableID, ServiceID, BookingTime, NumberOfGuests, Note, TotalAmount, Status, BookingType)
-VALUES
-(1, 1, NULL, '2025-12-20 18:00', 4, N'Khách đặt trước', 0, 'CONFIRMED', 'DINE_IN'), -- BookingID = 1
-(2, 2, NULL, '2025-12-20 18:00', 4, N'Khách đặt trước', 0, 'CONFIRMED', 'DINE_IN'), -- BookingID = 2
-(3, 5, NULL, '2025-12-20 19:00', 4, N'Khách đặt trước', 0, 'CONFIRMED', 'DINE_IN'), -- BookingID = 3
-(1, 12, NULL, '2025-12-20 17:30', 4, N'Khách đặt trước', 0, 'CONFIRMED', 'DINE_IN'); -- BookingID = 4
-
--- 7. Bảng TableSchedule (Lịch đặt bàn)
-INSERT INTO TableSchedule (TableID, BookingID, ReservationDate, StartTime, EndTime, Status)
-VALUES
-(1, 1, '2025-12-20', '18:00', '20:00', 'BOOKED');
-
-INSERT INTO TableSchedule (TableID, BookingID, ReservationDate, StartTime, EndTime, Status)
-VALUES
-(2, 2, '2025-12-20', '18:00', '20:00', 'BOOKED'),
-(5, 3, '2025-12-20', '19:00', '21:00', 'BOOKED'),
-(12, 4, '2025-12-20', '17:30', '19:30', 'BOOKED');
-
 -- 8.  Bảng Service (Dịch vụ đi kèm)
 INSERT INTO Service (Name, ExtraFee)
 VALUES
@@ -305,3 +285,10 @@ VALUES
 (N'Nhân viên nướng dùm', 150000),
 (N'Trang trí sinh nhật', 300000),
 (N'Phòng VIP', 200000);
+
+USE [RestaurantBookingDB];
+GO
+
+-- 1. Thêm cột OrderCode vào bảng Booking
+ALTER TABLE dbo.Booking 
+ADD OrderCode VARCHAR(20);

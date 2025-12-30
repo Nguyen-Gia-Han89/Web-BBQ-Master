@@ -58,7 +58,7 @@ public class VNPayReturnServlet extends HttpServlet {
                 request.getSession().removeAttribute("BOOKING_ID");
                 request.getSession().removeAttribute("PAYMENT_AMOUNT");
 
-                response.sendRedirect(request.getContextPath() + "/booking-success.jsp");
+                response.sendRedirect(request.getContextPath() + "/pages/booking-success.jsp");
             } else {
                 // THANH TOÁN THẤT BẠI (Người dùng hủy hoặc lỗi thẻ)
                 response.sendRedirect(request.getContextPath() + "/booking-fail.jsp?code=" + vnp_ResponseCode);

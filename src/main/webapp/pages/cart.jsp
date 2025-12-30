@@ -47,7 +47,7 @@
                                     </td>
                                     <td><fmt:formatNumber value="${item.price}" pattern="#,##0"/> đ</td>
                                     <td>
-                                        <form action="${pageContext.request.contextPath}/update-cart" method="post" class="qty-form">
+                                        <form action="${pageContext.request.contextPath}/cart" method="post" class="qty-form">
                                             <input type="hidden" name="dishId" value="${item.dish.dishId}">
                                             <button type="submit" name="action" value="minus" class="qty-btn">-</button>
                                             <input type="text" name="quantity" value="${item.quantity}" size="2" class="qty-input">
@@ -56,7 +56,7 @@
                                     </td>
                                     <td><fmt:formatNumber value="${item.total}" pattern="#,##0"/> đ</td>
                                     <td>
-                                        <form action="${pageContext.request.contextPath}/remove-cart" method="post" class="remove-form">
+                                        <form action="${pageContext.request.contextPath}/cart" method="post" class="remove-form">
                                             <input type="hidden" name="dishId" value="${item.dish.dishId}">
                                             <button type="submit" class="remove-btn">Xóa</button>
                                         </form>
