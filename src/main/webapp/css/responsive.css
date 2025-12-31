@@ -1,0 +1,52 @@
+@charset "UTF-8";
+
+/* Responsive */
+@media (max-width: 576px) {
+  header {
+    padding: 12px 16px;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  nav ul {
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .hero h1 { font-size: 40px; }
+
+  .about-content,
+  .combo-list {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .combo-card {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .contact-content {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .contact-info,
+  .contact-form {
+    padding: 20px;
+  }
+
+  .map-container iframe { height: 300px; }
+}
+
+@media (max-width: 480px) {
+  body { font-size: 16px; }
+  .hero h1 { font-size: 32px; }
+
+  .combo-section h2,
+  .about h2,
+  .contact h2 {
+    font-size: 1.5rem;
+  }
+}

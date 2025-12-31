@@ -1,0 +1,333 @@
+package model;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Lớp đại diện cho thông tin đặt bàn/đặt tiệc tại nhà hàng. Bao gồm thông tin
+ * khách hàng, thời gian đặt, số lượng khách, loại hình đặt bàn, dịch vụ đi kèm,
+ * chi tiết món ăn và tổng chi phí.
+ */
+public class Booking {
+	/**
+	 * Trạng thái của đơn đặt bàn: - PENDING: Chờ xác nhận - CONFIRMED: Đã xác nhận
+	 * - CANCELLED: Đã hủy - COMPLETED: Hoàn thành
+	 */
+	public enum BookingStatus {
+		PENDING, CONFIRMED, CANCELLED, COMPLETED
+	}
+
+	/**
+	 * Loại hình đặt bàn: - DINE_IN: Ăn tại nhà hàng - PARTY: Đặt tiệc/sinh nhật
+	 */
+	public enum BookingType {
+		DINE_IN, PARTY
+	}
+
+	/** Mã đặt bàn */
+	private int bookingId;
+
+	/** Khách hàng thực hiện đặt bàn */
+	private Customer customer;
+
+	/** Thời gian đặt bàn */
+	private LocalDateTime bookingTime;
+
+	/** Số lượng khách */
+	private int numberOfGuests;
+
+	/** Ghi chú kèm theo của khách hàng */
+	private String note;
+
+	/** Trạng thái đặt bàn */
+	private BookingStatus status;
+
+	/** Loại hình đặt bàn */
+	private BookingType bookingType;
+
+	/** Danh sách chi tiết món ăn/đồ uống */
+	private List<BookingDetail> bookingDetails;
+
+	/** Bàn được chọn */
+	private Table table;
+
+	/** Dịch vụ đi kèm (như trang trí, âm nhạc, VIP) */
+	private Service service;
+
+	/** Tổng số tiền cần thanh toán */
+	private double totalAmount;
+
+	/** Mã đơn hàng hiển thị cho khách hàng (Ví dụ: BBQ-20251230-1) */
+	private String orderCode;
+
+	/**
+	 * Constructor mặc định. Khởi tạo danh sách chi tiết món ăn rỗng và trạng thái
+	 * mặc định là PENDING.
+	 */
+	public Booking() {
+		this.bookingDetails = new ArrayList<>();
+		this.status = BookingStatus.PENDING;
+	}
+
+	/**
+	 * Constructor đầy đủ tham số
+	 */
+	public Booking(int bookingId, String orderCode, Customer customer, LocalDateTime bookingTime, int numberOfGuests,
+			String note, BookingStatus status, BookingType bookingType, List<BookingDetail> bookingDetails, Table table,
+			Service service, double totalAmount) {
+		this.bookingId = bookingId;
+		this.orderCode = orderCode; // Thêm mới
+		this.customer = customer;
+		this.bookingTime = bookingTime;
+		this.numberOfGuests = numberOfGuests;
+		this.note = note;
+		this.status = status;
+		this.bookingType = bookingType;
+		this.bookingDetails = bookingDetails != null ? bookingDetails : new ArrayList<>();
+		this.table = table;
+		this.service = service;
+		this.totalAmount = totalAmount;
+	}
+
+	// Getters & Setters
+	public int getBookingId() {
+		return bookingId;
+	}
+
+	public void setBookingId(int bookingId) {
+		this.bookingId = bookingId;
+	}
+
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+
+	public LocalDateTime getBookingTime() {
+		return bookingTime;
+	}
+
+	public void setBookingTime(LocalDateTime bookingTime) {
+		this.bookingTime = bookingTime;
+	}
+
+	public int getNumberOfGuests() {
+		return numberOfGuests;
+	}
+
+	public void setNumberOfGuests(int numberOfGuests) {
+		this.numberOfGuests = numberOfGuests;
+	}
+
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
+
+	public BookingStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(BookingStatus status) {
+		this.status = status;
+	}
+
+	public BookingType getBookingType() {
+		return bookingType;
+	}
+
+	public void setBookingType(BookingType bookingType) {
+		this.bookingType = bookingType;
+	}
+
+	public List<BookingDetail> getBookingDetails() {
+		return bookingDetails;
+	}
+
+	public void setBookingDetails(List<BookingDetail> bookingDetails) {
+		this.bookingDetails = bookingDetails;
+	}
+
+	public Table getTable() {
+		return table;
+	}
+
+	public void setTable(Table table) {
+		this.table = table;
+	}
+
+	public Service getService() {
+		return service;
+	}
+
+	public void setService(Service service) {
+		this.service = service;
+	}
+
+	public double getTotalAmount() {
+		return totalAmount;
+	}
+
+	public void setTotalAmount(double totalAmount) {
+		this.totalAmount = totalAmount;
+	}
+
+	public String getOrderCode() {
+		return orderCode;
+	}
+
+	public void setOrderCode(String orderCode) {
+		this.orderCode = orderCode;
+	}
+	
+	/**
+     * Tạo mã đơn hàng tự động dựa trên ngày hiện tại và ID
+     * @param id ID lấy từ database sau khi insert
+     * @return chuỗi BBQ-YYYYMMDD-ID
+     */
+    public void generateAndSetOrderCode(int id) {
+        String datePart = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        this.orderCode = (this.bookingType == BookingType.PARTY ? "EVT-" : "BBQ-") + datePart + "-" + id;
+    }
+
+	/**
+	 * Thêm món ăn/đồ uống vào danh sách chi tiết đặt bàn, sau đó cập nhật tổng
+	 * tiền.
+	 * 
+	 * @param detail chi tiết món ăn/đồ uống
+	 */
+	public void addDetail(BookingDetail detail) {
+		if (detail != null) {
+			bookingDetails.add(detail);
+			calculateTotalAmount();
+		}
+	}
+
+	/**
+	 * Tính tổng chi phí = tổng tiền món ăn + phí dịch vụ (nếu có)
+	 */
+	public void calculateTotalAmount() {
+		double dishTotal = bookingDetails.stream().mapToDouble(BookingDetail::getTotal).sum();
+		double serviceFee = service != null ? service.getExtraFee() : 0;
+		this.totalAmount = dishTotal + serviceFee;
+	}
+
+	/**
+	 * Kiểm tra xem đơn đặt bàn đã được xác nhận hay chưa
+	 *
+	 * @return true nếu trạng thái CONFIRMED
+	 */
+	public boolean isConfirmed() {
+		return status == BookingStatus.CONFIRMED;
+	}
+
+	public BookingDetail[] getBookingDetailsArray() {
+		return bookingDetails.toArray(new BookingDetail[0]);
+	}
+
+	public void addDish(Dish dish, int quantity) {
+		if (dish == null || quantity <= 0)
+			return;
+
+		for (BookingDetail detail : bookingDetails) {
+			if (detail.getDish().getDishId() == dish.getDishId()) {
+				detail.setQuantity(detail.getQuantity() + quantity);
+				calculateTotalAmount();
+				return;
+			}
+		}
+
+		BookingDetail newDetail = new BookingDetail();
+		newDetail.setDish(dish);
+		newDetail.setQuantity(quantity);
+		newDetail.setPrice(dish.getPrice());
+		bookingDetails.add(newDetail);
+
+		calculateTotalAmount();
+	}
+
+	public int getTotalQuantity() {
+		int total = 0;
+		for (BookingDetail d : bookingDetails) {
+			total += d.getQuantity();
+		}
+		return total;
+	}
+
+	public void removeDish(Dish selectedDish) {
+		if (selectedDish == null)
+			return;
+		// Loại bỏ tất cả chi tiết có dishId bằng với món được chọn
+		bookingDetails.removeIf(detail -> detail.getDish().getDishId() == selectedDish.getDishId());
+		// Cập nhật lại tổng tiền sau khi xóa
+		calculateTotalAmount();
+
+	}
+
+	// Lấy BookingDetail theo dishId
+	public BookingDetail findDetailByDishId(int dishId) {
+		for (BookingDetail detail : bookingDetails) {
+			if (detail.getDish().getDishId() == dishId)
+				return detail;
+		}
+		return null;
+	}
+
+	// alias cho servlet cũ
+	public BookingDetail getDetailByDishId(int dishId) {
+		return findDetailByDishId(dishId);
+	}
+
+	// Set trực tiếp số lượng
+	public void setQuantity(Dish dish, int quantity) {
+		if (dish == null)
+			return;
+		for (BookingDetail detail : bookingDetails) {
+			if (detail.getDish().getDishId() == dish.getDishId()) {
+				detail.setQuantity(quantity);
+				calculateTotalAmount();
+				return;
+			}
+		}
+		// Nếu chưa có món này thì thêm mới
+		if (quantity > 0)
+			addDish(dish, quantity);
+	}
+
+	public void removeDetailByDishId(int dishId) {
+		if (bookingDetails == null || bookingDetails.isEmpty()) {
+			return;
+		}
+		// Duyệt qua danh sách và xóa phần tử có dishId trùng khớp
+		bookingDetails.removeIf(detail -> detail.getDish().getDishId() == dishId);
+	}
+
+	/**
+	 * Trả về tổng tiền dưới dạng chuỗi định dạng tiền tệ Việt Nam (Ví dụ:
+	 * 1.200.000đ)
+	 */
+	public String getFormattedTotalAmount() {
+		return String.format("%,.0fđ", totalAmount);
+	}
+
+	/**
+	 * Trả về thời gian đặt bàn dưới dạng chuỗi dễ đọc (Ví dụ: 18:30 - 30/12/2025)
+	 */
+	public String getFormattedBookingTime() {
+		if (bookingTime == null)
+			return "";
+		java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter
+				.ofPattern("HH:mm - dd/MM/yyyy");
+		return bookingTime.format(formatter);
+	}
+
+}
