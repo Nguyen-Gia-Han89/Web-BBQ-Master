@@ -1,0 +1,122 @@
+@charset "UTF-8";
+
+.success-wrapper {
+    padding: 80px 0;
+    text-align: center;
+    background: #f9f9f9;
+    min-height: 70vh;
+}
+
+.success-card {
+    background: #fff;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.success-icon {
+    font-size: 70px;
+    color: #2ecc71;
+    margin-bottom: 20px;
+}
+
+.success-title {
+    font-size: 28px;
+    color: #2d3436;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+/* Container chính */
+
+.info-grid {
+    background: #f8f9fa; /* Màu nền xám nhạt như ảnh */
+    border-radius: 12px;
+    padding: 20px 25px;
+    margin: 20px 0; /* Khoảng cách trên dưới của khung */
+    border-left: 5px solid #ff4757; /* Thanh dọc đỏ bên trái */
+}
+
+/* Header của khung (Mã đơn hàng) */
+.header-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    margin-bottom: 10px;
+    border-bottom: 1px dashed #ddd; /* Dấu gạch tách biệt mã đơn hàng */
+}
+
+.info-label {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.info-value {
+    color: #e17055;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* Danh sách chi tiết (Căn phải value) */
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eeeeee; /* Gạch mờ giữa các dòng */
+}
+
+.detail-row:last-of-type {
+    border-bottom: none; /* Dòng cuối không gạch */
+}
+
+.detail-row .value {
+    color: #e17055; /* Màu giống mã đơn hàng */
+    font-weight: 500;
+    text-align: right;
+}
+
+/* Trạng thái căn giữa */
+.status-badge-centered {
+    text-align: center;
+    margin-top: 15px;
+    padding-top: 10px;
+    color: #2d3436;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* KHU VỰC NÚT BẤM (group-btns) */
+.group-btns {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px; /* Khoảng cách từ khung thông tin xuống nút */
+}
+
+.btn-action {
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: bold;
+    text-decoration: none;
+    min-width: 140px;
+    text-align: center;
+    transition: 0.3s;
+}
+
+.btn-home {
+    background-color: #2d3436;
+    color: white;
+}
+
+.btn-history {
+    background-color: #ff4757;
+    color: white;
+}
+
+.btn-action:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}

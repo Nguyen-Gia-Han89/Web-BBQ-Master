@@ -1,0 +1,12 @@
+# Build output
+/build/
+/bin/
+*.class
+
+# IDE
+.settings/
+.project
+.classpath
+
+# Optional: log / temp
+*.log

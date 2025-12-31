@@ -1,0 +1,20 @@
+/* RESET CƠ BẢN */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: Arial, Helvetica, sans-serif;
+	background: #fff;
+	color: #333;
+	font-size: 20px;
+	padding-top: 80px; 
+}
+
+.container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0 20px;
+}

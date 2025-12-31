@@ -1,0 +1,356 @@
+@charset "UTF-8";
+
+/* =================== BOOKING PAGE =================== */
+.booking-section {
+    padding: 40px 20px;
+    background: #f9f9f9;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.booking-section h1 {
+    font-size: 2rem;
+    margin-bottom: 30px;
+    color: #ff5722;
+    font-weight: 700;
+    text-align: center;
+}
+
+/* =================== TABS =================== */
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.tab {
+    padding: 10px 20px;
+    background: #fff;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+.tab.active {
+    background: #ff6600;
+    color: #fff;
+    border-color: #ff6600;
+}
+
+/* =================== TAB CONTENT =================== */
+.tab-content {
+    display: none;
+    background: #fff;
+    padding: 20px;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.tab-content.active { display: block; }
+
+/* =================== COMMON FORM & CARD =================== */
+.booking-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.booking-card h3 {
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+.booking-card input,
+.booking-card select,
+.booking-card textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    margin-bottom: 15px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+.booking-card input[readonly] { background: #f5f5f5; cursor: not-allowed; }
+
+/* =================== DATE & TIME =================== */
+.date-time-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.time-slots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+}
+.time-slot-btn {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #ff6600;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+.time-slot-btn.active,
+.time-slot-btn:hover {
+    background: #ff6600;
+    color: #fff;
+    border-color: #ff6600;
+}
+.time-slot-btn:disabled {
+    background: #e0e0e0;
+    color: #999;
+    cursor: not-allowed;
+}
+
+/* =================== SPACE & TABLE =================== */
+.space-options-wrapper {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+.space-radio { display: none; }
+.space-option {
+    border: 1px solid #ddd;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1 1 150px;
+    text-align: center;
+}
+.space-radio:checked + .space-option {
+    border-color: #ff6600;
+    background: #fff3e6;
+}
+
+.map-container { margin-top: 15px; }
+.grid-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.table-btn {
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #fff;
+}
+.table-btn.available:hover { border-color: #ff6600; background: #fff3e6; }
+.table-btn.selected { border-color: #ff6600; background: #ffedd9; }
+.table-btn.occupied { background: #e0e0e0; cursor: not-allowed; }
+
+/* =================== CART TABLE (TAB 3) =================== */
+/* =================== FIELDSET NO BORDER =================== */
+fieldset {
+    border: none;
+    padding: 0;
+    margin-bottom: 28px;
+}
+
+/* Label + select giữ gọn */
+fieldset label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+fieldset select {
+    width: 100%;
+    height: 42px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #fff;
+    box-sizing: border-box;
+}
+
+
+.cart-table {
+    width: 100%;
+    border-collapse: separate;
+    margin: 15px 0;
+    border-spacing: 0;
+    border: 1px solid #e6e6e6;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.cart-table th {
+    text-align: left;
+    background: #fcfcfc;
+    padding: 15px;
+    border-bottom: 2px solid #f0f0f0;
+    color: #888;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.cart-table td {
+    padding: 15px;
+    border-bottom: 1px solid #f9f9f9;
+    vertical-align: middle;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.cart-item-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+
+/* Bộ nút tăng giảm số lượng */
+.qty-wrapper {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    width: fit-content;
+    overflow: hidden;
+}
+
+.qty-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: #fff;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background 0.2s;
+}
+
+.qty-btn:hover { background: #f5f5f5; color: #ff6600; }
+
+.qty-input {
+    width: 40px;
+    text-align: center;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-top: none;
+    border-bottom: none;
+    font-weight: 600;
+    padding: 0;
+}
+
+
+/* Nút thêm món */
+.add-food-link {
+    display: inline-block;
+    margin-top: 10px;
+    color: #ff6600;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.add-food-link:hover { text-decoration: underline; }
+
+
+/* Phần tổng kết tiền */
+.summary-container {
+    background: #fffaf5;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #ffe0cc;
+    margin-top: 20px;
+}
+
+.summary-line {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    color: #555;
+}
+
+.grand-total-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 2px dashed #ffe0cc;
+}
+
+.grand-total-line h3 { margin: 0; color: #333; }
+
+#grandTotalDisplay {
+    font-size: 1.6rem;
+    color: #e74c3c;
+    font-weight: 800;
+}
+
+/* ==========================================================================
+   5. ĐIỀU HƯỚNG (BUTTONS)
+   ========================================================================== */
+.tab-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn-next, .btn-back, .btn-book {
+    padding: 14px 35px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s;
+}
+
+.btn-next, .btn-book {
+    background: #ff6600;
+    color: #fff;
+    flex-grow: 0.2;
+}
+
+.btn-book:hover, .btn-next:hover {
+    background: #e65c00;
+    box-shadow: 0 5px 15px rgba(230, 92, 0, 0.3);
+}
+
+.btn-back {
+    background: #f1f1f1;
+    color: #666;
+}
+
+.btn-back:hover { background: #e5e5e5; }
+
+#note {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box; 
+    resize: vertical;      
+}
+
+/* ==========================================================================
+   6. RESPONSIVE
+   ========================================================================== */
+@media (max-width: 768px) {
+    .tabs { flex-wrap: wrap; }
+    .tab { flex: 1; padding: 10px; font-size: 13px; text-align: center; }
+    .cart-table th:nth-child(2), .cart-table td:nth-child(2) { display: none; }
+    .tab-buttons { flex-direction: column-reverse; }
+    .btn-next, .btn-back, .btn-book { width: 100%; }
+}
