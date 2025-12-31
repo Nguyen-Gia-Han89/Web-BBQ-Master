@@ -14,6 +14,7 @@ encoding//src/main/java/controller/VNPayReturnServlet.java=UTF-8
 encoding//src/main/java/dao/BookingDAO.java=UTF-8
 encoding//src/main/java/dao/BookingDetailDAO.java=UTF-8
 encoding//src/main/java/dao/CustomerDAO.java=UTF-8
+encoding//src/main/java/dao/DBCPDataSource.java=UTF-8
 encoding//src/main/java/dao/DishDAO.java=UTF-8
 encoding//src/main/java/dao/PromotionDAO.java=UTF-8
 encoding//src/main/java/dao/ServiceDAO.java=UTF-8
