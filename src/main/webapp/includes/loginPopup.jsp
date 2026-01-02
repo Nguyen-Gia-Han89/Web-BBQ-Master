@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 	<div class="login-modal" id="loginModal">
 	    <div class="modal-content">
@@ -8,7 +8,7 @@
 	        
 	        <div class="form-box" id="loginBox">
 	            <h2>Đăng nhập</h2>
-	            <form action="<c:url value='/LoginServlet' />" method="post">
+	            <form action="${pageContext.request.contextPath}/login" method="post">
 	                <input type="email" name="email" placeholder="Email đăng nhập" required>
 	                <input type="password" name="password" placeholder="Mật khẩu" required>
 	                <button type="submit" class="btn">Đăng nhập</button>

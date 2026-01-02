@@ -1,37 +1,37 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%-- Lấy trang hiện tại --%>
 <c:set var="currentPage" value="${pageContext.request.servletPath}" />
 
-<%-- URL dùng chung --%>
+<%-- URL dùng chung (qua Servlet) --%>
 <c:url var="homeUrl" value="/index.jsp" />
 <c:url var="menuUrl" value="/menu" />
 <c:url var="bookTableUrl" value="/booking-table" />
-<c:url var="bookPartytUrl" value="/pages/party-booking.jsp" />
+<c:url var="bookPartyUrl" value="/pages/party-booking.jsp" />
 <c:url var="promotionUrl" value="/promotions" />
-<c:url var="contactUrl" value="/pages/contact.jsp" />
-<c:url var="cartUrl" value="/pages/cart.jsp" />
+<c:url var="contactUrl" value="/contact/contact.jsp" />
+<c:url var="cartUrl" value="/cart" />
 <c:url var="logoUrl" value="/images/Logo.jpg" />
 
-<%-- Active class --%>
+<%-- Active class theo servlet --%>
 <c:set var="homeActive" value="${currentPage == '/index.jsp' ? 'active' : ''}" />
 <c:set var="menuActive" value="${currentPage == '/menu' ? 'active' : ''}" />
-<c:set var="bookTableActive" value="${currentPage == '/pages/book-table.jsp' ? 'active' : ''}" />
-<c:set var="bookPartyActive" value="${currentPage == '/pages/party-book.jsp' ? 'active' : ''}" />
+<c:set var="promotionActive" value="${currentPage == '/promotions' ? 'active' : ''}" />
+<c:set var="contactActive" value="${currentPage == '/contact/contact.jsp' ? 'active' : ''}" />
 
 <c:set var="serviceActiveClass" value="" />
-<c:if test="${currentPage == '/pages/book-table.jsp'
-          or currentPage == '/pages/book-party.jsp'}">
+<c:if test="${currentPage == '/booking-table' 
+          or currentPage == '/pages/party-booking.jsp'}">
     <c:set var="serviceActiveClass" value="active" />
 </c:if>
 
+<c:set var="bookTableActive" value="${currentPage == '/booking-table' ? 'active' : ''}" />
+<c:set var="bookPartyActive" value="${currentPage == '/pages/party-booking.jsp' ? 'active' : ''}" />
 
-<c:set var="promotionActive" value="${currentPage == '/pages/promotion.jsp' ? 'active' : ''}" />
 
-<c:set var="contactActive" value="${currentPage == '/pages/contact.jsp' ? 'active' : ''}" />
 
 <header class="header">
 
@@ -79,16 +79,9 @@
         <!-- CART -->
         <a href="${cartUrl}" class="cart-icon">
 		    <i class="fa-solid fa-cart-shopping"></i>
-		    <c:choose>
-		        <c:when test="${empty sessionScope.cart or sessionScope.cart.totalQuantity == 0}">
-		            <span id="cart-badge" class="cart-badge" style="display:none;">0</span>
-		        </c:when>
-		        <c:otherwise>
-		            <span id="cart-badge" class="cart-badge">
-		                ${sessionScope.cart.totalQuantity}
-		            </span>
-		        </c:otherwise>
-		    </c:choose>
+		    <span id="cart-badge" class="cart-badge">
+		        <c:out value="${not empty sessionScope.cart ? sessionScope.cart.totalQuantity : 0}" />
+		    </span>
 		</a>
 
 
@@ -118,7 +111,7 @@
                 </a>
                 <hr>
                 
-                <a href="${pageContext.request.contextPath}/LogoutServlet" class="logout-item">
+                <a href="${pageContext.request.contextPath}/logout" class="logout-item">
                     <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
                 </a>
             </div>
@@ -131,5 +124,9 @@
 <jsp:include page="/includes/loginPopup.jsp" />
 
 
+<script>
+    // Ép kiểu contextPath thành biến toàn cục để file cart.js dùng được ở mọi nơi
+	window.contextPath = "${pageContext.request.contextPath}";
+</script>
 <script src="<c:url value='/js/login.js' />"></script>
 <script src="<c:url value='/js/header.js' />"></script>

@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib uri="jakarta.tags.core" prefix="c" %>
-<%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -61,30 +61,26 @@
             <c:if test="${not empty foods}">
                 <c:forEach var="dish" items="${foods}">
                     <div class="item-card">
-
-                        <!-- 🔥 FIX ẢNH: LINK ONLINE KHÔNG GHÉP CONTEXTPATH -->
-                        <img src="${dish.imageUrl}" alt="${dish.name}">
-
-                        <h4>${dish.name}</h4>
-                        <p class="description">${dish.description}</p>
-
-                        <p class="price">
-                            <c:choose>
-                                <c:when test="${dish.price > 0}">
-                                    <fmt:formatNumber value="${dish.price}" pattern="#,##0"/>đ
-                                </c:when>
-                                <c:otherwise>
-                                    (Liên hệ giá)
-                                </c:otherwise>
-                            </c:choose>
-                        </p>
-
-                        <form action="${pageContext.request.contextPath}/cart" method="post" style="display: inline;">
-								<input type="hidden" name="dishId" value="${dish.dishId}"> <input
-									type="hidden" name="action" value="add">
-								<button type="submit" class="order-btn">Đặt món</button>
-							</form>
-                    </div>
+					    <img src="${dish.imageUrl}" alt="${dish.name}" class="dish-img">
+					
+					    <h4>${dish.name}</h4>
+					    <p class="description">${dish.description}</p>
+					
+					    <p class="price">
+					        <c:choose>
+					            <c:when test="${dish.price > 0}">
+					                <fmt:formatNumber value="${dish.price}" pattern="#,##0"/>đ
+					            </c:when>
+					            <c:otherwise>(Liên hệ giá)</c:otherwise>
+					        </c:choose>
+					    </p>
+					
+					    <button type="button" 
+					            class="order-btn btn-add-to-cart" 
+					            data-id="${dish.dishId}">
+					        Đặt món
+					    </button>
+					</div>
                 </c:forEach>
             </c:if>
 
@@ -97,6 +93,7 @@
 <!-- JS -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="<c:url value='/js/menu.js' />"></script>
+<script src="<c:url value='/js/cart.js' />"></script>
 
 </body>
 </html>

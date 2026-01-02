@@ -1,43 +1,43 @@
 package controller;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import dao.CustomerDAO;
 import model.Customer;
 
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
 import java.io.IOException;
 
-import dao.CustomerDAO;
-
-/**
- * Servlet implementation class LoginServlet
- */
-@WebServlet("/LoginServlet")
+@WebServlet("/login")
 public class LoginServlet extends HttpServlet {
-	
-	private CustomerDAO userDAO = new CustomerDAO();
-	
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-    
-		String email = request.getParameter("email");
-		String password = request.getParameter("password");
 
-		
-        Customer customer = userDAO.login(email, password);
-        
-		// Kiểm tra đăng nhập (ví dụ đơn giản)
+    private final CustomerDAO customerDAO = new CustomerDAO();
+
+    /* =======================
+     * POST: Xử lý đăng nhập
+     * ======================= */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        request.setCharacterEncoding("UTF-8");
+
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+
+        Customer customer = customerDAO.login(email, password);
+
         if (customer != null) {
-            HttpSession session = request.getSession();
-            session.setAttribute("customer", customer); 
-            response.sendRedirect("index.jsp");
-        } else {
-            request.setAttribute("error", "Email hoặc mật khẩu không đúng!");
-            request.getRequestDispatcher("index.jsp").forward(request, response);
-        }
-	}
+            HttpSession session = request.getSession(true);
+            session.setAttribute("customer", customer);
 
+            // Đăng nhập thành công → về trang chủ
+            response.sendRedirect(request.getContextPath() + "/index.jsp");
+        } else {
+            // Đăng nhập thất bại
+            request.setAttribute("error", "Email hoặc mật khẩu không đúng");
+            request.getRequestDispatcher("index.jsp")
+                   .forward(request, response);
+        }
+    }
 }

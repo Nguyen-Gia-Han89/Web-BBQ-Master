@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -57,9 +57,12 @@
                                     <td><fmt:formatNumber value="${item.total}" pattern="#,##0"/> đ</td>
                                     <td>
                                         <form action="${pageContext.request.contextPath}/cart" method="post" class="remove-form">
-                                            <input type="hidden" name="dishId" value="${item.dish.dishId}">
-                                            <button type="submit" class="remove-btn">Xóa</button>
-                                        </form>
+										    <input type="hidden" name="dishId" value="${item.dish.dishId}">
+										    <button type="submit" name="action" value="remove" class="remove-btn" 
+											        onclick="return confirm('Bạn có chắc chắn muốn xóa món này khỏi giỏ hàng?')">
+											    Xóa
+											</button>
+										</form>
                                     </td>
                                 </tr>
                             </c:forEach>

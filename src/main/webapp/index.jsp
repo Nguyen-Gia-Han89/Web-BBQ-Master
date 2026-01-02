@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
 
 <!DOCTYPE html>
@@ -93,24 +93,24 @@
 	        
 	        <c:forEach var="dish" items="${dishList.dishes}">
 	            <c:if test="${dish.combo and dish.available}">
-	                <div class="combo-card">
-	                    <img src="${dish.imageUrl}" alt="${dish.name}">
-	                    <h3>${dish.name}</h3>
-	                    <p>${dish.description}</p>
-	
-	                    <div class="combo-footer">
-	                        <span class="price">
-	                            <fmt:formatNumber value="${dish.price}" pattern="#,##0"/>đ
-	                        </span>
-	
-	                        <!-- ADD TO CART -->
-	                        <form action="${pageContext.request.contextPath}/cart" method="post">
-	                            <input type="hidden" name="dishId" value="${dish.dishId}">
-	                            <input type="hidden" name="action" value="add">
-	                            <button type="submit" class="btn-order">Đặt ngay</button>
-	                        </form>
-	                    </div>
-	                </div>
+	                <div class="combo-card"> 
+					    <img src="${dish.imageUrl}" class="dish-img" alt="${dish.name}">
+					    
+					    <h3>${dish.name}</h3>
+					    <p>${dish.description}</p>
+					
+					    <div class="combo-footer">
+					        <span class="price">
+					            <fmt:formatNumber value="${dish.price}" pattern="#,##0"/>đ
+					        </span>
+					
+					        <button type="button" 
+					                class="btn-order btn-add-to-cart" 
+					                data-id="${dish.dishId}">
+					            Đặt ngay
+					        </button>
+					    </div>
+					</div>
 	            </c:if>
 	        </c:forEach>
 	    </div>
@@ -122,5 +122,6 @@
 
     <script src="<c:url value='/js/main.js'/>"></script>
 	<script src="<c:url value='/js/cart.js'/>"></script>
+
 </body>
 </html>

@@ -1,105 +1,110 @@
 package controller;
 
 import com.vnpay.common.Config;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
 @WebServlet("/payment")
 public class PaymentServlet extends HttpServlet {
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        Double amountVal = (Double) session.getAttribute("PAYMENT_AMOUNT");
-        Integer bookingId = (Integer) session.getAttribute("BOOKING_ID");
+    private void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
 
-        // 1. Kiểm tra dữ liệu đầu vào
-        if (amountVal == null || bookingId == null || amountVal < 5000) {
-            System.out.println("Lỗi: Số tiền không hợp lệ hoặc thiếu Booking ID");
-            response.sendRedirect("booking-fail.jsp");
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            response.sendRedirect(request.getContextPath() + "/booking-fail.jsp");
             return;
         }
 
-        // 2. Thiết lập các tham số cơ bản cho VNPAY
-        Map<String, String> vnp_Params = new HashMap<>();
-        vnp_Params.put("vnp_Version", "2.1.0");
-        vnp_Params.put("vnp_Command", "pay");
-        vnp_Params.put("vnp_TmnCode", Config.vnp_TmnCode);
-        vnp_Params.put("vnp_Amount", String.valueOf((long) (amountVal * 100))); // Nhân 100 theo quy định
-        vnp_Params.put("vnp_CurrCode", "VND");
-        vnp_Params.put("vnp_TxnRef", String.valueOf(bookingId));
-        vnp_Params.put("vnp_OrderInfo", "Thanh toan BBQ Master don hang #" + bookingId);
-        vnp_Params.put("vnp_OrderType", "other");
-        vnp_Params.put("vnp_Locale", "vn");
-        vnp_Params.put("vnp_ReturnUrl", Config.vnp_ReturnUrl);
-        vnp_Params.put("vnp_IpAddr", Config.getIpAddress(request));
+        Double amount = (Double) session.getAttribute("PAYMENT_AMOUNT");
+        Integer bookingId = (Integer) session.getAttribute("BOOKING_ID");
 
-        Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-        vnp_Params.put("vnp_CreateDate", formatter.format(cld.getTime()));
+        /* =======================
+         * 1. Validate dữ liệu
+         * ======================= */
+        if (amount == null || bookingId == null || amount < 5000) {
+            System.out.println("PAYMENT ERROR: Invalid amount or bookingId");
+            response.sendRedirect(request.getContextPath() + "/booking-table/booking-fail.jsp");
+            return;
+        }
 
-        // 3. Sắp xếp danh sách tham số theo bảng chữ cái (A-Z)
-        List<String> fieldNames = new ArrayList<>(vnp_Params.keySet());
+        /* =======================
+         * 2. Tạo params VNPAY
+         * ======================= */
+        Map<String, String> vnpParams = new HashMap<>();
+        vnpParams.put("vnp_Version", "2.1.0");
+        vnpParams.put("vnp_Command", "pay");
+        vnpParams.put("vnp_TmnCode", Config.vnp_TmnCode);
+        vnpParams.put("vnp_Amount", String.valueOf((long) (amount * 100)));
+        vnpParams.put("vnp_CurrCode", "VND");
+        vnpParams.put("vnp_TxnRef", String.valueOf(bookingId));
+        vnpParams.put("vnp_OrderInfo", "Thanh toan BBQ Master don hang #" + bookingId);
+        vnpParams.put("vnp_OrderType", "other");
+        vnpParams.put("vnp_Locale", "vn");
+        vnpParams.put("vnp_ReturnUrl", Config.vnp_ReturnUrl);
+        vnpParams.put("vnp_IpAddr", Config.getIpAddress(request));
+
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        vnpParams.put("vnp_CreateDate", sdf.format(calendar.getTime()));
+
+        /* =======================
+         * 3. Sort + build query
+         * ======================= */
+        List<String> fieldNames = new ArrayList<>(vnpParams.keySet());
         Collections.sort(fieldNames);
 
-        // 4. Xây dựng chuỗi Query và HashData
         StringBuilder query = new StringBuilder();
         StringBuilder hashData = new StringBuilder();
-        Iterator<String> itr = fieldNames.iterator();
 
-        while (itr.hasNext()) {
-            String fieldName = itr.next();
-            String fieldValue = vnp_Params.get(fieldName);
+        for (Iterator<String> it = fieldNames.iterator(); it.hasNext(); ) {
+            String key = it.next();
+            String value = vnpParams.get(key);
 
-            if ((fieldValue != null) && (fieldValue.length() > 0)) {
-                // Encode Key và Value
-                String encodedKey = URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString());
-                String encodedValue = URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString());
+            if (value != null && !value.isEmpty()) {
+                String encKey = URLEncoder.encode(key, StandardCharsets.US_ASCII);
+                String encValue = URLEncoder.encode(value, StandardCharsets.US_ASCII);
 
-                // Xây dựng Query String (Dùng cho URL thực tế)
-                query.append(encodedKey).append('=').append(encodedValue);
+                query.append(encKey).append('=').append(encValue);
+                hashData.append(key).append('=').append(encValue);
 
-                // Xây dựng Hash Data (Dùng để tạo chữ ký)
-                hashData.append(fieldName).append('=').append(encodedValue);
-
-                if (itr.hasNext()) {
+                if (it.hasNext()) {
                     query.append('&');
                     hashData.append('&');
                 }
             }
         }
 
-        // 5. Tạo chữ ký Secure Hash bằng HMAC SHA512
-        String vnp_SecureHash = Config.hmacSHA512(Config.secretKey, hashData.toString());
-        
-        // 6. Tạo URL cuối cùng để Redirect
-        String paymentUrl = Config.vnp_PayUrl + "?" + query.toString() + "&vnp_SecureHash=" + vnp_SecureHash;
+        /* =======================
+         * 4. Secure hash
+         * ======================= */
+        String secureHash = Config.hmacSHA512(Config.secretKey, hashData.toString());
 
-        System.out.println("Redirecting to VNPAY: " + paymentUrl);
+        String paymentUrl = Config.vnp_PayUrl
+                + "?" + query
+                + "&vnp_SecureHash=" + secureHash;
+
+        System.out.println("VNPAY REDIRECT: " + paymentUrl);
+
         response.sendRedirect(paymentUrl);
     }
 }
