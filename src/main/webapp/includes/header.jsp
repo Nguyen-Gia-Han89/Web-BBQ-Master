@@ -9,8 +9,9 @@
 <%-- URL dùng chung (qua Servlet) --%>
 <c:url var="homeUrl" value="/index.jsp" />
 <c:url var="menuUrl" value="/menu" />
+<%-- URL dùng chung (Tất cả đi qua Servlet /booking) --%>
 <c:url var="bookTableUrl" value="/booking-table" />
-<c:url var="bookPartyUrl" value="/pages/party-booking.jsp" />
+<c:url var="bookPartyUrl" value="/party-booking" />
 <c:url var="promotionUrl" value="/promotions" />
 <c:url var="contactUrl" value="/contact/contact.jsp" />
 <c:url var="cartUrl" value="/cart" />
@@ -22,14 +23,12 @@
 <c:set var="promotionActive" value="${currentPage == '/promotions' ? 'active' : ''}" />
 <c:set var="contactActive" value="${currentPage == '/contact/contact.jsp' ? 'active' : ''}" />
 
-<c:set var="serviceActiveClass" value="" />
-<c:if test="${currentPage == '/booking-table' 
-          or currentPage == '/pages/party-booking.jsp'}">
-    <c:set var="serviceActiveClass" value="active" />
-</c:if>
+<%-- Logic Active Class mới --%>
+<c:set var="isBookingPage" value="${currentPage == '/booking-table' or currentPage == '/party-booking'}" />
+<c:set var="serviceActiveClass" value="${isBookingPage ? 'active' : ''}" />
 
 <c:set var="bookTableActive" value="${currentPage == '/booking-table' ? 'active' : ''}" />
-<c:set var="bookPartyActive" value="${currentPage == '/pages/party-booking.jsp' ? 'active' : ''}" />
+<c:set var="bookPartyActive" value="${currentPage == '/party-booking' ? 'active' : ''}" />
 
 
 
@@ -58,12 +57,10 @@
 			    </a>
 			    <ul class="dropdown-menu">
 			        <li>
-					    <a href="${bookTableUrl}" class="${bookTableActive}">Đặt bàn</a>
-					</li>
+			            <a href="${bookTableUrl}" class="${bookTableActive}">Đặt bàn</a>
+			        </li>
 			        <li>
-			            <a href="${bookPartyUrl}" class="${bookPartyActive}">
-			                Đặt tiệc
-			            </a>
+			            <a href="${bookPartyUrl}" class="${bookPartyActive}">Đặt tiệc</a>
 			        </li>
 			    </ul>
 			</li>

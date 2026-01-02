@@ -59,7 +59,6 @@
 				
 				<div class="group-btns">
 				    <a href="<c:url value='/'/>" class="btn-action btn-home">Trang chủ</a>
-				    <a href="<c:url value='/customer-history'/>" class="btn-action btn-history">Lịch sử của tôi</a>
 				</div>
             </div>
         </div>
