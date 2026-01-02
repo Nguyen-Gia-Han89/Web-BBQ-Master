@@ -79,10 +79,11 @@
                             </c:choose>
                         </p>
 
-                        <button class="order-btn"
-                                onclick="addToCart(${dish.dishId})">
-                            Đặt món
-                        </button>
+                        <form action="${pageContext.request.contextPath}/cart" method="post" style="display: inline;">
+								<input type="hidden" name="dishId" value="${dish.dishId}"> <input
+									type="hidden" name="action" value="add">
+								<button type="submit" class="order-btn">Đặt món</button>
+							</form>
                     </div>
                 </c:forEach>
             </c:if>

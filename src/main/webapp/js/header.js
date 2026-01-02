@@ -24,16 +24,31 @@ document.addEventListener('DOMContentLoaded', function () {
             if (serviceDropdown) serviceDropdown.classList.remove('open');
         });
     }
+	document.addEventListener('DOMContentLoaded', function () {
+	    const avatarToggle = document.getElementById('avatarToggle');
+	    const userDropdown = document.getElementById('userDropdown');
+	    const serviceDropdown = document.getElementById('serviceDropdown'); // Giả định id menu dịch vụ của bạn
 
-    // --- 3. CLICK RA NGOÀI THÌ ĐÓNG TẤT CẢ ---
-    document.addEventListener('click', function (e) {
-        // Đóng menu Dịch vụ
-        if (serviceDropdown && !serviceDropdown.contains(e.target)) {
-            serviceDropdown.classList.remove('open');
-        }
-        // Đóng menu Avatar
-        if (userDropdown && !avatarToggle.contains(e.target)) {
-            userDropdown.classList.remove('show');
-        }
-    });
+	    // Mở menu Avatar khi click
+	    if (avatarToggle) {
+	        avatarToggle.addEventListener('click', function (e) {
+	            e.stopPropagation();
+	            userDropdown.classList.toggle('show');
+	            // Nếu có menu khác đang mở thì nên đóng lại
+	            if(serviceDropdown) serviceDropdown.classList.remove('open');
+	        });
+	    }
+
+	    // --- CLICK RA NGOÀI THÌ ĐÓNG TẤT CẢ ---
+	    document.addEventListener('click', function (e) {
+	        // Đóng menu Dịch vụ (nếu click ra ngoài nó)
+	        if (serviceDropdown && !serviceDropdown.contains(e.target)) {
+	            serviceDropdown.classList.remove('open');
+	        }
+	        // Đóng menu Avatar (nếu click ra ngoài nó)
+	        if (userDropdown && !avatarToggle.contains(e.target)) {
+	            userDropdown.classList.remove('show');
+	        }
+	    });
+	});
 });

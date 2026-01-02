@@ -1,0 +1,237 @@
+@charset "UTF-8";
+
+/* ================== VARIABLES ================== */
+:root {
+    --bg-primary: #e8f4fd;
+    --bg-card: #ffffff;
+
+    --text-primary: #1a365d;
+    --text-secondary: #4a5568;
+    --text-accent: #2d3748;
+
+    --border-radius: 20px;
+
+    --shadow-light: inset 4px 4px 8px rgba(209, 231, 240, 0.3),
+                    inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+    --shadow-dark: 8px 8px 16px rgba(209, 231, 240, 0.4),
+                   -8px -8px 16px rgba(255, 255, 255, 0.9);
+
+    --gradient-avatar: linear-gradient(135deg, #667eea, #764ba2);
+    --btn-edit: linear-gradient(135deg, #667eea, #764ba2);
+    --btn-password: linear-gradient(135deg, #f093fb, #f5576c);
+
+    --font-family: "Inter", "Segoe UI", Roboto, sans-serif;
+    --spacing: 16px;
+
+    --input-bg: #f7fafc;
+    --input-border: rgba(74, 85, 104, 0.3);
+}
+
+/* ================== GLOBAL ================== */
+body {
+    background: var(--bg-primary);
+    font-family: var(--font-family);
+    margin: 0;
+    padding: 0;
+    color: var(--text-accent);
+}
+
+/* ================== CONTAINER ================== */
+.profile-container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing);
+}
+
+/* ================== TITLE ================== */
+.profile-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+/* ================== BACK BUTTON ================== */
+.back-wrapper {
+    width: clamp(400px, 90vw, 550px);
+    margin-bottom: 10px;
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.btn-back:hover {
+    color: #667eea;
+    transform: translateX(-3px);
+}
+
+/* ================== CARD ================== */
+.profile-card {
+    background: var(--bg-card);
+    width: clamp(400px, 90vw, 550px);
+    padding: 32px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-light);
+    transition: 0.3s ease;
+    position:relative;
+}
+
+.profile-card:hover {
+    box-shadow: var(--shadow-dark);
+    transform: translateY(-4px);
+}
+
+/* ================== AVATAR ================== */
+.avatar-large {
+    width: 120px;
+    height: 120px;
+    background: var(--gradient-avatar);
+    color: #fff;
+    font-size: 48px;
+    font-weight: 700;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+/* ================== INFO / FORM ================== */
+.profile-details {
+    margin-top: 16px;
+}
+
+.info-group {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    align-items: center;
+}
+
+.info-group:last-child {
+    border-bottom: none;
+}
+
+.info-group label {
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.info-group span {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* ================== INPUT ================== */
+.info-group input {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--input-border);
+    background: var(--input-bg);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-accent);
+    box-shadow: inset 2px 2px 4px rgba(209, 231, 240, 0.2),
+                inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+    transition: 0.2s;
+}
+
+.info-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
+.info-group input:disabled {
+    background: #edf2f7;
+    color: var(--text-secondary);
+}
+
+/* ================== ACTIONS ================== */
+.profile-actions {
+    margin-top: 28px;
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+}
+
+/* ================== BUTTON ================== */
+.btn {
+    padding: 14px 28px;
+    border-radius: var(--border-radius);
+    border: none;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.btn-edit {
+    background: var(--btn-edit);
+}
+
+.btn-password {
+    background: var(--btn-password);
+}
+
+/* Nút quay lại nằm trong card */
+.btn-back.inside-card {
+    position: absolute;
+    top: 18px;
+    left: 20px;
+
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    transition: 0.25s ease;
+}
+
+/* Hover đẹp */
+.btn-back.inside-card:hover {
+    color: #667eea;
+    transform: translateX(-4px);
+}
+
+/* ================== RESPONSIVE ================== */
+@media (max-width: 768px) {
+    .info-group {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-actions {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}
