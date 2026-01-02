@@ -3,6 +3,7 @@ package dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -146,6 +147,31 @@ public class CustomerDAO {
         }
         return false;
     }
+    
+    public boolean updateProfile(Customer customer) {
+
+        String checkSql = "UPDATE Customer SET FullName = ?, PhoneNumber = ? WHERE CustomerID = ?";
+
+        try (Connection con = DBCPDataSource.getDataSource().getConnection();
+             PreparedStatement ps = con.prepareStatement(checkSql)) {
+
+            ps.setString(1, customer.getFullName());
+            ps.setString(2, customer.getPhoneNumber());
+            ps.setInt(3, customer.getCustomerID());
+
+            int rows = ps.executeUpdate();
+            System.out.println("Update Profile rows affected = " + rows);
+
+            // ✅ DÒNG QUYẾT ĐỊNH
+            return rows > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
 
     
     // ================== TEST MAIN ==================
@@ -157,7 +183,7 @@ public class CustomerDAO {
             System.out.println(c.getCustomerID() + " - " + c.getFullName())
         );
 //
-//        System.out.println("\n=== CUSTOMER BY ID (1) ===");
+//      System.out.println("\n=== CUSTOMER BY ID (1) ===");
 //        Customer c = dao.getCustomerById(1);
 //        if (c != null) {
 //            System.out.println(c.getFullName() + " | " + c.getEmail());
@@ -171,5 +197,21 @@ public class CustomerDAO {
 //        Customer c1 = new Customer("Tran", "0231452513", "tran@gmail.com", "123456");
 //        boolean register = dao.register(c1);
 //        System.out.println(register ? "Register OK" : "Register Fail");
+      
+       
+        System.out.println("\n=== EDIT PROFILE TEST ===");
+
+        Customer c = new Customer();
+        c.setCustomerID(1);
+        c.setFullName("Test Update Java");
+        c.setPhoneNumber("0912345678");
+
+        boolean result = dao.updateProfile(c);
+
+        System.out.println(result ? "Edit Profile OK" : "Edit Profile FAIL");
     }
 }
+
+	
+	
+

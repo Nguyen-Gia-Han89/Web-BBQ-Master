@@ -10,7 +10,7 @@
 <c:url var="homeUrl" value="/index.jsp" />
 <c:url var="menuUrl" value="/menu" />
 <c:url var="bookTableUrl" value="/booking-table" />
-<c:url var="bookEventUrl" value="/pages/book-event.jsp" />
+<c:url var="bookPartytUrl" value="/pages/party-booking.jsp" />
 <c:url var="promotionUrl" value="/promotions" />
 <c:url var="contactUrl" value="/pages/contact.jsp" />
 <c:url var="cartUrl" value="/pages/cart.jsp" />
@@ -20,11 +20,11 @@
 <c:set var="homeActive" value="${currentPage == '/index.jsp' ? 'active' : ''}" />
 <c:set var="menuActive" value="${currentPage == '/menu' ? 'active' : ''}" />
 <c:set var="bookTableActive" value="${currentPage == '/pages/book-table.jsp' ? 'active' : ''}" />
-<c:set var="bookEventActive" value="${currentPage == '/pages/book-event.jsp' ? 'active' : ''}" />
+<c:set var="bookPartyActive" value="${currentPage == '/pages/party-book.jsp' ? 'active' : ''}" />
 
 <c:set var="serviceActiveClass" value="" />
 <c:if test="${currentPage == '/pages/book-table.jsp'
-          or currentPage == '/pages/book-event.jsp'}">
+          or currentPage == '/pages/book-party.jsp'}">
     <c:set var="serviceActiveClass" value="active" />
 </c:if>
 
@@ -61,7 +61,7 @@
 					    <a href="${bookTableUrl}" class="${bookTableActive}">Đặt bàn</a>
 					</li>
 			        <li>
-			            <a href="${bookEventUrl}" class="${bookEventActive}">
+			            <a href="${bookPartyUrl}" class="${bookPartyActive}">
 			                Đặt tiệc
 			            </a>
 			        </li>
@@ -93,36 +93,43 @@
 
 
         <!-- LOGIN / AVATAR -->
-        <c:choose>
-		    <c:when test="${empty sessionScope.customer}">
-		        <button class="login-btn" id="openLogin">
-		            <i class="fa-solid fa-user"></i> Đăng nhập
-		        </button>
-		    </c:when>
-		    <c:otherwise>
-		        <c:set var="firstChar" value="${fn:toUpperCase(fn:substring(sessionScope.customer.fullName, 0, 1))}" />
-		        
-		        <div class="user-profile-container" id="avatarToggle">
-		            <div class="user-avatar-circle">${firstChar}</div>
-		            
-		            <div class="user-dropdown-menu" id="userDropdown">
-		                <div class="dropdown-header">
-		                    <strong>${sessionScope.customer.fullName}</strong>
-		                    <span>${sessionScope.customer.email}</span>
-		                </div>
-		                <hr>
-		                <a href="${pageContext.request.contextPath}/LogoutServlet" class="logout-item">
-		                    <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
-		                </a>
-		            </div>
-		        </div>
-		    </c:otherwise>
-		</c:choose>
-
+     <c:choose>
+    <c:when test="${empty sessionScope.customer}">
+        <button class="login-btn" id="openLogin">
+            <i class="fa-solid fa-user"></i> Đăng nhập
+        </button>
+    </c:when>
+    <c:otherwise>
+        <c:set var="firstChar" value="${fn:toUpperCase(fn:substring(sessionScope.customer.fullName, 0, 1))}" />
+        
+        <div class="user-profile-container" id="avatarToggle">
+            <div class="user-avatar-circle">${firstChar}</div>
+            
+            <div class="user-dropdown-menu" id="userDropdown">
+                <div class="dropdown-header">
+                    <strong>${sessionScope.customer.fullName}</strong>
+                    <span>${sessionScope.customer.email}</span>
+                </div>
+                
+                <hr>
+                
+                <a href="${pageContext.request.contextPath}/profile" class="logout-item">
+                    <i class="fa-solid fa-address-card"></i> Thông tin cá nhân
+                </a>
+                <hr>
+                
+                <a href="${pageContext.request.contextPath}/LogoutServlet" class="logout-item">
+                    <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                </a>
+            </div>
+        </div>
+    </c:otherwise>
+</c:choose>
     </div>
 </header>
 
 <jsp:include page="/includes/loginPopup.jsp" />
+
 
 <script src="<c:url value='/js/login.js' />"></script>
 <script src="<c:url value='/js/header.js' />"></script>
