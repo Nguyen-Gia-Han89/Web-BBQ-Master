@@ -1,73 +1,68 @@
-/**
- * 
- */
-function addToCart(dishId) {
-    // 1. Tìm các phần tử quan trọng
-    const dishBtn = document.querySelector(`button[onclick*='addToCart(${dishId})']`);
-    const cartIcon = document.querySelector(".cart-icon");
-    const badge = document.getElementById("cart-badge");
+// Dùng Event Delegation: Lắng nghe trên toàn bộ trang
+document.addEventListener('click', function (e) {
+    // Lắng nghe cả nút 'btn-add-to-cart' (class chung ta vừa thêm)
+    if (e.target && e.target.classList.contains('btn-add-to-cart')) {
+        const btn = e.target;
+        const dishId = btn.getAttribute('data-id');
+        
+        // Tìm khung bao quanh (item-card ở menu hoặc combo-card ở index)
+        const card = btn.closest('.item-card') || btn.closest('.combo-card');
+        const imgToFly = card ? card.querySelector('img') : null;
+        const badge = document.getElementById('cart-badge');
 
-    if (!dishBtn || !cartIcon) {
-        console.error("Không tìm thấy nút bấm hoặc icon giỏ hàng!");
-        return;
+        if (imgToFly && badge) {
+            performFlyAnimation(imgToFly, badge);
+        }
+
+        addToCartAjax(dishId);
     }
+});
 
-    const dishCard = dishBtn.closest('.combo-card');
-    const dishImg = dishCard.querySelector('img');
+function addToCartAjax(dishId) {
+    // Sử dụng window.contextPath đã khai báo ở Header
+    const url = window.contextPath + "/cart?action=add&dishId=" + dishId;
 
-    // 2. Lấy vị trí
-    const rect = dishImg.getBoundingClientRect();
-    const cartRect = cartIcon.getBoundingClientRect();
+    fetch(url, { method: 'POST' })
+        .then(res => {
+            if (res.ok) {
+                // Cập nhật con số trên Header ngay lập tức
+                const badge = document.getElementById('cart-badge');
+                if (badge) {
+                    let count = parseInt(badge.innerText) || 0;
+                    badge.innerText = count + 1;
+                    badge.style.display = 'block'; 
+                }
+            }
+        })
+        .catch(err => console.error("Lỗi đặt hàng:", err));
+}
 
-    // 3. Tạo ảnh bay (Tạo mới thay vì clone để đảm bảo src chuẩn)
-    const flyImg = document.createElement('img');
-    flyImg.src = dishImg.src; 
-    flyImg.className = 'fly-to-cart';
-    
-    // Thiết lập vị trí xuất phát chính xác tuyệt đối
+function performFlyAnimation(img, target) {
+    const flyImg = img.cloneNode(true);
+    const rect = img.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+
     Object.assign(flyImg.style, {
         position: 'fixed',
         top: rect.top + 'px',
         left: rect.left + 'px',
         width: rect.width + 'px',
-        height: rect.height + 'px',
-        zIndex: '100000',
-        opacity: '1',
-        pointerEvents: 'none',
-        transition: 'all 0.8s cubic-bezier(0.42, 0, 0.58, 1)' // Gán trực tiếp vào style để chắc chắn
+        zIndex: '9999',
+        transition: 'all 0.8s ease-in-out',
+        borderRadius: '50%',
+        pointerEvents: 'none'
     });
 
     document.body.appendChild(flyImg);
 
-    // 4. Ép trình duyệt nhận diện vị trí cũ trước khi bay (quan trọng nhất)
-    requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-            Object.assign(flyImg.style, {
-                top: cartRect.top + 'px',
-                left: cartRect.left + 'px',
-                width: '20px',
-                height: '20px',
-                opacity: '0.2',
-                transform: 'rotate(360deg)' // Thêm hiệu ứng xoay cho sinh động
-            });
-        });
-    });
-
-    // 5. Xóa ảnh sau khi bay xong
     setTimeout(() => {
-        if (flyImg.parentNode) flyImg.remove();
-    }, 800);
+        Object.assign(flyImg.style, {
+            top: targetRect.top + 'px',
+            left: targetRect.left + 'px',
+            width: '20px',
+            opacity: '0'
+        });
+    }, 50);
 
-    // 6. Gọi API cập nhật Badge (Giữ nguyên của bạn)
-    fetch('add-to-cart?dishId=' + dishId + '&ajax=true')
-        .then(response => response.json())
-        .then(data => {
-            if (badge) {
-                badge.textContent = data.count;
-                badge.style.display = data.count > 0 ? "inline-block" : "none";
-                badge.classList.add('bounce');
-                setTimeout(() => badge.classList.remove('bounce'), 300);
-            }
-        })
-        .catch(err => console.error("Lỗi Fetch:", err));
+    setTimeout(() => flyImg.remove(), 800);
 }
