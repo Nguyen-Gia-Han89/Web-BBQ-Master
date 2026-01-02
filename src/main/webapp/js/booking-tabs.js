@@ -1,175 +1,193 @@
-
-
-/*************************************************
- * 3. CHUYỂN TAB
- *************************************************/
-function showTab(tabId) {
-    const contents = document.querySelectorAll(".tab-content");
-    const tabs = document.querySelectorAll(".tab");
-
-    contents.forEach(c => {
-        c.classList.remove("active");
-        c.style.display = "none";
-    });
-    tabs.forEach(t => t.classList.remove("active"));
-
-    const targetContent = document.getElementById(tabId);
-    if (targetContent) {
-        targetContent.classList.add("active");
-        targetContent.style.display = "block";
-        if (tabId === "tab3") calculateGrandTotal();
-    }
-
-    const targetTab = document.querySelector(
-        `.tab[data-tab="${tabId}"]`
-    );
-    if (targetTab) targetTab.classList.add("active");
-}
-
-/*************************************************
- * 4. CẬP NHẬT GIỎ HÀNG (AJAX, KHÔNG RELOAD)
- *************************************************/
-function updateBookingCart(dishId, action) {
-    const path = window.location.pathname;
-    const contextPath =
-        path.split("/").length > 2 ? "/" + path.split("/")[1] : "";
-
-    const url = `${contextPath}/add-to-cart?dishId=${dishId}&action=${action}&ajax=true`;
-
-    fetch(url, { method: "POST" })
-        .then(res => {
-            if (!res.ok) throw new Error("Network error");
-            return res.json(); // server trả về JSON giỏ hàng mới
-        })
-        .then(cart => {
-            // Cập nhật tổng tiền món ăn
-            const foodTotalElem = document.getElementById("foodTotalDisplay");
-            foodTotalElem.dataset.foodTotal = cart.totalAmount;
-            foodTotalElem.innerText = cart.totalAmount.toLocaleString("vi-VN") + "đ";
-
-            // Cập nhật số lượng và thành tiền từng món
-            cart.bookingDetails.forEach(item => {
-                const qtyInput = document.querySelector(
-                    `.qty-input[data-dish-id="${item.dish.dishId}"]`
-                );
-                if (qtyInput) {
-                    qtyInput.value = item.quantity;
-                    const totalCell = qtyInput.closest("tr").querySelector("td:last-child");
-                    totalCell.innerText = item.total.toLocaleString("vi-VN") + "đ";
-                }
-            });
-
-            // Tính lại tổng thanh toán (bao gồm dịch vụ)
-            calculateGrandTotal();
-        })
-        .catch(err => {
-            console.error("Lỗi cập nhật giỏ hàng:", err);
-            alert("Có lỗi khi cập nhật giỏ hàng, vui lòng thử lại.");
-        });
-}
-
-/*************************************************
- * 5. KHỞI TẠO KHI TRANG LOAD
- *************************************************/
+/**
+ * booking-tabs.js
+ * BBQ Master - Logic điều hướng và lọc sơ đồ bàn theo khu vực
+ */
 document.addEventListener("DOMContentLoaded", function () {
+    // 1. KHỞI TẠO GIÁ TRỊ MẶC ĐỊNH
+    initDefaultValues();
 
-    /* ---- TÍNH TIỀN BAN ĐẦU ---- */
-    calculateGrandTotal();
-
-    /* ---- KHÔI PHỤC TAB ---- */
-    const savedTab = localStorage.getItem("currentTab");
-    if (savedTab) {
-        showTab(savedTab);
-        localStorage.removeItem("currentTab");
-    }
-
-    /* ---- NÚT NEXT / BACK ---- */
-    document.querySelectorAll(".btn-next").forEach(btn => {
-        btn.addEventListener("click", () => {
-            const current = btn.closest(".tab-content");
-            const contents = [...document.querySelectorAll(".tab-content")];
-            const idx = contents.findIndex(c => c.id === current.id);
-            if (idx < contents.length - 1) {
-                showTab(contents[idx + 1].id);
-                window.scrollTo(0, 0);
-            }
-        });
-    });
-
-    document.querySelectorAll(".btn-back").forEach(btn => {
-        btn.addEventListener("click", () => {
-            const current = btn.closest(".tab-content");
-            const contents = [...document.querySelectorAll(".tab-content")];
-            const idx = contents.findIndex(c => c.id === current.id);
-            if (idx > 0) {
-                showTab(contents[idx - 1].id);
-                window.scrollTo(0, 0);
-            }
-        });
-    });
-
-    /* ---- CHỌN GIỜ ---- */
-    const timeInput = document.getElementById("time");
-    document.querySelectorAll(".time-slot-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-            document
-                .querySelectorAll(".time-slot-btn")
-                .forEach(b => b.classList.remove("active"));
+    // 2. CHỌN GIỜ (DẠNG NÚT BẤM)
+    var timeBtns = document.querySelectorAll(".time-slot-btn");
+    var timeInput = document.getElementById("selectedTime");
+    
+    timeBtns.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            timeBtns.forEach(function (b) { b.classList.remove("active"); });
             btn.classList.add("active");
-            timeInput.value = btn.dataset.time;
+            if (timeInput) timeInput.value = btn.dataset.time;
         });
     });
 
-    /* ---- LỌC BÀN THEO KHÔNG GIAN ---- */
-    const tableBtns = document.querySelectorAll(".table-btn");
+    // 3. CHỌN KHÔNG GIAN & LỌC SƠ ĐỒ BÀN (FIX LỖI HIỂN THỊ TẤT CẢ)
+    var spaceRadios = document.querySelectorAll(".space-radio");
+    var tableBtns = document.querySelectorAll(".table-btn");
 
-    function filterTables(spaceId) {
-        tableBtns.forEach(btn => {
-            btn.style.display =
-                btn.dataset.space === spaceId ? "inline-block" : "none";
+    function filterTablesBySpace() {
+        // Lấy radio khu vực đang được chọn (Tầng 1, Tầng 2, Sân vườn)
+        var selectedRadio = document.querySelector('input[name="spaceId"]:checked');
+        var selectedSpaceId = selectedRadio ? selectedRadio.value.toString().trim() : "";
+        
+        tableBtns.forEach(function (btn) {
+            // Lấy mã không gian từ data-space của nút bàn trong mã HTML của bạn
+            var btnSpaceId = btn.getAttribute("data-space") ? btn.getAttribute("data-space").toString().trim() : "";
+            
+            if (btnSpaceId === selectedSpaceId && selectedSpaceId !== "") {
+                // Hiển thị bàn đúng khu vực
+                btn.style.setProperty("display", "inline-block", "important");
+            } else {
+                // Ẩn các bàn không thuộc khu vực
+                btn.style.setProperty("display", "none", "important");
+                
+                // Nếu bàn đang chọn bỗng nhiên bị ẩn (do đổi khu vực) thì reset chọn bàn
+                if (btn.classList.contains("selected")) {
+                    btn.classList.remove("selected");
+                    if (document.getElementById("selectedTable")) document.getElementById("selectedTable").value = "";
+                    if (document.getElementById("selectedTableDisplay")) document.getElementById("selectedTableDisplay").innerText = "Chưa chọn";
+                }
+            }
         });
     }
 
-    document.querySelectorAll(".space-radio").forEach(radio => {
-        radio.addEventListener("change", () => filterTables(radio.value));
+    // Chạy lọc ngay lập tức để khớp với khu vực mặc định khi load trang
+    filterTablesBySpace();
+
+    // Lắng nghe khi khách hàng đổi khu vực
+    spaceRadios.forEach(function (radio) {
+        radio.addEventListener("change", filterTablesBySpace);
     });
 
-    /* ---- CHỌN BÀN ---- */
-    const tableInput = document.getElementById("selectedTable");
-    const tableDisplay = document.getElementById("selectedTableDisplay");
+    // 4. CHỌN BÀN CỤ THỂ TRÊN SƠ ĐỒ
+    var selectedTableInput = document.getElementById("selectedTable");
+    var selectedTableDisplay = document.getElementById("selectedTableDisplay");
 
-    tableBtns.forEach(btn => {
-        btn.addEventListener("click", () => {
-            tableBtns.forEach(b => b.classList.remove("selected"));
+    tableBtns.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            // Xóa trạng thái chọn của các bàn khác
+            tableBtns.forEach(function (b) { b.classList.remove("selected"); });
+            
+            // Đánh dấu bàn hiện tại
             btn.classList.add("selected");
-            tableInput.value = btn.dataset.id;
-            tableDisplay.textContent = btn.textContent.trim();
+            
+            // Lưu ID vào input ẩn để Servlet xử lý (tableId)
+            if (selectedTableInput) selectedTableInput.value = btn.getAttribute("data-id");
+            
+            // Hiển thị tên bàn lên giao diện (Ví dụ: A01 (4 người))
+            if (selectedTableDisplay) selectedTableDisplay.innerText = btn.innerText.replace(/\s+/g, ' ').trim();
         });
     });
 
-    /* ---- VALIDATE FORM ---- */
-    const bookingForm = document.getElementById("bookingForm");
-    if (bookingForm) {
-		bookingForm.addEventListener("submit", function(e) {
-		    const dateInput = document.getElementById("date");
-		    if (!dateInput.value) {
-		        alert("Vui lòng chọn ngày!");
-		        e.preventDefault();
-		    }
-		});
-    }
+    // 5. ĐIỀU HƯỚNG TAB & KIỂM TRA DỮ LIỆU
+    var tabs = document.querySelectorAll(".tab");
+    tabs.forEach(function (tab) {
+        tab.style.cursor = "pointer";
+        tab.addEventListener("click", function () {
+            var targetTabId = tab.getAttribute("data-tab");
 
-    /* ---- LƯU DỊCH VỤ ĐÃ CHỌN ---- */
-    const serviceSelect = document.getElementById("service");
-    if (serviceSelect) {
-        serviceSelect.addEventListener("change", function () {
-            localStorage.setItem("selectedService", this.value);
-            calculateGrandTotal();
+            if (targetTabId !== "tab1" && !validateContactInfo()) return;
+
+            // Nếu sang Tab xác nhận (tab3), phải chọn bàn trước
+            if (targetTabId === "tab3" && document.getElementById("selectedTable")) {
+                if (!document.getElementById("selectedTable").value) {
+                    alert("Vui lòng chọn một bàn cụ thể!");
+                    showTab("tab2");
+                    return;
+                }
+            }
+            showTab(targetTabId);
         });
+    });
 
-        const savedService = localStorage.getItem("selectedService");
-        if (savedService) {
-            serviceSelect.value = savedService;
-        }
-    }
+    // Nút Tiếp tục
+    document.querySelectorAll(".btn-next").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            var currentTab = document.querySelector(".tab-content.active");
+            var currentTabId = currentTab ? currentTab.id : "";
+            
+            if (currentTabId === "tab1") {
+                if (validateContactInfo()) showTab("tab2");
+            } else if (currentTabId === "tab2") {
+                if (selectedTableInput && !selectedTableInput.value) {
+                    alert("Bạn chưa chọn bàn nào trên sơ đồ!");
+                } else {
+                    showTab("tab3");
+                }
+            }
+            window.scrollTo(0, 0);
+        });
+    });
+
+    // Nút Quay lại
+    document.querySelectorAll(".btn-back").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            var currentTabId = document.querySelector(".tab-content.active").id;
+            if (currentTabId === "tab3") showTab("tab2");
+            else if (currentTabId === "tab2") showTab("tab1");
+            window.scrollTo(0, 0);
+        });
+    });
 });
+
+/**
+ * Khởi tạo Ngày/Giờ mặc định
+ */
+function initDefaultValues() {
+    var dateInput = document.getElementById('bookingDate');
+    if (dateInput && !dateInput.value) {
+        var today = new Date();
+        var yyyy = today.getFullYear();
+        var mm = String(today.getMonth() + 1).padStart(2, '0');
+        var dd = String(today.getDate()).padStart(2, '0');
+        var formattedToday = yyyy + "-" + mm + "-" + dd;
+        dateInput.value = formattedToday;
+        dateInput.min = formattedToday;
+    }
+
+    var firstTimeBtn = document.querySelector(".time-slot-btn");
+    var timeInput = document.getElementById("selectedTime");
+    if (firstTimeBtn && timeInput) {
+        firstTimeBtn.classList.add("active");
+        timeInput.value = firstTimeBtn.dataset.time;
+    }
+}
+
+/**
+ * Kiểm tra thông tin liên hệ
+ */
+function validateContactInfo() {
+    // Lấy phần tử trước
+    var nameInput = document.querySelector('input[name="name"]');
+    var phoneInput = document.querySelector('input[name="phone"]');
+    
+    // Kiểm tra phần tử tồn tại rồi mới lấy giá trị .value
+    var name = nameInput ? nameInput.value.trim() : "";
+    var phone = phoneInput ? phoneInput.value.trim() : "";
+    
+    if (!name || !phone) {
+        alert("Vui lòng nhập đầy đủ Họ tên và Số điện thoại!");
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Hiển thị Tab
+ */
+function showTab(tabId) {
+    document.querySelectorAll(".tab").forEach(function (t) {
+        t.classList.toggle("active", t.getAttribute("data-tab") === tabId);
+    });
+
+    document.querySelectorAll(".tab-content").forEach(function (content) {
+        if (content.id === tabId) {
+            content.style.display = "block";
+            content.classList.add("active");
+        } else {
+            content.style.display = "none";
+            content.classList.remove("active");
+        }
+    });
+
+    if (typeof calculateGrandTotal === "function") {
+        calculateGrandTotal();
+    }
+}

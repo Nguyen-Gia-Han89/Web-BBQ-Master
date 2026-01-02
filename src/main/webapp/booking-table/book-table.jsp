@@ -69,28 +69,23 @@
                     <h3>Thời gian <span class="required">*</span></h3>
                     <label for="guests">Số người (1-20):</label>
                     <input type="number" id="guests" name="guests" min="1" max="20" value="1" required>
-
-                    <div class="date-time-row">
-                        <div class="date-group">
-                            <label for="date">Chọn ngày:</label>
-                            <input type="date" id="date" name="date" required>
-                        </div>
-                        <div class="time-group">
-                            <label>Chọn giờ:</label>
-                            <div id="timeSlots" class="time-slots">
-                                <c:forEach var="h" begin="10" end="21">
-                                    <button type="button" class="time-slot-btn" data-time="${h}:00">
-                                        ${h}:00
-                                    </button>
-                                    <button type="button" class="time-slot-btn" data-time="${h}:30">
-                                        ${h}:30
-                                    </button>
-                                </c:forEach>
-                            </div>
-                            <input type="hidden" id="time" name="time" required>
-                        </div>
-                    </div>
-                </div>
+						
+						<div class="date-time-row">
+					        <label>Ngày:</label>
+					        <input type="date" id="bookingDate" name="date" required>
+					        
+					        <label>Giờ:</label>
+					        <div class="time-slots-container" id="timeSlots">
+					            <c:forEach var="h" begin="10" end="21" varStatus="status">
+					                <button type="button" class="time-slot-btn ${status.first ? 'active' : ''}" 
+					                        data-time="${h}:00">${h}:00</button>
+					                <button type="button" class="time-slot-btn" 
+					                        data-time="${h}:30">${h}:30</button>
+					            </c:forEach>
+					        </div>
+					        <input type="hidden" name="time" id="selectedTime" value="10:00">
+					    </div>
+					</div>
 
                 <div class="tab-buttons">
 				    <button type="button" class="btn-next">Tiếp tục</button>
@@ -100,22 +95,20 @@
 
             <!-- Tab 2: Chọn bàn -->
             <div class="tab-content" id="tab2">
-                <div class="booking-card">
-                    <h3>Chọn không gian</h3>
-                    <div class="space-options-wrapper">
-					    <c:forEach var="sp" items="${spaces}">
-					        <input type="radio" class="space-radio" name="spaceId" 
-					               id="space-${sp.spaceId}" value="${sp.spaceId}">
-					        <label for="space-${sp.spaceId}" class="space-option">
-					            <strong>${sp.name}</strong><br>
-					            <span>${sp.description}</span>
-					        </label>
-					    </c:forEach>
-                        <c:if test="${empty spaces}">
-                            <p>Không có dữ liệu khu vực</p>
-                        </c:if>
-                    </div>
-                </div>
+			    <div class="booking-card">
+			        <h3>Chọn không gian</h3>
+			        <div class="space-options-container">
+			            <c:forEach var="sp" items="${spaces}" varStatus="status">
+			                <input type="radio" class="space-radio" name="spaceId" 
+			                       id="space-${sp.spaceId}" value="${sp.spaceId}" 
+			                       ${status.first ? 'checked' : ''} required>
+			                <label for="space-${sp.spaceId}" class="space-card">
+			                    <strong>${sp.name}</strong>
+			                    <div class="check-mark"><i class="fa-solid fa-circle-check"></i></div>
+			                </label>
+			            </c:forEach>
+			        </div>
+			    </div>
 
                 <fieldset>
                     <legend>Chọn bàn</legend>
@@ -197,13 +190,13 @@
 				    <legend>Dịch vụ bổ sung</legend>
 				    <label for="service">Chọn dịch vụ đi kèm:</label>
 				    <select id="service" name="serviceId">
-				        <option value="" data-fee="0">-- Tự phục vụ / Tự nướng --</option>
-				        <c:forEach var="sv" items="${services}">
-				            <option value="${sv.serviceID}" data-fee="${sv.extraFee}">
-				                ${sv.name} (+<fmt:formatNumber value="${sv.extraFee}" pattern="#,##0"/>đ)
-				            </option>
-				        </c:forEach>
-				    </select>
+					    <c:forEach var="sv" items="${services}" varStatus="status">
+					        <c:set var="totalFee" value="${isParty ? (sv.extraFee + 500000) : sv.extraFee}" />
+					        <option value="${sv.serviceID}" data-fee="${totalFee}" ${status.first ? 'selected' : ''}>
+					            ${sv.name} (+<fmt:formatNumber value="${totalFee}" pattern="#,##0"/>đ)
+					        </option>
+					    </c:forEach>
+					</select>
 				</fieldset>
 
 			
@@ -225,15 +218,21 @@
 				        <strong id="serviceFeeDisplay">0đ</strong>
 				    </div>
 				
+				    <div class="summary-line">
+				        <span>Tổng thanh toán:</span>
+				        <strong id="grandTotalDisplay">0đ</strong>
+				    </div>
+				
 				    <div class="grand-total-line">
-				        <h3>Tổng thanh toán:</h3>
-				        <span id="grandTotalDisplay">
-				            <fmt:formatNumber value="${sessionScope.cart.totalAmount}" pattern="#,##0"/>đ
-				        </span>
+				        <span>Tiền cọc (30%):</span>
+				        <strong id="depositDisplay">0đ</strong>
 				    </div>
 				</div>
 				
-				<input type="hidden" name="amount" id="finalAmountInput" value="${sessionScope.cart.totalAmount}">
+				<!-- finalAmountInput = tiền cọc (sẽ thanh toán) -->
+				<input type="hidden" name="amount" id="finalAmountInput" value="0">
+				<!-- grandTotalInput = tổng tiền để server lưu -->
+				<input type="hidden" name="grandTotal" id="grandTotalInput" value="0">
 
 			    <div class="tab-buttons">
 			        <button type="button" class="btn-back">Quay lại</button>
