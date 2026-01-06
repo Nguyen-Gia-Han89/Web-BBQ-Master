@@ -7,65 +7,65 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Lớp đại diện cho thông tin đặt bàn/đặt tiệc tại nhà hàng. Bao gồm thông tin
- * khách hàng, thời gian đặt, số lượng khách, loại hình đặt bàn, dịch vụ đi kèm,
- * chi tiết món ăn và tổng chi phí.
+ * Lá»›p Ä‘áº¡i diá»‡n cho thÃ´ng tin Ä‘áº·t bÃ n/Ä‘áº·t tiá»‡c táº¡i nhÃ  hÃ ng. Bao gá»“m thÃ´ng tin
+ * khÃ¡ch hÃ ng, thá»�i gian Ä‘áº·t, sá»‘ lÆ°á»£ng khÃ¡ch, loáº¡i hÃ¬nh Ä‘áº·t bÃ n, dá»‹ch vá»¥ Ä‘i kÃ¨m,
+ * chi tiáº¿t mÃ³n Äƒn vÃ  tá»•ng chi phÃ­.
  */
 public class Booking {
 	/**
-	 * Trạng thái của đơn đặt bàn: - PENDING: Chờ xác nhận - CONFIRMED: Đã xác nhận
-	 * - CANCELLED: Đã hủy - COMPLETED: Hoàn thành
+	 * Tráº¡ng thÃ¡i cá»§a Ä‘Æ¡n Ä‘áº·t bÃ n: - PENDING: Chá»� xÃ¡c nháº­n - CONFIRMED: Ä�Ã£ xÃ¡c nháº­n
+	 * - CANCELLED: Ä�Ã£ há»§y - COMPLETED: HoÃ n thÃ nh
 	 */
 	public enum BookingStatus {
 		PENDING, CONFIRMED, CANCELLED, COMPLETED
 	}
 
 	/**
-	 * Loại hình đặt bàn: - DINE_IN: Ăn tại nhà hàng - PARTY: Đặt tiệc/sinh nhật
+	 * Loáº¡i hÃ¬nh Ä‘áº·t bÃ n: - DINE_IN: Ä‚n táº¡i nhÃ  hÃ ng - PARTY: Ä�áº·t tiá»‡c/sinh nháº­t
 	 */
 	public enum BookingType {
 		DINE_IN, PARTY
 	}
 
-	/** Mã đặt bàn */
+	/** MÃ£ Ä‘áº·t bÃ n */
 	private int bookingId;
 
-	/** Khách hàng thực hiện đặt bàn */
+	/** KhÃ¡ch hÃ ng thá»±c hiá»‡n Ä‘áº·t bÃ n */
 	private Customer customer;
 
-	/** Thời gian đặt bàn */
+	/** Thá»�i gian Ä‘áº·t bÃ n */
 	private LocalDateTime bookingTime;
 
-	/** Số lượng khách */
+	/** Sá»‘ lÆ°á»£ng khÃ¡ch */
 	private int numberOfGuests;
 
-	/** Ghi chú kèm theo của khách hàng */
+	/** Ghi chÃº kÃ¨m theo cá»§a khÃ¡ch hÃ ng */
 	private String note;
 
-	/** Trạng thái đặt bàn */
+	/** Tráº¡ng thÃ¡i Ä‘áº·t bÃ n */
 	private BookingStatus status;
 
-	/** Loại hình đặt bàn */
+	/** Loáº¡i hÃ¬nh Ä‘áº·t bÃ n */
 	private BookingType bookingType;
 
-	/** Danh sách chi tiết món ăn/đồ uống */
+	/** Danh sÃ¡ch chi tiáº¿t mÃ³n Äƒn/Ä‘á»“ uá»‘ng */
 	private List<BookingDetail> bookingDetails;
 
-	/** Bàn được chọn */
+	/** BÃ n Ä‘Æ°á»£c chá»�n */
 	private Table table;
 
-	/** Dịch vụ đi kèm (như trang trí, âm nhạc, VIP) */
+	/** Dá»‹ch vá»¥ Ä‘i kÃ¨m (nhÆ° trang trÃ­, Ã¢m nháº¡c, VIP) */
 	private Service service;
 
-	/** Tổng số tiền cần thanh toán */
+	/** Tá»•ng sá»‘ tiá»�n cáº§n thanh toÃ¡n */
 	private double totalAmount;
 
-	/** Mã đơn hàng hiển thị cho khách hàng (Ví dụ: BBQ-20251230-1) */
+	/** MÃ£ Ä‘Æ¡n hÃ ng hiá»ƒn thá»‹ cho khÃ¡ch hÃ ng (VÃ­ dá»¥: BBQ-20251230-1) */
 	private String orderCode;
 
 	/**
-	 * Constructor mặc định. Khởi tạo danh sách chi tiết món ăn rỗng và trạng thái
-	 * mặc định là PENDING.
+	 * Constructor máº·c Ä‘á»‹nh. Khá»Ÿi táº¡o danh sÃ¡ch chi tiáº¿t mÃ³n Äƒn rá»—ng vÃ  tráº¡ng thÃ¡i
+	 * máº·c Ä‘á»‹nh lÃ  PENDING.
 	 */
 	public Booking() {
 		this.bookingDetails = new ArrayList<>();
@@ -73,13 +73,13 @@ public class Booking {
 	}
 
 	/**
-	 * Constructor đầy đủ tham số
+	 * Constructor Ä‘áº§y Ä‘á»§ tham sá»‘
 	 */
 	public Booking(int bookingId, String orderCode, Customer customer, LocalDateTime bookingTime, int numberOfGuests,
 			String note, BookingStatus status, BookingType bookingType, List<BookingDetail> bookingDetails, Table table,
 			Service service, double totalAmount) {
 		this.bookingId = bookingId;
-		this.orderCode = orderCode; // Thêm mới
+		this.orderCode = orderCode; // ThÃªm má»›i
 		this.customer = customer;
 		this.bookingTime = bookingTime;
 		this.numberOfGuests = numberOfGuests;
@@ -190,9 +190,9 @@ public class Booking {
 	}
 	
 	/**
-     * Tạo mã đơn hàng tự động dựa trên ngày hiện tại và ID
-     * @param id ID lấy từ database sau khi insert
-     * @return chuỗi BBQ-YYYYMMDD-ID
+     * Táº¡o mÃ£ Ä‘Æ¡n hÃ ng tá»± Ä‘á»™ng dá»±a trÃªn ngÃ y hiá»‡n táº¡i vÃ  ID
+     * @param id ID láº¥y tá»« database sau khi insert
+     * @return chuá»—i BBQ-YYYYMMDD-ID
      */
     public void generateAndSetOrderCode(int id) {
         String datePart = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
@@ -200,20 +200,22 @@ public class Booking {
     }
 
 	/**
-	 * Thêm món ăn/đồ uống vào danh sách chi tiết đặt bàn, sau đó cập nhật tổng
-	 * tiền.
+	 * ThÃªm mÃ³n Äƒn/Ä‘á»“ uá»‘ng vÃ o danh sÃ¡ch chi tiáº¿t Ä‘áº·t bÃ n, sau Ä‘Ã³ cáº­p nháº­t tá»•ng
+	 * tiá»�n.
 	 * 
-	 * @param detail chi tiết món ăn/đồ uống
+	 * @param detail chi tiáº¿t mÃ³n Äƒn/Ä‘á»“ uá»‘ng
 	 */
-	public void addDetail(BookingDetail detail) {
-		if (detail != null) {
-			bookingDetails.add(detail);
-			calculateTotalAmount();
-		}
-	}
+    public void addDetail(BookingDetail detail) {
+        if (detail != null) {
+            detail.setBooking(this);
+            bookingDetails.add(detail);
+            calculateTotalAmount();
+        }
+    }
+
 
 	/**
-	 * Tính tổng chi phí = tổng tiền món ăn + phí dịch vụ (nếu có)
+	 * TÃ­nh tá»•ng chi phÃ­ = tá»•ng tiá»�n mÃ³n Äƒn + phÃ­ dá»‹ch vá»¥ (náº¿u cÃ³)
 	 */
 	public void calculateTotalAmount() {
 		double dishTotal = bookingDetails.stream().mapToDouble(BookingDetail::getTotal).sum();
@@ -222,9 +224,9 @@ public class Booking {
 	}
 
 	/**
-	 * Kiểm tra xem đơn đặt bàn đã được xác nhận hay chưa
+	 * Kiá»ƒm tra xem Ä‘Æ¡n Ä‘áº·t bÃ n Ä‘Ã£ Ä‘Æ°á»£c xÃ¡c nháº­n hay chÆ°a
 	 *
-	 * @return true nếu trạng thái CONFIRMED
+	 * @return true náº¿u tráº¡ng thÃ¡i CONFIRMED
 	 */
 	public boolean isConfirmed() {
 		return status == BookingStatus.CONFIRMED;
@@ -247,10 +249,12 @@ public class Booking {
 		}
 
 		BookingDetail newDetail = new BookingDetail();
+		newDetail.setBooking(this);
 		newDetail.setDish(dish);
 		newDetail.setQuantity(quantity);
 		newDetail.setPrice(dish.getPrice());
 		bookingDetails.add(newDetail);
+
 
 		calculateTotalAmount();
 	}
@@ -266,14 +270,14 @@ public class Booking {
 	public void removeDish(Dish selectedDish) {
 		if (selectedDish == null)
 			return;
-		// Loại bỏ tất cả chi tiết có dishId bằng với món được chọn
+		// Loáº¡i bá»� táº¥t cáº£ chi tiáº¿t cÃ³ dishId báº±ng vá»›i mÃ³n Ä‘Æ°á»£c chá»�n
 		bookingDetails.removeIf(detail -> detail.getDish().getDishId() == selectedDish.getDishId());
-		// Cập nhật lại tổng tiền sau khi xóa
+		// Cáº­p nháº­t láº¡i tá»•ng tiá»�n sau khi xÃ³a
 		calculateTotalAmount();
 
 	}
 
-	// Lấy BookingDetail theo dishId
+	// Láº¥y BookingDetail theo dishId
 	public BookingDetail findDetailByDishId(int dishId) {
 		for (BookingDetail detail : bookingDetails) {
 			if (detail.getDish().getDishId() == dishId)
@@ -282,12 +286,12 @@ public class Booking {
 		return null;
 	}
 
-	// alias cho servlet cũ
+	// alias cho servlet cÅ©
 	public BookingDetail getDetailByDishId(int dishId) {
 		return findDetailByDishId(dishId);
 	}
 
-	// Set trực tiếp số lượng
+	// Set trá»±c tiáº¿p sá»‘ lÆ°á»£ng
 	public void setQuantity(Dish dish, int quantity) {
 		if (dish == null)
 			return;
@@ -298,7 +302,7 @@ public class Booking {
 				return;
 			}
 		}
-		// Nếu chưa có món này thì thêm mới
+		// Náº¿u chÆ°a cÃ³ mÃ³n nÃ y thÃ¬ thÃªm má»›i
 		if (quantity > 0)
 			addDish(dish, quantity);
 	}
@@ -307,20 +311,20 @@ public class Booking {
 		if (bookingDetails == null || bookingDetails.isEmpty()) {
 			return;
 		}
-		// Duyệt qua danh sách và xóa phần tử có dishId trùng khớp
+		// Duyá»‡t qua danh sÃ¡ch vÃ  xÃ³a pháº§n tá»­ cÃ³ dishId trÃ¹ng khá»›p
 		bookingDetails.removeIf(detail -> detail.getDish().getDishId() == dishId);
 	}
 
 	/**
-	 * Trả về tổng tiền dưới dạng chuỗi định dạng tiền tệ Việt Nam (Ví dụ:
-	 * 1.200.000đ)
+	 * Tráº£ vá»� tá»•ng tiá»�n dÆ°á»›i dáº¡ng chuá»—i Ä‘á»‹nh dáº¡ng tiá»�n tá»‡ Viá»‡t Nam (VÃ­ dá»¥:
+	 * 1.200.000Ä‘)
 	 */
 	public String getFormattedTotalAmount() {
-		return String.format("%,.0fđ", totalAmount);
+		return String.format("%,.0fÄ‘", totalAmount);
 	}
 
 	/**
-	 * Trả về thời gian đặt bàn dưới dạng chuỗi dễ đọc (Ví dụ: 18:30 - 30/12/2025)
+	 * Tráº£ vá»� thá»�i gian Ä‘áº·t bÃ n dÆ°á»›i dáº¡ng chuá»—i dá»… Ä‘á»�c (VÃ­ dá»¥: 18:30 - 30/12/2025)
 	 */
 	public String getFormattedBookingTime() {
 		if (bookingTime == null)

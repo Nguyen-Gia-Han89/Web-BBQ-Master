@@ -9,6 +9,9 @@ import model.*;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
+
+import com.bbqmaster.util.MailService;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -81,8 +84,14 @@ public class BookingServlet extends HttpServlet {
 			String time = request.getParameter("time");
 			String note = request.getParameter("note");
 			String serviceIdStr = request.getParameter("serviceId");
-			String amountStr = request.getParameter("amount");
+			Service service = null;
 
+			if (serviceIdStr != null && !serviceIdStr.isBlank()) {
+			    int serviceId = Integer.parseInt(serviceIdStr);
+			    service = new ServiceDAO().getServiceById(serviceId);
+			}
+
+			
 			// Kiểm tra date và time trước khi parse để tránh lỗi LocalDateTime
 			if (date == null || time == null) {
 				throw new Exception("Vui lòng chọn ngày và giờ!");
@@ -96,7 +105,11 @@ public class BookingServlet extends HttpServlet {
 			booking.setBookingTime(bookingTime);
 			booking.setNote(note);
 			booking.setStatus(Booking.BookingStatus.PENDING);
-
+			
+			if (service != null) {
+			    booking.setService(service);
+			}
+			
 			// Tự động xác định loại Booking dựa trên URL
 			String path = request.getServletPath();
 			if (path.equals("/party-booking")) {
@@ -106,12 +119,12 @@ public class BookingServlet extends HttpServlet {
 			}
 
 			// Xử lý Bàn: Chỉ set nếu tableId > 0
-			if (tableId > 0) {
-				Table table = new Table();
-				table.setTableId(tableId);
-				booking.setTable(table);
+			Table fullTable = null;
+			if (tableId > 0 && booking.getBookingType() == Booking.BookingType.DINE_IN) {
+			    fullTable = new TableDAO().getById(tableId);
+			    booking.setTable(fullTable);
 			} else {
-				booking.setTable(null); // Đặt tiệc thì không có bàn lẻ
+			    booking.setTable(null);
 			}
 
 			/* -------- 3. Lấy món ăn từ cart -------- */
@@ -125,6 +138,7 @@ public class BookingServlet extends HttpServlet {
 				}
 			}
 			booking.setBookingDetails(details);
+			booking.calculateTotalAmount();
 
 			/* -------- 4. Lưu DB -------- */
 			BookingDAO bookingDAO = new BookingDAO();
@@ -137,7 +151,6 @@ public class BookingServlet extends HttpServlet {
 			/* -------- 5. Hậu xử lý -------- */
 			booking.generateAndSetOrderCode(bookingId);
 
-			Table fullTable = new TableDAO().getById(tableId);
 
 			DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm - dd/MM/yyyy");
 			String bookingTimeStr = bookingTime.format(fmt);
@@ -152,15 +165,12 @@ public class BookingServlet extends HttpServlet {
 					(fullTable != null && fullTable.getSpace() != null) ? fullTable.getSpace().getName()
 							: "Tầng 1 - Khu thường");
 
+			
 			/* -------- 6. Thanh toán -------- */
-			double totalAmount = 0;
-			try {
-				totalAmount = Double.parseDouble(amountStr);
-			} catch (Exception ignored) {
-			}
+			double totalAmount = booking.getTotalAmount();
 
 			session.setAttribute("TOTAL_AMOUNT", totalAmount);
-
+			
 			if (totalAmount > 0) {
 				session.setAttribute("PAYMENT_AMOUNT", totalAmount);
 				session.setAttribute("BOOKING_ID", bookingId);
@@ -168,6 +178,7 @@ public class BookingServlet extends HttpServlet {
 			} else {
 				bookingDAO.updateStatus(bookingId, Booking.BookingStatus.CONFIRMED);
 				session.removeAttribute("cart");
+				MailService.sendBookingEmail(booking, customer.getEmail());
 				response.sendRedirect(request.getContextPath() + "/booking-table/booking-success.jsp");
 			}
 

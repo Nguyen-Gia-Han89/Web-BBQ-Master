@@ -23,15 +23,21 @@ public class BookingDAO {
 
         b.setBookingId(rs.getInt("BookingID"));
 
-        Customer c = new Customer();
-        c.setCustomerID(rs.getInt("CustomerID"));
-        c.setFullName(rs.getString("FullName"));
+        CustomerDAO customerDAO = new CustomerDAO();
+        Customer c = customerDAO.getCustomerById(rs.getInt("CustomerID"));
         b.setCustomer(c);
 
-        Table t = new Table();
-        t.setTableId(rs.getInt("TableID"));
-        t.setTableName(rs.getString("TableName"));
-        b.setTable(t);
+
+        
+        int tableId = rs.getInt("TableID");
+        if (!rs.wasNull() && tableId > 0) {
+            Table t = new Table();
+            t.setTableId(tableId);
+            t.setTableName(rs.getString("TableName"));
+            b.setTable(t);
+        } else {
+            b.setTable(null);
+        }
 
         if (rs.getInt("ServiceID") > 0) {
             Service s = new Service();
@@ -52,7 +58,7 @@ public class BookingDAO {
     }
 
     /**
-     * Lấy tất cả Booking
+     * Láº¥y táº¥t cáº£ Booking
      */
     public List<Booking> getAll() {
         List<Booking> list = new ArrayList<>();
@@ -83,7 +89,7 @@ public class BookingDAO {
     }
 
     /**
-     * Lấy Booking theo ID
+     * Láº¥y Booking theo ID
      */
     public Booking getById(int bookingId) {
         String sql = """
@@ -105,7 +111,15 @@ public class BookingDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return mapBooking(rs);
+                    Booking b = mapBooking(rs);
+
+                    // 1. Load chi tiết món
+                    b.setBookingDetails(new BookingDetailDAO().getByBookingId(bookingId));
+
+                    // 2. OrderCode
+                    b.setOrderCode(rs.getString("OrderCode")); // chắc chắn OrderCode đã lưu trong DB
+
+                    return b;
                 }
             }
         } catch (Exception e) {
@@ -114,8 +128,9 @@ public class BookingDAO {
         return null;
     }
 
+
     /**
-     * Tạo Booking mới
+     * Táº¡o Booking má»›i
      */
     public int insert(Booking booking) {
         String sqlInsert = """
@@ -130,7 +145,7 @@ public class BookingDAO {
         try (
             Connection con = DBCPDataSource.getDataSource().getConnection()
         ) {
-            con.setAutoCommit(false); // Bắt đầu Transaction để đảm bảo tính toàn vẹn
+            con.setAutoCommit(false); // Báº¯t Ä‘áº§u Transaction Ä‘á»ƒ Ä‘áº£m báº£o tÃ­nh toÃ n váº¹n
 
             try (PreparedStatement ps = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setInt(1, booking.getCustomer().getCustomerID());
@@ -161,30 +176,30 @@ public class BookingDAO {
                         if (rs.next()) {
                             int newId = rs.getInt(1);
 
-                            // 1. TẠO ORDER_CODE (VÍ DỤ: BBQ-20251230-1)
+                            // 1. Táº O ORDER_CODE (VÃ� Dá»¤: BBQ-20251230-1)
                             String datePart = new java.text.SimpleDateFormat("yyyyMMdd").format(new java.util.Date());
                             String orderCode = "BBQ-" + datePart + "-" + newId;
 
-                            // 2. UPDATE NGƯỢC LẠI VÀO DB
+                            // 2. UPDATE NGÆ¯á»¢C Láº I VÃ€O DB
                             try (PreparedStatement psUpdate = con.prepareStatement(sqlUpdateCode)) {
                                 psUpdate.setString(1, orderCode);
                                 psUpdate.setInt(2, newId);
                                 psUpdate.executeUpdate();
                             }
 
-                            // 3. LƯU CHI TIẾT MÓN ĂN
+                            // 3. LÆ¯U CHI TIáº¾T MÃ“N Ä‚N
                             insertBookingDetails(con, newId, booking.getBookingDetails());
 
-                            // Gán ngược orderCode vào đối tượng booking để Servlet có thể lấy ra session
+                            // GÃ¡n ngÆ°á»£c orderCode vÃ o Ä‘á»‘i tÆ°á»£ng booking Ä‘á»ƒ Servlet cÃ³ thá»ƒ láº¥y ra session
                             booking.setOrderCode(orderCode); 
 
-                            con.commit(); // Thành công hết thì mới lưu thật vào DB
+                            con.commit(); // ThÃ nh cÃ´ng háº¿t thÃ¬ má»›i lÆ°u tháº­t vÃ o DB
                             return newId;
                         }
                     }
                 }
             } catch (Exception e) {
-                con.rollback(); // Lỗi bất cứ bước nào thì hủy hết (tránh dữ liệu rác)
+                con.rollback(); // Lá»—i báº¥t cá»© bÆ°á»›c nÃ o thÃ¬ há»§y háº¿t (trÃ¡nh dá»¯ liá»‡u rÃ¡c)
                 e.printStackTrace();
             }
         } catch (Exception e) {
@@ -211,7 +226,7 @@ public class BookingDAO {
         }
     }
     /**
-     * Cập nhật tổng tiền Booking
+     * Cáº­p nháº­t tá»•ng tiá»�n Booking
      */
     public boolean updateTotalAmount(int bookingId, double totalAmount) {
         String sql = "UPDATE Booking SET TotalAmount = ? WHERE BookingID = ?";
@@ -230,7 +245,7 @@ public class BookingDAO {
     }
 
     /**
-     * Cập nhật trạng thái Booking
+     * Cáº­p nháº­t tráº¡ng thÃ¡i Booking
      */
     public boolean updateStatus(int bookingId, Booking.BookingStatus status) {
         String sql = "UPDATE Booking SET Status = ? WHERE BookingID = ?";

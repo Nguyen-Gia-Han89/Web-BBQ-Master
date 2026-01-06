@@ -1,8 +1,12 @@
 package controller;
 
+import com.bbqmaster.util.MailService;
 import com.vnpay.common.Config;
 import dao.BookingDAO;
+import model.Booking;
 import model.Booking.BookingStatus;
+import model.Customer;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -48,15 +52,27 @@ public class VNPayReturnServlet extends HttpServlet {
             String bookingId = request.getParameter("vnp_TxnRef");
 
             if ("00".equals(vnp_ResponseCode)) {
+            		int id = Integer.parseInt(bookingId);
                 // THANH TOÁN THÀNH CÔNG
                 BookingDAO dao = new BookingDAO();
                 dao.updateStatus(Integer.parseInt(bookingId), BookingStatus.CONFIRMED);
 
+                // 2. LẤY BOOKING TỪ DB
+                Booking booking = dao.getById(id);
+                Customer customer = booking.getCustomer();
+                
+                System.out.println("Booking: " + booking);
+                System.out.println("Customer: " + booking.getCustomer().toString());
+                System.out.println("Email: " + customer.getEmail());
+
+                // 3. GỬI MAIL (CHỈ 1 LẦN – ĐÚNG CHỖ)
+                MailService.sendBookingEmail(booking, customer.getEmail());
+                
                 // Xóa giỏ hàng và các session liên quan
                 request.getSession().removeAttribute("cart");
                 request.getSession().removeAttribute("BOOKING_ID");
                 request.getSession().removeAttribute("PAYMENT_AMOUNT");
-
+               
                 response.sendRedirect(request.getContextPath() + "/booking-table/booking-success.jsp");
                 } else {
                 // THANH TOÁN THẤT BẠI (người dùng hủy hoặc lỗi thẻ)
