@@ -1,12 +1,17 @@
 # Build output
 /build/
 /bin/
+/target/
 *.class
 
 # IDE
 .settings/
 .project
 .classpath
+.idea/
+*.iml
 
-# Optional: log / temp
+# Cấu hình nhạy cảm (Quan trọng)
+db.properties
+config.properties
 *.log
