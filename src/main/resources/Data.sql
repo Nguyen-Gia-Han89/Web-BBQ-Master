@@ -292,3 +292,39 @@ GO
 -- 1. Thêm cột OrderCode vào bảng Booking
 ALTER TABLE dbo.Booking 
 ADD OrderCode VARCHAR(20);
+
+-- Bảng lưu vai trò (Cần thiết cho isUserInRole)
+CREATE TABLE User_Roles (
+    Email VARCHAR(100),
+    RoleName VARCHAR(50),
+    PRIMARY KEY (Email, RoleName)
+);
+
+-- Thêm dữ liệu mẫu
+INSERT INTO Customer (FullName, PhoneNumber, Email, PasswordHash) VALUES ('Quản lý BBQ', '0123', 'admin@bbq.com', 'hashed_pass_123');
+INSERT INTO User_Roles VALUES ('admin@bbq.com', 'admin-role');
+
+INSERT INTO User_Roles (Email, RoleName)
+VALUES 
+    ('a@gmail.com', 'administrator'), -- Nguyễn Văn A là Admin
+    ('b@gmail.com', 'registered-user'), -- Trần Thị B là Khách
+    ('c@gmail.com', 'registered-user'); -- Lê Văn C là Khách
+
+
+    -- 1. Kiểm tra bảng User
+SELECT Email, PasswordHash FROM Customer WHERE Email = 'admin@gmail.com';
+
+-- 2. Kiểm tra bảng Role (Tomcat cần bảng này để biết bạn là ai)
+-- Câu lệnh này phải trả về đúng chữ 'administrator'
+SELECT RoleName FROM User_Roles WHERE Email = 'admin@gmail.com';
+
+-- Đảm bảo trường Email trong Customer là Unique trước khi liên kết
+ALTER TABLE Customer ADD CONSTRAINT UC_Customer_Email UNIQUE (Email);
+
+-- Tạo liên kết Khóa ngoại
+ALTER TABLE User_Roles
+ADD CONSTRAINT FK_UserRoles_Customer
+FOREIGN KEY (Email) REFERENCES Customer(Email)
+ON DELETE CASCADE ON UPDATE CASCADE;
+
+DELETE FROM Service WHERE ServiceID = 4;

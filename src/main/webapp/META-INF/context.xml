@@ -1,0 +1,12 @@
+<Context>
+  <Realm className="org.apache.catalina.realm.JDBCRealm"
+         driverName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+         connectionURL="jdbc:sqlserver://localhost:1433;databaseName=RestaurantBookingDB;encrypt=true;trustServerCertificate=true"
+         connectionName="sa" 
+         connectionPassword="123456"
+         userTable="Customer" 
+         userNameCol="Email" 
+         userCredCol="PasswordHash"
+         userRoleTable="User_Roles" 
+         roleNameCol="RoleName" />
+</Context>

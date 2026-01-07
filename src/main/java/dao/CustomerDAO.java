@@ -18,12 +18,12 @@ public class CustomerDAO {
         c.setFullName(rs.getString("FullName"));
         c.setEmail(rs.getString("Email"));
         c.setPhoneNumber(rs.getString("PhoneNumber"));
-        // Không map password khi đọc danh sách
+        // KhÃ´ng map password khi Ä‘á»�c danh sÃ¡ch
         return c;
     }
 
     /**
-     * Lấy tất cả khách hàng
+     * Láº¥y táº¥t cáº£ khÃ¡ch hÃ ng
      */
     public List<Customer> getAll() {
         List<Customer> list = new ArrayList<>();
@@ -47,7 +47,7 @@ public class CustomerDAO {
     }
 
     /**
-     * Lấy khách hàng theo ID
+     * Láº¥y khÃ¡ch hÃ ng theo ID
      */
     public Customer getCustomerById(int id) {
         String sql = """
@@ -78,13 +78,14 @@ public class CustomerDAO {
      */
     public Customer login(String email, String password) {
         String sql = """
-            SELECT CustomerID, FullName, Email, PhoneNumber
-            FROM Customer
-            WHERE Email = ? AND PasswordHash = ?
+            SELECT c.CustomerID, c.FullName, c.Email, c.PhoneNumber, r.RoleName
+            FROM Customer c
+            LEFT JOIN User_Roles r ON c.Email = r.Email
+            WHERE c.Email = ? AND c.PasswordHash = ?
         """;
 
         try (
-            Connection con = DBCPDataSource.getDataSource(). getConnection();
+            Connection con = DBCPDataSource.getDataSource().getConnection();
             PreparedStatement ps = con.prepareStatement(sql)
         ) {
             ps.setString(1, email);
@@ -92,7 +93,9 @@ public class CustomerDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return mapCustomer(rs);
+                    Customer c = mapCustomer(rs);
+                    c.setRole(rs.getString("RoleName")); // Lấy quyền từ DB
+                    return c;
                 }
             }
         } catch (Exception e) {
@@ -105,45 +108,58 @@ public class CustomerDAO {
      * Register
      */
     public boolean register(Customer customer) {
-        String checkSql = """
-            SELECT 1 FROM Customer 
-            WHERE Email = ? OR PhoneNumber = ?
-        """;
+        String checkSql = "SELECT 1 FROM Customer WHERE Email = ? OR PhoneNumber = ?";
+        String insertCustSql = "INSERT INTO Customer (FullName, PhoneNumber, Email, PasswordHash) VALUES (?, ?, ?, ?)";
+        String insertRoleSql = "INSERT INTO User_Roles (Email, RoleName) VALUES (?, ?)";
 
-        String insertSql = """
-            INSERT INTO Customer (FullName, PhoneNumber, Email, PasswordHash)
-            VALUES (?, ?, ?, ?)
-        """;
+        Connection con = null;
+        try {
+            con = DBCPDataSource.getDataSource().getConnection();
+            // Bật chế độ Transaction (Tắt tự động lưu)
+            con.setAutoCommit(false);
 
-        try (Connection con = DBCPDataSource.getDataSource().getConnection()) {
-
-            // 1️⃣ Kiểm tra trùng Email hoặc PhoneNumber
-            try (PreparedStatement ps = con.prepareStatement(checkSql)) {
-                ps.setString(1, customer.getEmail());
-                ps.setString(2, customer.getPhoneNumber());
-
-                try (ResultSet rs = ps.executeQuery()) {
+            // 1. Kiểm tra trùng lặp
+            try (PreparedStatement psCheck = con.prepareStatement(checkSql)) {
+                psCheck.setString(1, customer.getEmail());
+                psCheck.setString(2, customer.getPhoneNumber());
+                try (ResultSet rs = psCheck.executeQuery()) {
                     if (rs.next()) {
                         System.out.println("❌ Email hoặc số điện thoại đã tồn tại!");
-                        return false;
+                        return false; 
                     }
                 }
             }
 
-            // 2️⃣ Insert dữ liệu mới
-            try (PreparedStatement ps = con.prepareStatement(insertSql)) {
-                ps.setString(1, customer.getFullName());
-                ps.setString(2, customer.getPhoneNumber());
-                ps.setString(3, customer.getEmail());
-                ps.setString(4, customer.getPasswordHash());
-
-                int rows = ps.executeUpdate();
-                System.out.println("✅ Insert thành công, số dòng thêm: " + rows);
-                return rows > 0;
+            // 2. Insert vào bảng Customer
+            try (PreparedStatement psCust = con.prepareStatement(insertCustSql)) {
+                psCust.setString(1, customer.getFullName());
+                psCust.setString(2, customer.getPhoneNumber());
+                psCust.setString(3, customer.getEmail());
+                psCust.setString(4, customer.getPasswordHash());
+                psCust.executeUpdate();
             }
 
+            // 3. Insert vào bảng User_Roles (Gán quyền mặc định là registered-user)
+            try (PreparedStatement psRole = con.prepareStatement(insertRoleSql)) {
+                psRole.setString(1, customer.getEmail());
+                psRole.setString(2, "registered-user"); // <--- Role mặc định cho khách mới
+                psRole.executeUpdate();
+            }
+
+            // Nếu mọi thứ ok, lưu tất cả thay đổi vào Database
+            con.commit();
+            System.out.println("✅ Đăng ký và gán quyền thành công cho: " + customer.getEmail());
+            return true;
+
         } catch (Exception e) {
+            if (con != null) {
+                try { con.rollback(); } catch (Exception ex) { ex.printStackTrace(); }
+            }
             e.printStackTrace();
+        } finally {
+            if (con != null) {
+                try { con.setAutoCommit(true); con.close(); } catch (Exception e) { e.printStackTrace(); }
+            }
         }
         return false;
     }
@@ -162,7 +178,7 @@ public class CustomerDAO {
             int rows = ps.executeUpdate();
             System.out.println("Update Profile rows affected = " + rows);
 
-            // ✅ DÒNG QUYẾT ĐỊNH
+            // âœ… DÃ’NG QUYáº¾T Ä�á»ŠNH
             return rows > 0;
 
         } catch (Exception e) {
@@ -189,9 +205,9 @@ public class CustomerDAO {
 //            System.out.println(c.getFullName() + " | " + c.getEmail());
 //        }
 //
-//        System.out.println("\n=== LOGIN TEST ===");
-//        Customer login = dao.login("test@gmail.com", "123456");
-//        System.out.println(login != null ? "Login OK" : "Login Fail");
+        System.out.println("\n=== LOGIN TEST ===");
+        Customer login = dao.login("a@gmail.com", "123");
+        System.out.println(login != null ? "Login OK" : "Login Fail");
 //        
 //        System.out.println("\n=== Register TEST ===");
 //        Customer c1 = new Customer("Tran", "0231452513", "tran@gmail.com", "123456");
@@ -199,16 +215,16 @@ public class CustomerDAO {
 //        System.out.println(register ? "Register OK" : "Register Fail");
       
        
-        System.out.println("\n=== EDIT PROFILE TEST ===");
-
-        Customer c = new Customer();
-        c.setCustomerID(1);
-        c.setFullName("Test Update Java");
-        c.setPhoneNumber("0912345678");
-
-        boolean result = dao.updateProfile(c);
-
-        System.out.println(result ? "Edit Profile OK" : "Edit Profile FAIL");
+//        System.out.println("\n=== EDIT PROFILE TEST ===");
+//
+//        Customer c = new Customer();
+//        c.setCustomerID(1);
+//        c.setFullName("Test Update Java");
+//        c.setPhoneNumber("0912345678");
+//
+//        boolean result = dao.updateProfile(c);
+//
+//        System.out.println(result ? "Edit Profile OK" : "Edit Profile FAIL");
     }
 }
 

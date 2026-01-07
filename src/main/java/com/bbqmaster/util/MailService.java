@@ -66,11 +66,25 @@ public class MailService {
             double totalAmount = 0;
             String serviceSection = "";
             Service service = booking.getService();
-            if (service != null) {
+            if (booking.getBookingType() == Booking.BookingType.PARTY) {
+                // Nếu là TIỆC: Cộng 500k và ghi đè dòng dịch vụ
+                totalAmount += 500000;
+                String partyServiceName = (service != null) ? "Tiệc BBQ + " + service.getName() : "Phí tổ chức tiệc";
+                
+                serviceSection = """
+                    <p style='margin-bottom:20px;'><b>Dịch vụ:</b> %s – <b style="color:#e67e22;">500,000 đ</b></p>
+                    """.formatted(partyServiceName);
+            } else if (service != null) {
+                // Nếu là ĐẶT BÀN THƯỜNG và có dịch vụ đi kèm
                 totalAmount += service.getExtraFee();
                 serviceSection = """
-                <p style='margin-bottom:20px;'><b>Dịch vụ đi kèm:</b> %s – <b>%,.0f đ</b></p>
-                """.formatted(service.getName(), service.getExtraFee());
+                    <p style='margin-bottom:20px;'><b>Dịch vụ đi kèm:</b> %s – <b>%,.0f đ</b></p>
+                    """.formatted(service.getName(), service.getExtraFee());
+            } else {
+                // Nếu là ĐẶT BÀN THƯỜNG và không có dịch vụ (Tự nướng)
+                serviceSection = """
+                    <p style='margin-bottom:20px;'><b>Dịch vụ đi kèm:</b> Tự nướng – 0 đ</p>
+                    """;
             }
 
             String foodSection = "";

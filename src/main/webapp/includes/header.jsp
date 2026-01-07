@@ -102,10 +102,10 @@
                 </div>
                 
                 <hr>
+			    <a href="${pageContext.request.contextPath}/profile" class="logout-item">
+			        <i class="fa-solid fa-address-card"></i> Thông tin cá nhân
+			    </a>
                 
-                <a href="${pageContext.request.contextPath}/profile" class="logout-item">
-                    <i class="fa-solid fa-address-card"></i> Thông tin cá nhân
-                </a>
                 <hr>
                 
                 <a href="${pageContext.request.contextPath}/logout" class="logout-item">

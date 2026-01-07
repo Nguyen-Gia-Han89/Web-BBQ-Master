@@ -1,5 +1,6 @@
 package model;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -217,11 +218,22 @@ public class Booking {
 	/**
 	 * TÃ­nh tá»•ng chi phÃ­ = tá»•ng tiá»�n mÃ³n Äƒn + phÃ­ dá»‹ch vá»¥ (náº¿u cÃ³)
 	 */
-	public void calculateTotalAmount() {
-		double dishTotal = bookingDetails.stream().mapToDouble(BookingDetail::getTotal).sum();
-		double serviceFee = service != null ? service.getExtraFee() : 0;
-		this.totalAmount = dishTotal + serviceFee;
-	}
+    public void calculateTotalAmount() {
+        // 1. Tính tổng tiền món ăn từ giỏ hàng
+        double dishTotal = bookingDetails.stream().mapToDouble(BookingDetail::getTotal).sum();
+        
+        // 2. Lấy phí dịch vụ đi kèm (ví dụ: Trang trí 300k)
+        double serviceFee = (service != null) ? service.getExtraFee() : 0;
+        
+        // 3. Cộng phí mặc định nếu là Đặt tiệc (Phí tổ chức 500k)
+        double partyFee = 0;
+        if (this.bookingType == BookingType.PARTY) {
+            partyFee = 500000;
+        }
+        
+        // Tổng cuối cùng
+        this.totalAmount = dishTotal + serviceFee + partyFee;
+    }
 
 	/**
 	 * Kiá»ƒm tra xem Ä‘Æ¡n Ä‘áº·t bÃ n Ä‘Ã£ Ä‘Æ°á»£c xÃ¡c nháº­n hay chÆ°a
@@ -329,9 +341,13 @@ public class Booking {
 	public String getFormattedBookingTime() {
 		if (bookingTime == null)
 			return "";
-		java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter
+		DateTimeFormatter formatter = java.time.format.DateTimeFormatter
 				.ofPattern("HH:mm - dd/MM/yyyy");
 		return bookingTime.format(formatter);
+	}
+	
+	public java.util.Date getBookingTimeAsDate() {
+	    return Timestamp.valueOf(this.bookingTime);
 	}
 
 }

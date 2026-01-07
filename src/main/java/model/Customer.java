@@ -1,40 +1,38 @@
 package model;
 
 /**
- * Lớp Customer đại diện cho thông tin của khách hàng.
- * Lưu trữ các thuộc tính cơ bản như họ tên, số điện thoại, email và mật khẩu.
- * Được sử dụng để quản lý tài khoản khách hàng trong hệ thống đặt bàn/nhà hàng.
+ * Lá»›p Customer Ä‘áº¡i diá»‡n cho thÃ´ng tin cá»§a khÃ¡ch hÃ ng.
+ * LÆ°u trá»¯ cÃ¡c thuá»™c tÃ­nh cÆ¡ báº£n nhÆ° há»� tÃªn, sá»‘ Ä‘iá»‡n thoáº¡i, email vÃ  máº­t kháº©u.
+ * Ä�Æ°á»£c sá»­ dá»¥ng Ä‘á»ƒ quáº£n lÃ½ tÃ i khoáº£n khÃ¡ch hÃ ng trong há»‡ thá»‘ng Ä‘áº·t bÃ n/nhÃ  hÃ ng.
  */
 public class Customer {
 
-    /** Mã khách hàng (duy nhất trong hệ thống) */
+    /** MÃ£ khÃ¡ch hÃ ng (duy nháº¥t trong há»‡ thá»‘ng) */
     private int customerID;
 
-    /** Họ và tên khách hàng */
+    /** Há»� vÃ  tÃªn khÃ¡ch hÃ ng */
     private String fullName;
 
-    /** Số điện thoại liên hệ */
+    /** Sá»‘ Ä‘iá»‡n thoáº¡i liÃªn há»‡ */
     private String phoneNumber;
 
-    /** Địa chỉ email đăng ký */
+    /** Ä�á»‹a chá»‰ email Ä‘Äƒng kÃ½ */
     private String email;
-
-    /** Mật khẩu tài khoản khách hàng */
-    private String password;
     
-    private String passwordHash; // CHỈ DÙNG CÁI NÀY
+    private String passwordHash; // CHá»ˆ DÃ™NG CÃ�I NÃ€Y
 
-    /** Constructor mặc định */
+    private String role;
+    /** Constructor máº·c Ä‘á»‹nh */
     public Customer() {}
 
     /**
-     * Constructor khởi tạo khách hàng đầy đủ thông tin
+     * Constructor khá»Ÿi táº¡o khÃ¡ch hÃ ng Ä‘áº§y Ä‘á»§ thÃ´ng tin
      *
-     * @param customerID  Mã khách hàng
-     * @param fullName    Họ tên khách hàng
-     * @param phoneNumber Số điện thoại
-     * @param email       Email đăng ký
-     * @param password    Mật khẩu tài khoản
+     * @param customerID  MÃ£ khÃ¡ch hÃ ng
+     * @param fullName    Há»� tÃªn khÃ¡ch hÃ ng
+     * @param phoneNumber Sá»‘ Ä‘iá»‡n thoáº¡i
+     * @param email       Email Ä‘Äƒng kÃ½
+     * @param password    Máº­t kháº©u tÃ i khoáº£n
      */
     public Customer(String fullName, String phoneNumber, String email, String passwordHash) {;
         this.fullName = fullName;
@@ -82,4 +80,7 @@ public class Customer {
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
     }
+    
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 }

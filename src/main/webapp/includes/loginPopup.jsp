@@ -7,14 +7,14 @@
 	        <span class="close">&times;</span>
 	        
 	        <div class="form-box" id="loginBox">
-	            <h2>Đăng nhập</h2>
-	            <form action="${pageContext.request.contextPath}/login" method="post">
-	                <input type="email" name="email" placeholder="Email đăng nhập" required>
-	                <input type="password" name="password" placeholder="Mật khẩu" required>
-	                <button type="submit" class="btn">Đăng nhập</button>
-	                <p>Chưa có tài khoản? <a href="#" id="openRegister">Đăng ký ngay</a></p>
-	            </form>
-	        </div>
+			    <h2>Đăng nhập</h2>
+			    <form action="<c:url value='/login' />" method="post">
+				    <input type="text" name="email" placeholder="Email" required>
+				    <input type="password" name="password" placeholder="Mật khẩu" required>
+				    <button type="submit" class="btn">Đăng nhập</button>
+			        <p>Chưa có tài khoản? <a href="#" id="openRegister">Đăng ký ngay</a></p>
+			    </form>
+			</div>
 	
 	        <div class="form-box" id="registerBox" style="display: none;">
 	            <h2>Đăng ký</h2>

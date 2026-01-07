@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +59,7 @@ public class BookingDAO {
     }
 
     /**
-     * Láº¥y táº¥t cáº£ Booking
+     * Lấy tất cả danh sách đặt bàn
      */
     public List<Booking> getAll() {
         List<Booking> list = new ArrayList<>();
@@ -89,7 +90,7 @@ public class BookingDAO {
     }
 
     /**
-     * Láº¥y Booking theo ID
+     * Lấy Booking theo ID
      */
     public Booking getById(int bookingId) {
         String sql = """
@@ -130,7 +131,7 @@ public class BookingDAO {
 
 
     /**
-     * Táº¡o Booking má»›i
+     * Tạo booking mới
      */
     public int insert(Booking booking) {
         String sqlInsert = """
@@ -145,7 +146,7 @@ public class BookingDAO {
         try (
             Connection con = DBCPDataSource.getDataSource().getConnection()
         ) {
-            con.setAutoCommit(false); // Báº¯t Ä‘áº§u Transaction Ä‘á»ƒ Ä‘áº£m báº£o tÃ­nh toÃ n váº¹n
+            con.setAutoCommit(false); 
 
             try (PreparedStatement ps = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setInt(1, booking.getCustomer().getCustomerID());
@@ -176,8 +177,8 @@ public class BookingDAO {
                         if (rs.next()) {
                             int newId = rs.getInt(1);
 
-                            // 1. Táº O ORDER_CODE (VÃ� Dá»¤: BBQ-20251230-1)
-                            String datePart = new java.text.SimpleDateFormat("yyyyMMdd").format(new java.util.Date());
+                            // 1. Tạo ORDER_CODE (Ví dụ: BBQ-20251230-1)
+                            String datePart = new SimpleDateFormat("yyyyMMdd").format(new java.util.Date());
                             String orderCode = "BBQ-" + datePart + "-" + newId;
 
                             // 2. UPDATE NGÆ¯á»¢C Láº I VÃ€O DB
@@ -226,7 +227,7 @@ public class BookingDAO {
         }
     }
     /**
-     * Cáº­p nháº­t tá»•ng tiá»�n Booking
+     * Cập nhật tổng tiền
      */
     public boolean updateTotalAmount(int bookingId, double totalAmount) {
         String sql = "UPDATE Booking SET TotalAmount = ? WHERE BookingID = ?";
@@ -245,7 +246,7 @@ public class BookingDAO {
     }
 
     /**
-     * Cáº­p nháº­t tráº¡ng thÃ¡i Booking
+     * Cập nhật trạng thái Booking sử dụng Enum BookingStatus
      */
     public boolean updateStatus(int bookingId, Booking.BookingStatus status) {
         String sql = "UPDATE Booking SET Status = ? WHERE BookingID = ?";
@@ -254,15 +255,79 @@ public class BookingDAO {
             Connection con = DBCPDataSource.getDataSource().getConnection();
             PreparedStatement ps = con.prepareStatement(sql)
         ) {
+            // Chuyển Enum thành String để lưu vào Database (VD: "COMPLETED")
             ps.setString(1, status.name());
             ps.setInt(2, bookingId);
-            return ps.executeUpdate() > 0;
+            
+            int rows = ps.executeUpdate();
+            System.out.println("✅ Đã cập nhật đơn #" + bookingId + " sang: " + status.name());
+            return rows > 0;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
     }
 
+ // Lấy N đơn hàng mới nhất cho Dashboard
+    public List<Booking> getRecentBookings(int limit) {
+        List<Booking> list = new ArrayList<>();
+        String sql = "SELECT TOP (?) b.*, c.FullName, t.TableName, s.Name AS ServiceName, s.ExtraFee " +
+                     "FROM Booking b JOIN Customer c ON b.CustomerID = c.CustomerID " +
+                     "LEFT JOIN [Table] t ON b.TableID = t.TableID " +
+                     "LEFT JOIN Service s ON b.ServiceID = s.ServiceID " +
+                     "ORDER BY b.BookingTime DESC";
+
+        try (Connection con = DBCPDataSource.getDataSource().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, limit);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapBooking(rs));
+                }
+            }
+        } catch (Exception e) { e.printStackTrace(); }
+        return list;
+    }
+
+    // ================== THỐNG KÊ (DASHBOARD) ==================
+
+    public int countTotalBookings() {
+        String sql = "SELECT COUNT(*) FROM Booking";
+        try (Connection con = DBCPDataSource.getDataSource().getConnection();
+             Statement st = con.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            if (rs.next()) return rs.getInt(1);
+        } catch (Exception e) { e.printStackTrace(); }
+        return 0;
+    }
+
+    public double getTotalRevenue() {
+        String sql = "SELECT SUM(TotalAmount) FROM Booking WHERE Status = 'COMPLETED'";
+        try (Connection con = DBCPDataSource.getDataSource().getConnection();
+             Statement st = con.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            if (rs.next()) return rs.getDouble(1);
+        } catch (Exception e) { e.printStackTrace(); }
+        return 0.0;
+    }
+    
+    public boolean cancelBooking(int bookingId) {
+        // Chúng ta sử dụng Enum BookingStatus.CANCELLED đã định nghĩa trong model Booking
+        String sql = "UPDATE Booking SET Status = ? WHERE BookingID = ?";
+        
+        try (Connection con = DBCPDataSource.getDataSource().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setString(1, Booking.BookingStatus.CANCELLED.name());
+            ps.setInt(2, bookingId);
+            
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
     // ================== TEST MAIN ==================
     public static void main(String[] args) {
         BookingDAO dao = new BookingDAO();
