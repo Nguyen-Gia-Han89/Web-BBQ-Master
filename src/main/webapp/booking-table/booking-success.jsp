@@ -58,7 +58,13 @@
 				</div>
 				
 				<div class="group-btns">
-				    <a href="<c:url value='/'/>" class="btn-action btn-home">Trang chủ</a>
+				    <a href="<c:url value='/booking-history'/>" class="btn-action btn-history">
+				        <i class="fa-solid fa-clock-rotate-left"></i> Xem lịch sử
+				    </a>
+				    
+				    <a href="<c:url value='/'/>" class="btn-action btn-home">
+				        <i class="fa-solid fa-house"></i> Trang chủ
+				    </a>
 				</div>
             </div>
         </div>

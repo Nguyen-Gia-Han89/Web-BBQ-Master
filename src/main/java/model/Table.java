@@ -29,6 +29,8 @@ public class Table {
 
     /** Tham chiếu đến đối tượng Space (quan hệ OOP) */
     private Space space;
+    
+    private boolean isBooked;
 
     /** Constructor mặc định */
     public Table() {}
@@ -111,5 +113,13 @@ public class Table {
 
     public void setSpace(Space space) {
         this.space = space;
+    }
+    
+    public boolean isIsBooked() {
+        return isBooked;
+    }
+
+    public void setIsBooked(boolean isBooked) {
+        this.isBooked = isBooked;
     }
 }

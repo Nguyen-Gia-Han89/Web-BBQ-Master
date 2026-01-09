@@ -26,7 +26,7 @@ public class TableDAO {
        
         Space space = spaceDAO.getSpaceById(table.getSpaceId());
 
-        // Nếu không tìm thấy Space theo ID
+        // Náº¿u khÃ´ng tÃ¬m tháº¥y Space theo ID
         if (space == null) {
             List<Space> allSpaces = spaceDAO.getAllSpaces(); 
             
@@ -34,7 +34,7 @@ public class TableDAO {
                 space = allSpaces.get(0); 
             } else {
                 space = new Space();
-                space.setName("Khu vực chung");
+                space.setName("Khu vá»±c chung");
             }
         }
         
@@ -45,19 +45,22 @@ public class TableDAO {
     // ================== GET ALL ==================
     public List<Table> getAll() {
         List<Table> list = new ArrayList<>();
-        String sql = "SELECT * FROM [Table] ORDER BY TableName";
-
-        try (
-            Connection con = DBCPDataSource.getDataSource().getConnection();
-            PreparedStatement ps = con.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery()
-        ) {
+        String sql = "SELECT * FROM [Table]";
+        try (Connection con = DBCPDataSource.getDataSource().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                list.add(mapTable(rs));
+                Table t = new Table();
+                t.setTableId(rs.getInt("TableID"));
+                t.setTableName(rs.getString("TableName"));
+                t.setSpaceId(rs.getInt("SpaceID"));
+                
+                // Tạm thời set là false để JSP không bị crash
+                t.setIsBooked(false); 
+                
+                list.add(t);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) { e.printStackTrace(); }
         return list;
     }
 
@@ -153,6 +156,36 @@ public class TableDAO {
         return false;
     }
 
+    public List<Table> getAllWithStatus(String date, String time) {
+        List<Table> list = new ArrayList<>();
+        // Câu SQL này lấy tất cả bàn và kiểm tra xem có đơn đặt nào trùng giờ mà không bị HỦY không
+        String sql = "SELECT t.*, " +
+                     "(SELECT COUNT(*) FROM Booking b " +
+                     " WHERE b.TableID = t.TableID " +
+                     " AND CAST(b.BookingTime AS DATE) = ? " +
+                     " AND CAST(b.BookingTime AS TIME) = CAST(? AS TIME) " +
+                     " AND b.Status NOT IN ('CANCELLED')) as isBookedCount " +
+                     "FROM [Table] t";
+
+        try (Connection con = DBCPDataSource.getDataSource().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, date);
+            ps.setString(2, time + ":00"); // Database SQL Server cần format HH:mm:ss
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Table t = new Table();
+                t.setTableId(rs.getInt("TableID"));
+                t.setTableName(rs.getString("TableName"));
+                t.setSpaceId(rs.getInt("SpaceID"));
+                t.setSeats(rs.getInt("Seats"));
+                // Gán trạng thái: Nếu đếm được > 0 đơn đặt thì bàn đó bận
+                t.setIsBooked(rs.getInt("isBookedCount") > 0); 
+                list.add(t);
+            }
+        } catch (Exception e) { e.printStackTrace(); }
+        return list;
+    }
+    
     // ================== TEST MAIN ==================
     public static void main(String[] args) {
 
@@ -198,6 +231,8 @@ public class TableDAO {
 
         System.out.println("\n========== UPDATE STATUS TEST ==========");
         boolean ok = tableDAO.updateStatus(1, "reserved");
-        System.out.println(ok ? "✅ Update OK" : "❌ Update FAIL");
+        System.out.println(ok ? "âœ… Update OK" : "â�Œ Update FAIL");
     }
+
+
 }

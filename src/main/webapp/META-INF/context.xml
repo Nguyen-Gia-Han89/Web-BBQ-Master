@@ -6,7 +6,7 @@
          connectionPassword="123456"
          userTable="Customer" 
          userNameCol="Email" 
-         userCredCol="PasswordHash"
+         userCredCol="PasswordHash" 
          userRoleTable="User_Roles" 
          roleNameCol="RoleName" />
 </Context>

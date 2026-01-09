@@ -35,9 +35,6 @@
         <!-- Booking Form -->
         <form action="${pageContext.request.contextPath}/booking-table" method="post" id="bookingForm">
 
-			<input type="hidden" name="amount" value="${sessionScope.cart.totalAmount}">
-
-
             <!-- Tab 1: Thông tin & Thời gian -->
             <div class="tab-content active" id="tab1">
                 <!-- Khung 1: Thông tin cá nhân -->
@@ -70,22 +67,22 @@
                     <label for="guests">Số người (1-20):</label>
                     <input type="number" id="guests" name="guests" min="1" max="20" value="1" required>
 						
-						<div class="date-time-row">
-					        <label>Ngày:</label>
-					        <input type="date" id="bookingDate" name="date" required>
-					        
-					        <label>Giờ:</label>
-					        <div class="time-slots-container" id="timeSlots">
-					            <c:forEach var="h" begin="10" end="21" varStatus="status">
-					                <button type="button" class="time-slot-btn ${status.first ? 'active' : ''}" 
-					                        data-time="${h}:00">${h}:00</button>
-					                <button type="button" class="time-slot-btn" 
-					                        data-time="${h}:30">${h}:30</button>
-					            </c:forEach>
-					        </div>
-					        <input type="hidden" name="time" id="selectedTime" value="10:00">
+					<div class="date-time-row">
+					    <label>Ngày:</label>
+					    <input type="date" id="bookingDate" name="date" 
+					           value="${selectedDate != null ? selectedDate : ''}" required>
+					    
+					    <label>Giờ:</label>
+					    <div class="time-slots-container" id="timeSlots">
+					        <c:forEach var="h" begin="10" end="21" varStatus="status">
+					            <button type="button" class="time-slot-btn" data-time="${h}:00">${h}:00</button>
+					            <button type="button" class="time-slot-btn" data-time="${h}:30">${h}:30</button>
+					        </c:forEach>
 					    </div>
+					    
+					    <input type="hidden" name="time" id="selectedTime" value="${selectedTime != null ? selectedTime : '10:00'}">
 					</div>
+				</div>
 
                 <div class="tab-buttons">
 				    <button type="button" class="btn-next">Tiếp tục</button>
@@ -119,20 +116,17 @@
 
                     <div class="map-container" id="mapContainer" style="margin-top:16px;">
                         <div class="grid-container">
-                            <c:forEach var="t" items="${availableTables}">
-                                <button type="button"
-                                        class="table-btn available"
-                                        data-id="${t.tableId}"
-                                        data-space="${t.spaceId}">
-                                    ${t.tableName}
-                                    <br>
-                                    <span>(${t.seats} người)</span>
-                                </button>
-                            </c:forEach>
-                            <c:if test="${empty availableTables}">
-                                <p>Không có bàn trống trong khung giờ đã chọn</p>
-                            </c:if>
-                        </div>
+						    <c:forEach var="t" items="${availableTables}">
+						        <button type="button" 
+						                class="table-btn table-item space-${t.spaceId} ${t.isBooked ? 'occupied' : 'available'}" 
+						                ${t.isBooked ? 'disabled' : ''} 
+						                data-id="${t.tableId}" 
+						                data-space="${t.spaceId}">
+						            ${t.tableName}
+						            <c:if test="${t.isBooked}"><br><small>(Hết chỗ)</small></c:if>
+						        </button>
+						    </c:forEach>
+						</div>
                     </div>
                 </fieldset>
 
@@ -251,8 +245,8 @@
 </section>
 
 <jsp:include page="../includes/footer.jsp"></jsp:include>
-<script src="<c:url value='/js/booking-tabs.js'/>"></script>
-<script src="<c:url value='/js/booking-total.js'/>"></script>
+<script src="<c:url value='/js/booking-tabs.js?v=' /><%= System.currentTimeMillis() %>"></script>
+<script src="<c:url value='/js/booking-total.js?v=' /><%= System.currentTimeMillis() %>"></script>
 
 
 </body>

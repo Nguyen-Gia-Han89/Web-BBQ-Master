@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -14,7 +15,8 @@ import java.util.List;
  */
 public class Booking {
 	/**
-	 * Tráº¡ng thÃ¡i cá»§a Ä‘Æ¡n Ä‘áº·t bÃ n: - PENDING: Chá»� xÃ¡c nháº­n - CONFIRMED: Ä�Ã£ xÃ¡c nháº­n
+	 * Tráº¡ng thÃ¡i cá»§a Ä‘Æ¡n Ä‘áº·t bÃ n: 
+	 * - PENDING: Chá»� xÃ¡c nháº­n - CONFIRMED: Ä�Ã£ xÃ¡c nháº­n
 	 * - CANCELLED: Ä�Ã£ há»§y - COMPLETED: HoÃ n thÃ nh
 	 */
 	public enum BookingStatus {
@@ -346,7 +348,7 @@ public class Booking {
 		return bookingTime.format(formatter);
 	}
 	
-	public java.util.Date getBookingTimeAsDate() {
+	public Date getBookingTimeAsDate() {
 	    return Timestamp.valueOf(this.bookingTime);
 	}
 

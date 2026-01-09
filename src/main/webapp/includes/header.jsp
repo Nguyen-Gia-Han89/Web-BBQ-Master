@@ -12,7 +12,7 @@
 <%-- URL dùng chung (Tất cả đi qua Servlet /booking) --%>
 <c:url var="bookTableUrl" value="/booking-table" />
 <c:url var="bookPartyUrl" value="/party-booking" />
-<c:url var="promotionUrl" value="/promotions" />
+<c:url var="promotionUrl" value="/khuyen-mai" />
 <c:url var="contactUrl" value="/contact/contact.jsp" />
 <c:url var="cartUrl" value="/cart" />
 <c:url var="logoUrl" value="/images/Logo.jpg" />
@@ -20,7 +20,7 @@
 <%-- Active class theo servlet --%>
 <c:set var="homeActive" value="${currentPage == '/index.jsp' ? 'active' : ''}" />
 <c:set var="menuActive" value="${currentPage == '/menu' ? 'active' : ''}" />
-<c:set var="promotionActive" value="${currentPage == '/promotions' ? 'active' : ''}" />
+<c:set var="promotionActive" value="${currentPage == '/khuyen-mai' ? 'active' : ''}" />
 <c:set var="contactActive" value="${currentPage == '/contact/contact.jsp' ? 'active' : ''}" />
 
 <%-- Logic Active Class mới --%>
@@ -56,13 +56,13 @@
 			        Dịch vụ <i class="fa-solid fa-chevron-down"></i>
 			    </a>
 			    <ul class="dropdown-menu">
-			        <li>
-			            <a href="${bookTableUrl}" class="${bookTableActive}">Đặt bàn</a>
-			        </li>
-			        <li>
-			            <a href="${bookPartyUrl}" class="${bookPartyActive}">Đặt tiệc</a>
-			        </li>
-			    </ul>
+				    <li>
+				        <a href="${bookTableUrl}" class="${bookTableActive}">Đặt bàn</a>
+				    </li>
+				    <li>
+				        <a href="${bookPartyUrl}" class="${bookPartyActive}">Đặt tiệc</a>
+				    </li>
+				</ul>
 			</li>
 
 	        <li><a href="${promotionUrl}" class="${promotionActive}">Ưu đãi</a></li>
@@ -96,22 +96,34 @@
             <div class="user-avatar-circle">${firstChar}</div>
             
             <div class="user-dropdown-menu" id="userDropdown">
-                <div class="dropdown-header">
-                    <strong>${sessionScope.customer.fullName}</strong>
-                    <span>${sessionScope.customer.email}</span>
-                </div>
-                
-                <hr>
+			    <div class="dropdown-header">
+			        <strong>${sessionScope.customer.fullName}</strong>
+			        <span>${sessionScope.customer.email}</span>
+			    </div>
+			    
+			    <hr>
+			    
+			    <c:if test="${sessionScope.customer.role == 'administrator'}">
+				    <a href="${pageContext.request.contextPath}/admin/dashboard" class="logout-item">
+				        <i class="fa-solid fa-user-shield"></i> Trang quản trị
+				    </a>
+				    <hr>
+				</c:if>
+			    
 			    <a href="${pageContext.request.contextPath}/profile" class="logout-item">
 			        <i class="fa-solid fa-address-card"></i> Thông tin cá nhân
 			    </a>
-                
-                <hr>
-                
-                <a href="${pageContext.request.contextPath}/logout" class="logout-item">
-                    <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
-                </a>
-            </div>
+			
+			    <a href="${pageContext.request.contextPath}/booking-history" class="logout-item">
+			        <i class="fa-solid fa-clock-rotate-left"></i> Lịch sử đặt bàn
+			    </a>
+			    
+			    <hr>
+			    
+			    <a href="${pageContext.request.contextPath}/logout" class="logout-item">
+			        <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+			    </a>
+			</div>
         </div>
     </c:otherwise>
 </c:choose>

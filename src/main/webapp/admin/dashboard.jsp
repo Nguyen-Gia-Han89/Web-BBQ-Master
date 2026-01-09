@@ -18,12 +18,17 @@
                 <i class="fa-solid fa-fire-burner"></i> BBQ MASTER
             </div>
             <nav class="sidebar-nav">
-                <ul>
-                    <li class="active">
-                        <a href="#"><i class="fa-solid fa-chart-pie"></i> Bảng điều khiển</a>
-                    </li>
-                </ul>
-            </nav>
+			    <ul>
+			        <li class="${empty param.view || param.view == 'dashboard' ? 'active' : ''}">
+			            <a href="${pageContext.request.contextPath}/admin/dashboard"><i class="fa-solid fa-chart-pie"></i> Bảng điều khiển</a>
+			        </li>
+			        <li class="${param.view == 'bookings' ? 'active' : ''}">
+			            <a href="${pageContext.request.contextPath}/admin/manage-bookings?view=bookings">
+			                <i class="fa-solid fa-calendar-days"></i> Quản lý đơn đặt bàn
+			            </a>
+			        </li>
+			    </ul>
+			</nav>
             <div class="sidebar-footer">
                 <a href="<c:url value='/logout'/>" class="logout-link">
                     <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
@@ -86,13 +91,13 @@
                                 <th>KHÁCH HÀNG</th>
                                 <th>SỐ KHÁCH</th>
                                 <th>TRẠNG THÁI</th>
-                                <th class="text-right">HÀNH ĐỘNG</th>
+                                <th class="text-right">SỐ BÀN</th>
                             </tr>
                         </thead>
                         <tbody>
                             <c:forEach var="b" items="${recentBookings}">
                                 <tr>
-                                    <td><span class="booking-id">#${b.bookingId}</span></td>
+                                    <td><span class="booking-id">#${b.orderCode}</span></td>
                                     <td>
                                         <div class="cust-name">${b.customer.fullName}</div>
                                         <div class="cust-time">${b.bookingTime}</div>
@@ -103,21 +108,28 @@
                                             ${b.status}
                                         </span>
                                     </td>
+                                    
                                     <td class="text-right">
-									    <div class="action-dropdown">
-									        <button class="btn-more" onclick="toggleMenu(this)">
-									            <i class="fa-solid fa-ellipsis-vertical"></i>
-									        </button>
-									        <div class="dropdown-content">
-									            <a href="javascript:void(0)" onclick="updateStatus(${b.bookingId}, 'COMPLETED')">
-									                <i class="fa-solid fa-check-double"></i> Hoàn thành & Thanh toán
-									            </a>
-									            <a href="javascript:void(0)" onclick="viewDetail(${b.bookingId})">
-									                <i class="fa-solid fa-eye"></i> Xem chi tiết
-									            </a>
-									            <a href="javascript:void(0)" onclick="updateStatus(${b.bookingId}, 'CANCELLED')" class="text-danger">
-									                <i class="fa-solid fa-xmark"></i> Hủy đơn
-									            </a>
+									    <div class="table-action-wrapper" style="display: flex; align-items: center; justify-content: flex-end; gap: 15px;">
+									        <span class="table-tag">
+									            <i class="fa-solid fa-chair"></i> ${b.table.tableName}
+									        </span>
+									
+									        <div class="action-dropdown">
+									            <button class="btn-more" onclick="toggleMenu(this)">
+									                <i class="fa-solid fa-ellipsis-vertical"></i>
+									            </button>
+									            <div class="dropdown-content">
+									                <a href="javascript:void(0)" onclick="updateStatus(${b.bookingId}, 'COMPLETED')">
+									                    <i class="fa-solid fa-check-double"></i> Hoàn thành
+									                </a>
+									                <a href="javascript:void(0)" onclick="viewDetail(${b.bookingId})">
+									                    <i class="fa-solid fa-eye"></i> Chi tiết
+									                </a>
+									                <a href="javascript:void(0)" onclick="updateStatus(${b.bookingId}, 'CANCELLED')" class="text-danger">
+									                    <i class="fa-solid fa-xmark"></i> Hủy đơn
+									                </a>
+									            </div>
 									        </div>
 									    </div>
 									</td>

@@ -25,34 +25,39 @@ public class BookingServlet extends HttpServlet {
 	 * ======================= GET: Hiển thị form đặt bàn =======================
 	 */
 	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+	        throws ServletException, IOException {
+	    
+	    // Lấy thông tin từ URL
+	    String date = request.getParameter("date");
+	    String time = request.getParameter("time");
 
-		HttpSession session = request.getSession(false);
+	    // Nếu lần đầu truy cập (chưa có param)
+	    if (date == null) date = java.time.LocalDate.now().toString();
+	    if (time == null) time = "10:00";
 
-		// Chưa đăng nhập → quay lại trang trước + requireLogin
-		if (session == null || session.getAttribute("customer") == null) {
-			String referer = request.getHeader("Referer");
-			String redirect = (referer != null) ? referer + (referer.contains("?") ? "&" : "?") + "requireLogin=true"
-					: request.getContextPath() + "/?requireLogin=true";
-			response.sendRedirect(redirect);
-			return;
-		}
+	    // 1. Lấy trạng thái bàn từ Database
+	    TableDAO tableDAO = new TableDAO();
+	    List<Table> allTables = tableDAO.getAllWithStatus(date, time);
+	    
+	    // 2. Đẩy dữ liệu ra Request
+	    request.setAttribute("availableTables", allTables);
+	    request.setAttribute("spaces", new SpaceDAO().getAllSpaces());
+	    request.setAttribute("services", new ServiceDAO().getAll());
+	    
+	    // Giữ lại giá trị để JSP hiển thị đúng ngày/giờ vừa chọn
+	    request.setAttribute("selectedDate", date);
+	    request.setAttribute("selectedTime", time);
 
-		// Load dữ liệu cho JSP
-		String path = request.getServletPath();
-		request.setAttribute("spaces", new SpaceDAO().getAllSpaces());
-		request.setAttribute("availableTables", new TableDAO().getAll());
-		request.setAttribute("services", new ServiceDAO().getAll());
-
-		if (path.equals("/party-booking")) {
-			// Trang đặt tiệc: Chỉ cần Space, không cần Table lẻ
-			request.getRequestDispatcher("/booking-party/book-party.jsp").forward(request, response);
-		} else {
-			// Trang đặt bàn: Cần đủ Table
-			request.setAttribute("availableTables", new TableDAO().getAll());
-			request.getRequestDispatcher("/booking-table/book-table.jsp").forward(request, response);
-		}
+	    String path = request.getServletPath();
+	    
+	    if ("/party-booking".equals(path)) {
+	        // Nếu là đặt tiệc, mở trang tiệc (hoặc trang đặt bàn nhưng với giao diện khác)
+	        request.getRequestDispatcher("/booking-party/book-party.jsp").forward(request, response);
+	    } else {
+	        // Mặc định mở trang đặt bàn thường
+	        request.getRequestDispatcher("/booking-table/book-table.jsp").forward(request, response);
+	    }
 	}
 
 	/*
@@ -129,8 +134,6 @@ public class BookingServlet extends HttpServlet {
 	        int bookingId = bookingDAO.insert(booking);
 	        if (bookingId <= 0) throw new Exception("Không thể tạo đơn đặt bàn");
 
-	        booking.generateAndSetOrderCode(bookingId);
-
 	        /* -------- 5. Thiết lập Session để hiển thị ở trang tiếp theo -------- */
 	        session.setAttribute("ORDER_CODE", booking.getOrderCode());
 	        session.setAttribute("TOTAL_AMOUNT", totalAmount);
@@ -138,6 +141,7 @@ public class BookingServlet extends HttpServlet {
 	        session.setAttribute("GUESTS", guests);
 	        session.setAttribute("TABLE_NAME", fullTable != null ? fullTable.getTableName() : "Nhân viên sắp xếp");
 	        session.setAttribute("SPACE_NAME", (fullTable != null && fullTable.getSpace() != null) ? fullTable.getSpace().getName() : "Khu vực tiệc");
+	        session.setAttribute("ORDER_CODE", booking.getOrderCode());
 	        
 	        // Thông tin phí để hiển thị minh bạch
 	        if (isParty) {
@@ -149,11 +153,14 @@ public class BookingServlet extends HttpServlet {
 
 	        /* -------- 6. Điều hướng Thanh toán hoặc Hoàn tất -------- */
 	        if (isParty || totalAmount > 0) {
-	            session.setAttribute("PAYMENT_AMOUNT", totalAmount);
+	            // Lấy số tiền cọc người dùng đã thấy trên giao diện JSP
+	            String depositStr = request.getParameter("amount"); 
+	            double amountToPay = (depositStr != null) ? Double.parseDouble(depositStr) : totalAmount;
+
+	            session.setAttribute("PAYMENT_AMOUNT", amountToPay); // Đây là số sẽ nhân 100 ở PaymentServlet
 	            session.setAttribute("BOOKING_ID", bookingId);
 	            session.setAttribute("PAYMENT_TYPE", isParty ? "DEPOSIT" : "ORDER");
 	            
-	            // Xóa cart ngay sau khi đã lưu đơn thành công
 	            session.removeAttribute("cart"); 
 	            response.sendRedirect(request.getContextPath() + "/payment");
 	        } else {
