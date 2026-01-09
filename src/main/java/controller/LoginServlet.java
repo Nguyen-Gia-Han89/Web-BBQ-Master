@@ -6,6 +6,9 @@ import model.Customer;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
+
+import com.bbqmaster.util.PasswordUtil;
+
 import java.io.IOException;
 
 @WebServlet("/login")
@@ -22,29 +25,30 @@ public class LoginServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        try {
-            // 1. Yêu cầu Tomcat xác thực thông qua JDBCRealm đã cấu hình
-            request.login(email, password);
+        System.out.println("--- XÁC THỰC THỦ CÔNG (GIỐNG HÀM MAIN) ---");
 
-            System.out.println("Login thành công cho: " + email);
-            System.out.println("Quyền Administrator: " + request.isUserInRole("administrator"));
+        // Gọi trực tiếp DAO giống như bạn đã làm trong hàm main
+        Customer customer = customerDAO.login(email, password); 
+
+        if (customer != null) {
+            // ĐĂNG NHẬP THÀNH CÔNG
+            System.out.println("=> Login OK (giong ham main): " + customer.getFullName());
             
-            // 2. Nếu không có Exception, nghĩa là đăng nhập thành công. 
-            // Lấy lại đối tượng Customer từ DB để lưu vào Session nếu cần hiển thị tên.
-            Customer customer = customerDAO.login(email, password);
-            request.getSession().setAttribute("customer", customer);
+            // Lưu thông tin vào Session để các trang sau biết đã đăng nhập
+            HttpSession session = request.getSession();
+            session.setAttribute("customer", customer);
 
-            // 3. Kiểm tra quyền và chuyển hướng đúng Servlet
-            if (request.isUserInRole("administrator")) {
+            // Vì không dùng Tomcat Realm, ta tự check Role từ DB hoặc mặc định
+            // Giả sử bạn muốn check xem có phải Admin không (ví dụ qua email)
+            if (email.equals("admin@gmail.com")) {
                 response.sendRedirect(request.getContextPath() + "/admin/dashboard");
             } else {
                 response.sendRedirect(request.getContextPath() + "/index.jsp");
             }
-
-        } catch (ServletException e) {
-        		System.out.println("Đăng nhập thất bại: " + e.getMessage());
-        		// 4. Nếu sai tài khoản, request.login sẽ ném ra Exception
-            request.setAttribute("error", "Email hoặc mật khẩu không đúng");
+        } else {
+            // ĐĂNG NHẬP THẤT BẠI
+            System.out.println("=> Login Fail (giong ham main)");
+            request.setAttribute("error", "Email hoặc mật khẩu không đúng!");
             request.getRequestDispatcher("index.jsp").forward(request, response);
         }
     }

@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.bbqmaster.util.PasswordUtil;
+
 import model.Customer;
 
 public class CustomerDAO {
@@ -76,26 +78,21 @@ public class CustomerDAO {
     /**
      * Login
      */
-    public Customer login(String email, String password) {
-        String sql = """
-            SELECT c.CustomerID, c.FullName, c.Email, c.PhoneNumber, r.RoleName
-            FROM Customer c
-            LEFT JOIN User_Roles r ON c.Email = r.Email
-            WHERE c.Email = ? AND c.PasswordHash = ?
-        """;
-
-        try (
-            Connection con = DBCPDataSource.getDataSource().getConnection();
-            PreparedStatement ps = con.prepareStatement(sql)
-        ) {
+    public Customer login(String email, String password) { // password truyền vào là "f123"
+        // BĂM MẬT KHẨU NGAY TẠI ĐÂY
+        String hashedPassword = PasswordUtil.hashPassword(password); 
+        
+        String sql = "SELECT * FROM Customer WHERE Email = ? AND PasswordHash = ?";
+        
+        try (Connection con = DBCPDataSource.getDataSource().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
             ps.setString(1, email);
-            ps.setString(2, password);
-
+            ps.setString(2, hashedPassword); // Truyền chuỗi đã băm vào SQL
+            
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    Customer c = mapCustomer(rs);
-                    c.setRole(rs.getString("RoleName")); // Lấy quyền từ DB
-                    return c;
+                    return mapCustomer(rs);
                 }
             }
         } catch (Exception e) {
@@ -135,7 +132,11 @@ public class CustomerDAO {
                 psCust.setString(1, customer.getFullName());
                 psCust.setString(2, customer.getPhoneNumber());
                 psCust.setString(3, customer.getEmail());
-                psCust.setString(4, customer.getPasswordHash());
+                
+                // MÃ HÓA mật khẩu ở đây trước khi lưu
+                String hashed = PasswordUtil.hashPassword(customer.getPasswordHash());
+                psCust.setString(4, hashed);
+                
                 psCust.executeUpdate();
             }
 
@@ -206,7 +207,7 @@ public class CustomerDAO {
 //        }
 //
         System.out.println("\n=== LOGIN TEST ===");
-        Customer login = dao.login("a@gmail.com", "123");
+        Customer login = dao.login("f@gmail.com", "f123");
         System.out.println(login != null ? "Login OK" : "Login Fail");
 //        
 //        System.out.println("\n=== Register TEST ===");
