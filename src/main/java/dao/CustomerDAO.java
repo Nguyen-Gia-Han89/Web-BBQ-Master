@@ -20,7 +20,12 @@ public class CustomerDAO {
         c.setFullName(rs.getString("FullName"));
         c.setEmail(rs.getString("Email"));
         c.setPhoneNumber(rs.getString("PhoneNumber"));
-        // KhÃ´ng map password khi Ä‘á»�c danh sÃ¡ch
+        try {
+            c.setRole(rs.getString("RoleName"));
+        } catch (SQLException e) {
+            // Nếu không có cột RoleName (trong hàm getAll), cứ để mặc định hoặc null
+        }
+        
         return c;
     }
 
@@ -78,20 +83,27 @@ public class CustomerDAO {
     /**
      * Login
      */
-    public Customer login(String email, String password) { // password truyền vào là "f123"
-        // BĂM MẬT KHẨU NGAY TẠI ĐÂY
+    public Customer login(String email, String password) {
+        // BĂM MẬT KHẨU
         String hashedPassword = PasswordUtil.hashPassword(password); 
         
-        String sql = "SELECT * FROM Customer WHERE Email = ? AND PasswordHash = ?";
+        // Sửa câu SQL: Lấy thông tin khách hàng VÀ RoleName từ bảng User_Roles
+        String sql = """
+            SELECT c.CustomerID, c.FullName, c.Email, c.PhoneNumber, r.RoleName
+            FROM Customer c
+            LEFT JOIN User_Roles r ON c.Email = r.Email
+            WHERE c.Email = ? AND c.PasswordHash = ?
+        """;
         
         try (Connection con = DBCPDataSource.getDataSource().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             
             ps.setString(1, email);
-            ps.setString(2, hashedPassword); // Truyền chuỗi đã băm vào SQL
+            ps.setString(2, hashedPassword);
             
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
+                    // Bây giờ mapCustomer sẽ nhận được kết quả có cột RoleName
                     return mapCustomer(rs);
                 }
             }
@@ -209,6 +221,8 @@ public class CustomerDAO {
         System.out.println("\n=== LOGIN TEST ===");
         Customer login = dao.login("f@gmail.com", "f123");
         System.out.println(login != null ? "Login OK" : "Login Fail");
+        
+        System.out.println("999: " + PasswordUtil.hashPassword("999"));
 //        
 //        System.out.println("\n=== Register TEST ===");
 //        Customer c1 = new Customer("Tran", "0231452513", "tran@gmail.com", "123456");

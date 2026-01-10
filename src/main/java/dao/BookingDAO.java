@@ -362,8 +362,9 @@ public class BookingDAO {
 	public List<Booking> getUpcomingBookings() {
 	    List<Booking> list = new ArrayList<>();
 	    
-	    // SQL: Lọc đơn hàng có BookingTime >= ngày hiện tại
-	    // Sắp xếp: BookingTime ASC (Tăng dần theo thời gian)
+	    // Logic: 
+	    // Nhóm 1 (Hôm nay & Tương lai): b.BookingTime >= Today -> Xếp lên trước
+	    // Nhóm 2 (Quá khứ): b.BookingTime < Today -> Xếp ra sau
 	    String sql = """
 	            SELECT b.*, c.FullName, c.Email, c.PhoneNumber,
 	                   t.TableName,
@@ -372,8 +373,12 @@ public class BookingDAO {
 	            JOIN Customer c ON b.CustomerID = c.CustomerID
 	            LEFT JOIN [Table] t ON b.TableID = t.TableID
 	            LEFT JOIN Service s ON b.ServiceID = s.ServiceID
-	            WHERE b.BookingTime >= CAST(GETDATE() AS DATE) 
-	            ORDER BY b.BookingTime ASC
+	            ORDER BY 
+	                CASE 
+	                    WHEN b.BookingTime >= CAST(GETDATE() AS DATE) THEN 0 
+	                    ELSE 1 
+	                END ASC, 
+	                b.BookingTime ASC
 	            """;
 
 	    try (Connection con = DBCPDataSource.getDataSource().getConnection();

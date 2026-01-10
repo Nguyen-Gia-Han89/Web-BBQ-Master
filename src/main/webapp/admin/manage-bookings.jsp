@@ -81,18 +81,21 @@
 					                    </span>
 					
 					                    <div class="action-dropdown">
-					                        <button class="btn-more" onclick="toggleMenu(this)">
-					                            <i class="fa-solid fa-ellipsis-vertical"></i>
-					                        </button>
-					                        <div class="dropdown-content">
-					                            <a href="javascript:void(0)" onclick="updateStatus(${b.bookingId}, 'COMPLETED', '${pageContext.request.contextPath}')">
-					                                <i class="fa-solid fa-check"></i> Hoàn thành
-					                            </a>
-					                            <a href="javascript:void(0)" onclick="updateStatus(${b.bookingId}, 'CANCELLED', '${pageContext.request.contextPath}')" class="text-danger">
-					                                <i class="fa-solid fa-xmark"></i> Hủy đơn
-					                            </a>
-					                        </div>
-					                    </div>
+									            <button class="btn-more" onclick="toggleMenu(this)">
+									                <i class="fa-solid fa-ellipsis-vertical"></i>
+									            </button>
+									            <div class="dropdown-content">
+									                <a href="javascript:void(0)" onclick="updateStatus(${b.bookingId}, 'COMPLETED')">
+									                    <i class="fa-solid fa-check-double"></i> Hoàn thành
+									                </a>
+									                <a href="javascript:void(0)" onclick="viewDetail(${b.bookingId})">
+									                    <i class="fa-solid fa-eye"></i> Chi tiết
+									                </a>
+									                <a href="javascript:void(0)" onclick="updateStatus(${b.bookingId}, 'CANCELLED')" class="text-danger">
+									                    <i class="fa-solid fa-xmark"></i> Hủy đơn
+									                </a>
+									            </div>
+									        </div>
 					                </div>
 					            </td>
 					        </tr>
@@ -103,5 +106,6 @@
         </main>
     </div>
     <script src="<c:url value='/js/admin-manage.js'/>"></script>
+    <script src="<c:url value='/js/admin-dashboard.js'/>"></script>
 </body>
 </html>

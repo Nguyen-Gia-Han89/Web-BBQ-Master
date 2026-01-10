@@ -9,9 +9,9 @@
 	        <div class="form-box" id="loginBox">
 			    <h2>Đăng nhập</h2>
 			    <form action="<c:url value='/login' />" method="post">
-				    <input type="text" name="email" placeholder="Email" required>
-				    <input type="password" name="password" placeholder="Mật khẩu" required>
-				    <button type="submit" class="btn">Đăng nhập</button>
+			        <input type="text" id="loginEmail" name="email" placeholder="Email" autocomplete="username" required>
+			        <input type="password" id="loginPass" name="password" placeholder="Mật khẩu" autocomplete="current-password" required>
+			        <button type="submit" class="btn">Đăng nhập</button>
 			        <p>Chưa có tài khoản? <a href="#" id="openRegister">Đăng ký ngay</a></p>
 			    </form>
 			</div>
@@ -34,5 +34,4 @@
 	    </div>
 	</div>
 
-<script src="<c:url value='/js/login.js' />"></script>
 

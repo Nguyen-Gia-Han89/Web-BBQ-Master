@@ -37,7 +37,9 @@ public class LoginServlet extends HttpServlet {
             // Lưu thông tin vào Session để các trang sau biết đã đăng nhập
             HttpSession session = request.getSession();
             session.setAttribute("customer", customer);
-
+            session.setAttribute("userRole", customer.getRole());
+            
+            System.out.println("Đăng nhập thành công! Đã lưu Role: " + customer.getRole());
             // Vì không dùng Tomcat Realm, ta tự check Role từ DB hoặc mặc định
             // Giả sử bạn muốn check xem có phải Admin không (ví dụ qua email)
             if (email.equals("admin@gmail.com")) {

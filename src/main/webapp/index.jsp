@@ -120,8 +120,8 @@
     <!-- Footer -->
     <jsp:include page="includes/footer.jsp" />
 
-    <script src="<c:url value='/js/main.js'/>"></script>
-	<script src="<c:url value='/js/cart.js'/>"></script>
-
+<script src="<c:url value='/js/main.js'/>"></script>
+<script src="${pageContext.request.contextPath}/js/login.js?v=${System.currentTimeMillis()}"></script> <script src="<c:url value='/js/cart.js'/>"></script>
 </body>
+
 </html>
