@@ -11,9 +11,6 @@ import java.io.IOException;
 public class ComboServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    /* =======================
-     * GET: Hiển thị combo
-     * ======================= */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -32,9 +29,6 @@ public class ComboServlet extends HttpServlet {
                .forward(request, response);
     }
 
-    /* =======================
-     * POST: dùng lại GET
-     * ======================= */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

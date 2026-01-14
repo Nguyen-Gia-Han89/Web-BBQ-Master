@@ -64,8 +64,8 @@
                 <!-- Khung 2: Thời gian -->
                 <div class="booking-card">
                     <h3>Thời gian <span class="required">*</span></h3>
-                    <label for="guests">Số người (1-20):</label>
-                    <input type="number" id="guests" name="guests" min="1" max="20" value="1" required>
+                    <label for="guests">Số người (1-10):</label>
+                    <input type="number" id="guests" name="guests" min="1" max="10" value="1" required>
 						
 					<div class="date-time-row">
 					    <label>Ngày:</label>

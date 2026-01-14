@@ -15,12 +15,14 @@ public class MailService {
     private static String FROM_EMAIL;
     private static String APP_PASSWORD;
 
+    // Khối static: Chạy ngay khi class được nạp vào bộ nhớ, chỉ chạy DUY NHẤT 1 LẦN.
     // Tự động nạp cấu hình từ file db.properties
     static {
+    		// try-with-resources: Tự động đóng file sau khi đọc xong để tránh rò rỉ bộ nhớ.
         try (InputStream input = MailService.class.getClassLoader().getResourceAsStream("db.properties")) {
             Properties prop = new Properties();
             if (input != null) {
-                prop.load(input);
+                prop.load(input); // Nạp các cặp Key-Value từ file cấu hình.
                 FROM_EMAIL = prop.getProperty("mail.username");
                 APP_PASSWORD = prop.getProperty("mail.password");
             } else {
@@ -37,12 +39,14 @@ public class MailService {
             return;
         }
 
+        // ----kết nối SMTP----
         Properties props = new Properties();
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com"); // Server gửi mail của Google.
+        props.put("mail.smtp.port", "587"); // Cổng kết nối chuẩn bảo mật STARTTLS.
+        props.put("mail.smtp.auth", "true"); // Yêu cầu xác thực tài khoản/mật khẩu.
+        props.put("mail.smtp.starttls.enable", "true"); // Mã hóa luồng dữ liệu để không bị hack thông tin mail.
 
+        // Tạo phiên làm việc (Session) với cơ chế xác thực App Password.
         Session mailSession = Session.getInstance(props, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
@@ -51,6 +55,7 @@ public class MailService {
         });
 
         try {
+        		// 1. Dùng MimeMessage để hỗ trợ định dạng HTML (thay vì text thuần túy).
             MimeMessage message = new MimeMessage(mailSession);
             message.setFrom(new InternetAddress(FROM_EMAIL, "BBQ Master"));
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipientEmail));

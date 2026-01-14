@@ -65,9 +65,7 @@ public class Config {
         return digest;
     }
 
-    //Util for VNPAY
     public static String hashAllFields(Map fields) {
-        // 1. Sáº¯p xáº¿p tham sá»‘ theo alphabet
         List fieldNames = new ArrayList(fields.keySet());
         Collections.sort(fieldNames);
         
@@ -80,8 +78,7 @@ public class Config {
                 sb.append(fieldName);
                 sb.append("=");
                 try {
-                    // 2. Encode giÃ¡ trá»‹ theo chuáº©n US-ASCII (quy Ä‘á»‹nh cá»§a VNPAY)
-                    sb.append(java.net.URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                    sb.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
                 } catch (UnsupportedEncodingException e) {
                     sb.append(fieldValue);
                 }
@@ -90,7 +87,6 @@ public class Config {
                 sb.append("&");
             }
         }
-        // 3. BÄƒm vá»›i Secret Key
         return hmacSHA512(secretKey, sb.toString());
     }
     
