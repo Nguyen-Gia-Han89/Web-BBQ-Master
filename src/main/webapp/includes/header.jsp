@@ -1,15 +1,16 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<%-- Lấy trang hiện tại --%>
-<c:set var="currentPage" value="${pageContext.request.servletPath}" />
+<%-- 1. Lấy URI hiện tại để xử lý Active Class --%>
+<c:set var="uri" value="${requestScope['javax.servlet.forward.request_uri']}" />
+<c:if test="${empty uri}">
+    <c:set var="uri" value="${pageContext.request.requestURI}" />
+</c:if>
 
-<%-- URL dùng chung (qua Servlet) --%>
+<%-- 2. Khai báo URL dùng chung --%>
 <c:url var="homeUrl" value="/index.jsp" />
 <c:url var="menuUrl" value="/menu" />
-<%-- URL dùng chung (Tất cả đi qua Servlet /booking) --%>
 <c:url var="bookTableUrl" value="/booking-table" />
 <c:url var="bookPartyUrl" value="/party-booking" />
 <c:url var="promotionUrl" value="/khuyen-mai" />
@@ -17,24 +18,18 @@
 <c:url var="cartUrl" value="/cart" />
 <c:url var="logoUrl" value="/images/Logo.jpg" />
 
-<%-- Active class theo servlet --%>
-<c:set var="homeActive" value="${currentPage == '/index.jsp' ? 'active' : ''}" />
-<c:set var="menuActive" value="${currentPage == '/menu' ? 'active' : ''}" />
-<c:set var="promotionActive" value="${currentPage == '/khuyen-mai' ? 'active' : ''}" />
-<c:set var="contactActive" value="${currentPage == '/contact/contact.jsp' ? 'active' : ''}" />
+<%-- 3. Logic định nghĩa Active Class dựa trên URI --%>
+<c:set var="homeActive" value="${uri == pageContext.request.contextPath or uri == (pageContext.request.contextPath += '/') or fn:contains(uri, 'index.jsp') ? 'active' : ''}" />
+<c:set var="menuActive" value="${fn:contains(uri, '/menu') ? 'active' : ''}" />
+<c:set var="promotionActive" value="${fn:contains(uri, '/khuyen-mai') ? 'active' : ''}" />
+<c:set var="contactActive" value="${fn:contains(uri, '/contact') ? 'active' : ''}" />
 
-<%-- Logic Active Class mới --%>
-<c:set var="isBookingPage" value="${currentPage == '/booking-table' or currentPage == '/party-booking'}" />
-<c:set var="serviceActiveClass" value="${isBookingPage ? 'active' : ''}" />
-
-<c:set var="bookTableActive" value="${currentPage == '/booking-table' ? 'active' : ''}" />
-<c:set var="bookPartyActive" value="${currentPage == '/party-booking' ? 'active' : ''}" />
-
-
+<%-- Xử lý riêng cho Dropdown Dịch vụ --%>
+<c:set var="bookTableActive" value="${fn:contains(uri, '/booking-table') ? 'active' : ''}" />
+<c:set var="bookPartyActive" value="${fn:contains(uri, '/party-booking') ? 'active' : ''}" />
+<c:set var="serviceActive" value="${not empty bookTableActive or not empty bookPartyActive ? 'active' : ''}" />
 
 <header class="header">
-
-    <!-- LOGO -->
     <div class="logo">
         <a href="${homeUrl}" class="logo-link">
             <img src="${logoUrl}" alt="Logo BBQ Master">
@@ -42,30 +37,26 @@
         </a>
     </div>
 
-    <!-- NAV -->
     <nav>
         <ul>
             <li><a href="${homeUrl}" class="${homeActive}">Trang chủ</a></li>
             <li><a href="${menuUrl}" class="${menuActive}">Thực đơn</a></li>
-          
-          
             
-            <!-- DỊCH VỤ -->
-	        <li class="has-dropdown ${serviceActiveClass}">
-			    <a href="javascript:void(0)">
-			        Dịch vụ <i class="fa-solid fa-chevron-down"></i>
-			    </a>
-			    <ul class="dropdown-menu">
-				    <li>
-				        <a href="${bookTableUrl}" class="${bookTableActive}">Đặt bàn</a>
-				    </li>
-				    <li>
-				        <a href="${bookPartyUrl}" class="${bookPartyActive}">Đặt tiệc</a>
-				    </li>
-				</ul>
-			</li>
+            <li class="has-dropdown ${serviceActive}">
+                <a href="javascript:void(0)" class="${serviceActive}">
+                    Dịch vụ <i class="fa-solid fa-chevron-down"></i>
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="${bookTableUrl}" class="${bookTableActive}">Đặt bàn</a>
+                    </li>
+                    <li>
+                        <a href="${bookPartyUrl}" class="${bookPartyActive}">Đặt tiệc</a>
+                    </li>
+                </ul>
+            </li>
 
-	        <li><a href="${promotionUrl}" class="${promotionActive}">Ưu đãi</a></li>
+            <li><a href="${promotionUrl}" class="${promotionActive}">Ưu đãi</a></li>
             <li><a href="${contactUrl}" class="${contactActive}">Liên hệ</a></li>
         </ul>
     </nav>

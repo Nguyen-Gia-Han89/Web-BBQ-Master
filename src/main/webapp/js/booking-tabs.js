@@ -90,7 +90,13 @@ document.addEventListener("DOMContentLoaded", function () {
     setupNavigation();
     setupTabClick();
 
-    if (urlParams.has("time") && document.getElementById("tab2")) showTab("tab2");
+	if (urlParams.has("time") && document.getElementById("tab2")) {
+	        // Nếu vừa chọn giờ xong, nhảy sang Tab 2
+	        showTab("tab2");
+	    } else {
+	        // Trường hợp còn lại (vừa vào trang hoặc trang Party), luôn đảm bảo Tab 1 active
+	        showTab("tab1");
+	    }
 });
 
 // --- CÁC HÀM LOGIC ---
@@ -126,16 +132,25 @@ function setupNavigation() {
 
 function validateContact() {
     const tab1 = document.getElementById("tab1");
-    const name = tab1.querySelector('input[name="name"]')?.value.trim();
-    const phone = tab1.querySelector('input[name="phone"]')?.value.trim();
-    const email = tab1.querySelector('input[name="email"]')?.value.trim();
-    const date = tab1.querySelector('input[name="date"]')?.value;
+    if (!tab1) return false;
+
+    // Lấy phần tử trước
+    const nameEl = tab1.querySelector('input[name="name"]');
+    const phoneEl = tab1.querySelector('input[name="phone"]');
+    const emailEl = tab1.querySelector('input[name="email"]');
+    const dateEl = tab1.querySelector('input[name="date"]');
+
+    // Sau đó mới lấy value và trim()
+    const name = nameEl ? nameEl.value.trim() : "";
+    const phone = phoneEl ? phoneEl.value.trim() : "";
+    const email = emailEl ? emailEl.value.trim() : "";
+    const date = dateEl ? dateEl.value : "";
 
     if (!name || !phone || !email || !date) {
-        alert("Vui lòng điền đủ thông tin liên hệ và ngày!");
+        alert("Vui lòng điền đầy đủ thông tin liên hệ và chọn Ngày!");
         return false;
     }
-    return true;
+    return true; 
 }
 
 function validateTable() {
