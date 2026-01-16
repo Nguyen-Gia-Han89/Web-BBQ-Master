@@ -26,7 +26,9 @@
                 </ul>
             </nav>
             <div class="sidebar-footer">
-                <a href="<c:url value='/logout'/>" class="logout-link"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</a>
+                <a href="<c:url value='/logout'/>" class="logout-link">
+					<i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+				</a>
             </div>
         </aside>
 

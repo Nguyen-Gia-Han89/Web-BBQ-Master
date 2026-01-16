@@ -47,8 +47,5 @@
 		</div>
 	</div>
 
-	<!-- Bản quyền -->
-	<div class="footer-bottom">
-		<p>© 2025 BBQ Master. All rights reserved.</p>
-	</div>
+	
 </footer>
